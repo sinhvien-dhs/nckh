@@ -1,0 +1,16 @@
+{
+  "name": "Hồ Sơ Vật Lý: Điều Tra Chân Lý Thực Nghiệm",
+  "short_name": "PhysicsDetective",
+  "description": "Game phát triển năng lực tư duy phản biện trong dạy học Vật lý THPT GDPT 2018",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#FBFBF9",
+  "theme_color": "#FBFBF9",
+  "icons": [
+    {
+      "src": "./assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
