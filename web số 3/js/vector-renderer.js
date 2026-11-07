@@ -1,6 +1,7 @@
 /* ==========================================================================
    PHYSICS DETECTIVE - Vector Renderer (HTML5 Canvas 60 FPS)
    Dynamic Vector Overlay for Grade 10 Mechanics
+   Includes High-Contrast Readable Badges & Multi-Celestial Renderings
    ========================================================================== */
 
 class VectorRenderer {
@@ -13,68 +14,108 @@ class VectorRenderer {
     this.p = this.palette();
   }
 
-  // Bảng màu canvas đồng bộ với giao diện sáng/tối.
   palette() {
     const dark = document.documentElement.getAttribute('data-theme') === 'dark';
     if (dark) {
       return {
-        grid: 'rgba(250, 250, 250, 0.08)',
-        towerFill: 'rgba(250, 250, 250, 0.06)',
-        towerStroke: 'rgba(250, 250, 250, 0.25)',
+        grid: 'rgba(250, 250, 250, 0.06)',
+        towerFill: 'rgba(250, 250, 250, 0.08)',
+        towerStroke: 'rgba(250, 250, 250, 0.35)',
         ground: '#27272A',
         groundLine: '#3F3F46',
-        teal: '#B9D3E3',
-        tealDeep: '#8FB4C9',
-        green: '#B7CDAF',
-        greenDeep: '#93AE8A',
-        amber: '#EFD79B',
-        amberDeep: '#C9AE68',
-        rose: '#F2B8B8',
-        roseDeep: '#C98F8F',
-        purple: '#D3C6E8',
-        gray: '#A1A1AA',
-        text: '#FAFAFA',
-        onShape: '#1C1917',
-        spark: 'rgba(239, 215, 155, 0.28)',
-        track: 'rgba(185, 211, 227, 0.30)',
-        tether: 'rgba(250, 250, 250, 0.30)',
-        cloud: 'rgba(250, 250, 250, 0.08)',
-        carOutline: '#C98F8F'
+        teal: '#38bdf8',
+        tealDeep: '#0284c7',
+        green: '#4ade80',
+        greenDeep: '#16a34a',
+        amber: '#fbbf24',
+        amberDeep: '#d97706',
+        rose: '#f87171',
+        roseDeep: '#dc2626',
+        purple: '#c084fc',
+        gray: '#94a3b8',
+        text: '#F8FAFC',
+        onShape: '#0f172a',
+        spark: 'rgba(251, 191, 36, 0.4)',
+        track: 'rgba(56, 189, 248, 0.25)',
+        tether: 'rgba(248, 250, 252, 0.45)',
+        cloud: 'rgba(248, 250, 252, 0.1)',
+        carOutline: '#f87171'
       };
     }
     return {
-      grid: 'rgba(28, 25, 23, 0.06)',
-      towerFill: 'rgba(28, 25, 23, 0.06)',
-      towerStroke: 'rgba(28, 25, 23, 0.25)',
-      ground: '#E7E5E4',
-      groundLine: '#D6D3D1',
-      teal: '#1F4E5A',
-      tealDeep: '#163B44',
-      green: '#2D4A3E',
-      greenDeep: '#243D33',
-      amber: '#A16207',
-      amberDeep: '#854D0E',
-      rose: '#991B1B',
-      roseDeep: '#7F1D1D',
-      purple: '#6D3B4E',
-      gray: '#57534E',
-      text: '#1C1917',
+      grid: 'rgba(28, 25, 23, 0.05)',
+      towerFill: 'rgba(28, 25, 23, 0.08)',
+      towerStroke: 'rgba(28, 25, 23, 0.35)',
+      ground: '#E2E8F0',
+      groundLine: '#CBD5E1',
+      teal: '#0284c7',
+      tealDeep: '#0369a1',
+      green: '#16a34a',
+      greenDeep: '#15803d',
+      amber: '#d97706',
+      amberDeep: '#b45309',
+      rose: '#dc2626',
+      roseDeep: '#b91c1c',
+      purple: '#9333ea',
+      gray: '#64748b',
+      text: '#0F172A',
       onShape: '#FFFFFF',
-      spark: 'rgba(161, 98, 7, 0.35)',
-      track: 'rgba(31, 78, 90, 0.35)',
-      tether: 'rgba(28, 25, 23, 0.35)',
-      cloud: 'rgba(28, 25, 23, 0.08)',
-      carOutline: '#FBFBF9'
+      spark: 'rgba(217, 119, 6, 0.4)',
+      track: 'rgba(2, 132, 199, 0.2)',
+      tether: 'rgba(15, 23, 42, 0.4)',
+      cloud: 'rgba(15, 23, 42, 0.06)',
+      carOutline: '#dc2626'
     };
   }
 
   resize() {
     if (!this.canvas) return;
-    const rect = this.canvas.parentElement.getBoundingClientRect();
-    this.canvas.width = rect.width;
-    this.canvas.height = rect.height;
+    const rect = this.canvas.parentElement ? this.canvas.parentElement.getBoundingClientRect() : null;
+    const w = (rect && rect.width > 50) ? rect.width : (this.canvas.clientWidth > 50 ? this.canvas.clientWidth : 700);
+    const h = (rect && rect.height > 50) ? rect.height : (this.canvas.clientHeight > 50 ? this.canvas.clientHeight : 380);
+    this.canvas.width = Math.round(w);
+    this.canvas.height = Math.round(h);
     this.width = this.canvas.width;
     this.height = this.canvas.height;
+  }
+
+  drawHighContrastBadge(ctx, text, x, y, options = {}) {
+    const fontSize = options.fontSize || 10.5;
+    const paddingX = options.paddingX || 6;
+    const paddingY = options.paddingY || 3;
+    const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const bg = options.bg || (dark ? 'rgba(15, 23, 42, 0.88)' : 'rgba(255, 255, 255, 0.94)');
+    const border = options.border || (dark ? 'rgba(255, 255, 255, 0.35)' : 'rgba(0, 0, 0, 0.3)');
+    const color = options.color || (dark ? '#f8fafc' : '#0f172a');
+    
+    ctx.save();
+    ctx.font = `bold ${fontSize}px "Inter", monospace`;
+    const textW = ctx.measureText(text).width;
+    const boxW = textW + paddingX * 2;
+    const boxH = fontSize + paddingY * 2;
+    
+    let boxX = x;
+    let boxY = y;
+    if (options.align === 'center') {
+      boxX = x - boxW / 2;
+    } else if (options.align === 'right') {
+      boxX = x - boxW;
+    }
+
+    ctx.fillStyle = bg;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(boxX, boxY, boxW, boxH, 4);
+    else ctx.rect(boxX, boxY, boxW, boxH);
+    ctx.fill();
+    ctx.strokeStyle = border;
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+
+    ctx.fillStyle = color;
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text, boxX + paddingX, boxY + boxH / 2);
+    ctx.restore();
   }
 
   render(engine) {
@@ -83,10 +124,8 @@ class VectorRenderer {
     this.p = this.palette();
     ctx.clearRect(0, 0, this.width, this.height);
 
-    // Draw grid background
     this.drawGrid(ctx);
 
-    // Render active case
     switch (engine.currentCase) {
       case 'case1':
         this.renderCase1(ctx, engine);
@@ -133,13 +172,13 @@ class VectorRenderer {
 
     const toX = fromX + dx;
     const toY = fromY + dy;
-    const headLen = 9;
+    const headLen = Math.min(10, len * 0.35);
     const angle = Math.atan2(dy, dx);
 
     ctx.save();
     ctx.strokeStyle = color;
     ctx.fillStyle = color;
-    ctx.lineWidth = 2.5;
+    ctx.lineWidth = 2.2;
 
     ctx.beginPath();
     ctx.moveTo(fromX, fromY);
@@ -154,14 +193,12 @@ class VectorRenderer {
     ctx.fill();
 
     if (label) {
-      ctx.font = '11px "JetBrains Mono", monospace';
-      ctx.fillStyle = color;
-      ctx.fillText(label, toX + 6, toY - 4);
+      this.drawHighContrastBadge(ctx, label, toX + 6, toY - 8, { fontSize: 9.5, color: color, paddingX: 4, paddingY: 2 });
     }
     ctx.restore();
   }
 
-  // Case 1: Freefall & Multi-Environment Celestial Physics
+  // Case 1: Pisa Freefall & Celestial Environments
   renderCase1(ctx, engine) {
     const s = engine.state;
     const groundY = this.height - 40;
@@ -174,13 +211,11 @@ class VectorRenderer {
       groundLine: null
     };
 
-    // Environmental sky tint
     if (envInfo.sky) {
       ctx.fillStyle = envInfo.sky;
       ctx.fillRect(0, 0, this.width, groundY);
     }
 
-    // Draw Ground with celestial coloring
     ctx.fillStyle = envInfo.ground || this.p.ground;
     ctx.fillRect(0, groundY, this.width, 40);
     ctx.strokeStyle = envInfo.groundLine || this.p.teal;
@@ -190,116 +225,62 @@ class VectorRenderer {
     ctx.lineTo(this.width, groundY);
     ctx.stroke();
 
-    // Tower silhouette
+    // Tháp Pisa
+    const towerH = 200;
     ctx.fillStyle = this.p.towerFill;
-    ctx.fillRect(40, groundY - 280, 80, 280);
+    ctx.fillRect(30, groundY - towerH, 80, towerH);
     ctx.strokeStyle = this.p.towerStroke;
-    ctx.strokeRect(40, groundY - 280, 80, 280);
+    ctx.strokeRect(30, groundY - towerH, 80, towerH);
+    this.drawHighContrastBadge(ctx, 'THÁP PISA (h=45m)', 32, groundY - towerH - 22, { fontSize: 9.5 });
 
-    // Tower label
-    ctx.fillStyle = this.p.text;
-    ctx.font = '10px "Inter", sans-serif';
-    ctx.fillText('THÁP PISA (h=45m)', 42, groundY - 286);
+    // Huy hiệu môi trường gọn gàng góc trên bên trái
+    this.drawHighContrastBadge(ctx, envInfo.label, 130, 12, { fontSize: 10, color: envInfo.isVacuum ? this.p.green : this.p.amber });
 
-    // Environmental Vacuum & Celestial indicator
-    ctx.font = 'bold 12px "Inter", sans-serif';
-    ctx.fillStyle = envInfo.isVacuum ? this.p.green : this.p.amber;
-    ctx.fillText(envInfo.label, 140, 28);
-
-    // Dynamic drag force calculation
     const rho = engine.isVacuum ? 0.0 : engine.airDensity;
     const drag1 = 0.5 * rho * s.cDrag1 * s.area1 * s.v1 * s.v1;
     const drag2 = 0.5 * rho * s.cDrag2 * s.area2 * s.v2 * s.v2;
 
-    // Body 1 (Lead Ball - 5kg)
+    // Body 1: Quả tạ chì 5kg
     const b1X = 220;
     const b1Y = groundY - s.y1;
     ctx.beginPath();
-    ctx.arc(b1X, b1Y, 18, 0, Math.PI * 2);
+    ctx.arc(b1X, b1Y, 17, 0, Math.PI * 2);
     ctx.fillStyle = this.p.gray;
     ctx.fill();
     ctx.strokeStyle = this.p.teal;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 2.5;
     ctx.stroke();
-    ctx.fillStyle = this.p.onShape;
-    ctx.font = 'bold 10px monospace';
-    ctx.fillText(`${s.m1}kg`, b1X - 13, b1Y + 3);
+    this.drawHighContrastBadge(ctx, `${s.m1}kg (Quả Chì)`, b1X + 22, b1Y - 10, { color: this.p.teal });
 
-    // Body 2 (Light Object / Feather - 0.5kg)
-    const b2X = 360;
+    // Body 2: Lông vũ / Quả bóng nhẹ 0.5kg
+    const b2X = 380;
     const b2Y = groundY - s.y2;
     ctx.beginPath();
-    ctx.arc(b2X, b2Y, 12, 0, Math.PI * 2);
+    ctx.arc(b2X, b2Y, 14, 0, Math.PI * 2);
     ctx.fillStyle = this.p.amber;
     ctx.fill();
     ctx.strokeStyle = this.p.amberDeep;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 2.5;
     ctx.stroke();
-    ctx.fillStyle = this.p.onShape;
-    ctx.fillText(`${s.m2}kg`, b2X - 13, b2Y + 3);
+    this.drawHighContrastBadge(ctx, `${s.m2}kg (Vật Nhẹ)`, b2X + 18, b2Y - 10, { color: this.p.amber });
 
-    // Velocity Vectors
+    // Vectơ vận tốc
     if (s.y1 > s.groundY) {
-      this.drawArrow(ctx, b1X, b1Y, 0, Math.min(50, s.v1 * 2), this.p.teal, `v1=${s.v1.toFixed(1)}m/s`);
+      this.drawArrow(ctx, b1X, b1Y, 0, Math.min(45, s.v1 * 2), this.p.teal, `v1=${s.v1.toFixed(1)}m/s`);
     }
     if (s.y2 > s.groundY) {
-      this.drawArrow(ctx, b2X, b2Y, 0, Math.min(50, s.v2 * 2), this.p.teal, `v2=${s.v2.toFixed(1)}m/s`);
+      this.drawArrow(ctx, b2X, b2Y, 0, Math.min(45, s.v2 * 2), this.p.teal, `v2=${s.v2.toFixed(1)}m/s`);
     }
 
-    // Gravity force vectors (scaled appropriately)
-    const p1Val = s.m1 * engine.g;
-    const p2Val = s.m2 * engine.g;
-    const p1ArrowLen = Math.min(55, Math.max(14, p1Val * 0.5));
-    const p2ArrowLen = Math.min(45, Math.max(10, p2Val * 0.5));
-    this.drawArrow(ctx, b1X, b1Y, 0, p1ArrowLen, this.p.rose, `P1=${p1Val.toFixed(0)}N`);
-    this.drawArrow(ctx, b2X, b2Y, 0, p2ArrowLen, this.p.rose, `P2=${p2Val.toFixed(0)}N`);
+    // Vectơ trọng lực P và Lực cản F_cản
+    this.drawArrow(ctx, b1X, b1Y, 0, 42, this.p.rose, `P1=${(s.m1 * engine.g).toFixed(0)}N`);
+    this.drawArrow(ctx, b2X, b2Y, 0, 28, this.p.rose, `P2=${(s.m2 * engine.g).toFixed(1)}N`);
 
-    // Drag force vectors pointing upwards
-    if (drag1 > 0.1 && s.y1 > s.groundY) {
-      this.drawArrow(ctx, b1X, b1Y, 0, -Math.min(40, Math.max(12, drag1 * 2)), this.p.amber, `Fc1=${drag1.toFixed(1)}N`);
-    }
-    if (drag2 > 0.1 && s.y2 > s.groundY) {
-      this.drawArrow(ctx, b2X, b2Y, 0, -Math.min(40, Math.max(12, drag2 * 4)), this.p.amber, `Fc2=${drag2.toFixed(1)}N`);
-    }
-
-    // Photogates
-    ctx.strokeStyle = this.p.green;
-    ctx.setLineDash([4, 4]);
-    ctx.beginPath();
-    ctx.moveTo(180, groundY - 10);
-    ctx.lineTo(440, groundY - 10);
-    ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.fillStyle = this.p.green;
-    ctx.font = '10px "Inter", sans-serif';
-    ctx.fillText('CỔNG QUANG ĐIỆN ĐO THỜI GIAN RƠI', 190, groundY - 15);
-
-    // Timers display when landed
-    if (s.t1 !== null) {
-      ctx.fillStyle = this.p.teal;
-      ctx.font = 'bold 11px monospace';
-      ctx.fillText(`⏱ t1 = ${s.t1.toFixed(2)}s`, b1X - 25, groundY + 22);
-    }
-    if (s.t2 !== null) {
-      ctx.fillStyle = this.p.amber;
-      ctx.font = 'bold 11px monospace';
-      ctx.fillText(`⏱ t2 = ${s.t2.toFixed(2)}s`, b2X - 25, groundY + 22);
-    }
-
-    if (s.t1 !== null && s.t2 !== null) {
-      const diff = Math.abs(s.t1 - s.t2);
-      ctx.font = 'bold 11px "Inter", sans-serif';
-      if (diff < 0.05) {
-        ctx.fillStyle = this.p.green;
-        ctx.fillText(`🎯 CHẠM ĐẤT CÙNG LÚC! (Δt ≈ 0.00s)`, 450, groundY - 15);
-      } else {
-        ctx.fillStyle = this.p.rose;
-        ctx.fillText(`⚠️ LỆCH NHAU: Δt = ${diff.toFixed(2)}s`, 450, groundY - 15);
-      }
-    }
+    if (drag1 > 0.05) this.drawArrow(ctx, b1X, b1Y, 0, -Math.min(30, drag1 * 2), this.p.green, `F_cản1=${drag1.toFixed(1)}N`);
+    if (drag2 > 0.05) this.drawArrow(ctx, b2X, b2Y, 0, -Math.min(30, drag2 * 4), this.p.green, `F_cản2=${drag2.toFixed(1)}N`);
   }
 
-  // Helper: Vẽ xe tải (Truck) chi tiết
+  // Helper: Vẽ xe tải chi tiết
   drawTruck(ctx, x, y, w, h, color, strokeColor, label) {
     const wheelR = 8;
     const chassisY = y + h - wheelR;
@@ -307,24 +288,12 @@ class VectorRenderer {
     const cargoW = w - cabW - 4;
 
     ctx.save();
-    // 1. Thùng xe tải chở hàng (Cargo container)
     ctx.fillStyle = color;
     ctx.fillRect(x, y + 4, cargoW, h - wheelR - 4);
     ctx.strokeStyle = strokeColor;
     ctx.lineWidth = 2;
     ctx.strokeRect(x, y + 4, cargoW, h - wheelR - 4);
 
-    // Gân chịu lực thùng xe
-    ctx.strokeStyle = 'rgba(255,255,255,0.22)';
-    ctx.lineWidth = 1;
-    for (let rx = x + 16; rx < x + cargoW - 8; rx += 16) {
-      ctx.beginPath();
-      ctx.moveTo(rx, y + 7);
-      ctx.lineTo(rx, chassisY - 3);
-      ctx.stroke();
-    }
-
-    // 2. Cabin đầu xe tải
     const cabX = x + cargoW + 4;
     ctx.fillStyle = color;
     ctx.beginPath();
@@ -340,22 +309,10 @@ class VectorRenderer {
     ctx.lineWidth = 2;
     ctx.stroke();
 
-    // Kính chắn gió cabin
-    ctx.fillStyle = '#bae6fd';
-    ctx.beginPath();
-    ctx.moveTo(cabX + 10, y + 12);
-    ctx.lineTo(cabX + cabW - 9, y + 12);
-    ctx.lineTo(cabX + cabW - 2, y + 23);
-    ctx.lineTo(cabX + 10, y + 23);
-    ctx.closePath();
-    ctx.fill();
+    ctx.fillStyle = '#38bdf8';
+    ctx.fillRect(cabX + 12, y + 12, 14, 12);
 
-    // Đèn pha trước xe tải
-    ctx.fillStyle = '#fef08a';
-    ctx.fillRect(cabX + cabW - 4, y + 28, 4, 6);
-
-    // 3. Bánh xe tải (3 bánh xe lớn chịu tải)
-    [x + 16, x + 36, cabX + cabW - 12].forEach(wx => {
+    [x + 12, x + cargoW - 12, cabX + cabW - 10].forEach(wx => {
       ctx.fillStyle = '#18181b';
       ctx.beginPath();
       ctx.arc(wx, chassisY, wheelR, 0, Math.PI * 2);
@@ -363,198 +320,202 @@ class VectorRenderer {
       ctx.strokeStyle = '#71717a';
       ctx.lineWidth = 2;
       ctx.stroke();
-      ctx.fillStyle = '#cbd5e1';
-      ctx.beginPath();
-      ctx.arc(wx, chassisY, 3, 0, Math.PI * 2);
-      ctx.fill();
     });
 
-    // Nhãn khối lượng
-    ctx.fillStyle = this.p.onShape;
-    ctx.font = 'bold 10px monospace';
-    ctx.fillText(label, x + 8, y + 26);
+    this.drawHighContrastBadge(ctx, label, x + 6, y - 18, { color: strokeColor });
     ctx.restore();
   }
 
-  // Helper: Vẽ xe con (Passenger Car) khí động học
+  // Helper: Vẽ xe con chi tiết
   drawCar(ctx, x, y, w, h, color, strokeColor, label) {
     const wheelR = 6;
     const chassisY = y + h - wheelR;
 
     ctx.save();
-    // 1. Khung xe con khí động học
     ctx.fillStyle = color;
     ctx.beginPath();
-    ctx.moveTo(x + 4, chassisY);
-    ctx.lineTo(x, y + 18);
-    ctx.lineTo(x + 10, y + 15);
-    ctx.lineTo(x + 20, y + 4);
-    ctx.lineTo(x + w - 22, y + 4);
-    ctx.lineTo(x + w - 10, y + 15);
-    ctx.lineTo(x + w, y + 18);
-    ctx.lineTo(x + w - 2, chassisY);
+    ctx.moveTo(x, chassisY);
+    ctx.lineTo(x, y + 14);
+    ctx.lineTo(x + 10, y + 6);
+    ctx.lineTo(x + w - 16, y + 6);
+    ctx.lineTo(x + w, y + 14);
+    ctx.lineTo(x + w, chassisY);
     ctx.closePath();
     ctx.fill();
     ctx.strokeStyle = strokeColor;
     ctx.lineWidth = 2;
     ctx.stroke();
 
-    // 2. Kính xe (Windows)
-    ctx.fillStyle = '#bae6fd';
-    ctx.beginPath();
-    ctx.moveTo(x + 22, y + 7);
-    ctx.lineTo(x + w - 23, y + 7);
-    ctx.lineTo(x + w - 14, y + 14);
-    ctx.lineTo(x + 14, y + 14);
-    ctx.closePath();
-    ctx.fill();
+    ctx.fillStyle = '#38bdf8';
+    ctx.fillRect(x + 14, y + 8, w - 28, 8);
 
-    // Cột ngăn kính
-    ctx.strokeStyle = strokeColor;
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(x + (w / 2), y + 7);
-    ctx.lineTo(x + (w / 2), y + 14);
-    ctx.stroke();
-
-    // Đèn pha trước
-    ctx.fillStyle = '#fef08a';
-    ctx.fillRect(x + w - 4, y + 19, 4, 4);
-    // Đèn hậu đỏ
-    ctx.fillStyle = '#ef4444';
-    ctx.fillRect(x, y + 19, 3, 4);
-
-    // 3. Bánh xe con (2 bánh xe)
-    [x + 15, x + w - 15].forEach(wx => {
+    [x + 12, x + w - 12].forEach(wx => {
       ctx.fillStyle = '#18181b';
       ctx.beginPath();
       ctx.arc(wx, chassisY, wheelR, 0, Math.PI * 2);
       ctx.fill();
       ctx.strokeStyle = '#71717a';
-      ctx.lineWidth = 1.5;
+      ctx.lineWidth = 2;
       ctx.stroke();
-      ctx.fillStyle = '#cbd5e1';
-      ctx.beginPath();
-      ctx.arc(wx, chassisY, 2.5, 0, Math.PI * 2);
-      ctx.fill();
     });
 
-    // Nhãn khối lượng
-    ctx.fillStyle = this.p.onShape;
-    ctx.font = 'bold 9px monospace';
-    ctx.fillText(label, x + 6, y + 25);
+    this.drawHighContrastBadge(ctx, label, x + 2, y - 18, { color: strokeColor });
     ctx.restore();
   }
 
-  // Case 2: Newton III Collision (Xe Tải va chạm Xe Con)
+  // Case 2: Va Chạm Newton III
   renderCase2(ctx, engine) {
     const s = engine.state;
-    const groundY = this.height - 60;
+    const groundY = this.height - 50;
 
-    // Road (Lòng đường)
     ctx.fillStyle = this.p.ground;
-    ctx.fillRect(0, groundY, this.width, 60);
+    ctx.fillRect(0, groundY, this.width, 50);
     ctx.strokeStyle = this.p.groundLine;
-    ctx.strokeRect(0, groundY, this.width, 60);
+    ctx.strokeRect(0, groundY, this.width, 50);
 
-    // Vạch kẻ đường đứt đoạn màu vàng
     ctx.strokeStyle = this.p.amber;
     ctx.lineWidth = 2;
     ctx.setLineDash([16, 12]);
     ctx.beginPath();
-    ctx.moveTo(0, groundY + 30);
-    ctx.lineTo(this.width, groundY + 30);
+    ctx.moveTo(0, groundY + 25);
+    ctx.lineTo(this.width, groundY + 25);
     ctx.stroke();
     ctx.setLineDash([]);
 
-    // Xe tải (m1 = 5000kg)
-    const tW = 100, tH = 50;
+    const tW = 95, tH = 48;
     const tX = s.x1;
     const tY = groundY - tH;
     this.drawTruck(ctx, tX, tY, tW, tH, this.p.teal, this.p.tealDeep, `XE TẢI ${s.m1}kg`);
 
-    // Xe con (m2 = 1000kg)
-    const cW = 60, cH = 35;
+    const cW = 55, cH = 32;
     const cX = s.x2;
     const cY = groundY - cH;
     this.drawCar(ctx, cX, cY, cW, cH, this.p.rose, this.p.roseDeep, `XE CON ${s.m2}kg`);
 
-    // Force Sensors & Impact Spark (Điểm va chạm)
     if (s.contactForce > 0) {
       const contactX = (tX + tW + cX) / 2;
       ctx.beginPath();
-      ctx.arc(contactX, groundY - 25, 20, 0, Math.PI * 2);
+      ctx.arc(contactX, groundY - 22, 18, 0, Math.PI * 2);
       ctx.fillStyle = this.p.spark;
       ctx.fill();
 
-      // Action & Reaction Vectors (Định luật III Newton: F12 = -F21)
-      this.drawArrow(ctx, contactX, groundY - 30, -s.contactForce / 800, 0, this.p.green, `F_xe con -> xe tải = ${(s.contactForce / 1000).toFixed(1)}kN`);
-      this.drawArrow(ctx, contactX, groundY - 20, s.contactForce / 800, 0, this.p.rose, `F_xe tải -> xe con = ${(s.contactForce / 1000).toFixed(1)}kN`);
+      this.drawArrow(ctx, contactX, groundY - 32, -s.contactForce / 800, 0, this.p.green, `F_con->tải=${(s.contactForce / 1000).toFixed(1)}kN`);
+      this.drawArrow(ctx, contactX, groundY - 18, s.contactForce / 800, 0, this.p.rose, `F_tải->con=${(s.contactForce / 1000).toFixed(1)}kN`);
     } else {
-      this.drawArrow(ctx, tX + tW / 2, tY - 10, s.v1 * 4, 0, this.p.teal, `v1=${s.v1.toFixed(1)}m/s`);
-      this.drawArrow(ctx, cX + cW / 2, cY - 10, s.v2 * 4, 0, this.p.teal, `v2=${s.v2.toFixed(1)}m/s`);
+      this.drawArrow(ctx, tX + tW / 2, tY - 8, s.v1 * 3, 0, this.p.teal, `v1=${s.v1.toFixed(1)}m/s`);
+      this.drawArrow(ctx, cX + cW / 2, cY - 8, s.v2 * 3, 0, this.p.teal, `v2=${s.v2.toFixed(1)}m/s`);
     }
   }
 
-  // Case 3: Curved Road & Centripetal
+  // Case 3: Sợi dây quay tròn & Cắt dây quán tính (Tether rotation & cut string)
   renderCase3(ctx, engine) {
     const s = engine.state;
     const cx = this.width / 2;
-    const cy = this.height / 2;
+    const cy = this.height / 2 + 10;
+    const r = s.radius || 75;
 
-    // Track circle
+    // Đường tròn quỹ đạo ban đầu
     ctx.beginPath();
-    ctx.arc(cx, cy, s.radius * 2, 0, Math.PI * 2);
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
     ctx.strokeStyle = this.p.track;
-    ctx.lineWidth = 14;
+    ctx.lineWidth = 2;
+    ctx.setLineDash([4, 4]);
     ctx.stroke();
+    ctx.setLineDash([]);
 
-    // Center pivot
-    ctx.beginPath();
-    ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+    // Vẽ Người ở tâm đang cầm đầu sợi dây
+    ctx.save();
+    // Đầu người
     ctx.fillStyle = this.p.teal;
+    ctx.beginPath();
+    ctx.arc(cx, cy - 14, 8, 0, Math.PI * 2);
     ctx.fill();
+    // Thân người
+    ctx.strokeStyle = this.p.tealDeep;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - 6);
+    ctx.lineTo(cx, cy + 12);
+    // Chân
+    ctx.lineTo(cx - 8, cy + 24);
+    ctx.moveTo(cx, cy + 12);
+    ctx.lineTo(cx + 8, cy + 24);
+    ctx.stroke();
+    // Tay cầm dây
+    ctx.beginPath();
+    ctx.arc(cx, cy, 4, 0, Math.PI * 2);
+    ctx.fillStyle = this.p.amber;
+    ctx.fill();
+    this.drawHighContrastBadge(ctx, 'NGƯỜI QUAY (TÂM O)', cx - 55, cy + 28, { fontSize: 9.5 });
+    ctx.restore();
 
-    // Car position
-    const carPxX = cx + s.carX * 2;
-    const carPxY = cy + s.carY * 2;
+    // Vị trí quả cầu
+    const ballPxX = cx + s.ballX;
+    const ballPxY = cy + s.ballY;
 
-    // Tether line (if not cut)
+    // Sợi dây nối (nếu chưa cắt)
     if (!s.isStringCut) {
       ctx.beginPath();
       ctx.moveTo(cx, cy);
-      ctx.lineTo(carPxX, carPxY);
+      ctx.lineTo(ballPxX, ballPxY);
       ctx.strokeStyle = this.p.tether;
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+
+      // Vectơ lực căng dây T (Lực hướng tâm) hướng vào tâm
+      const dx = cx - ballPxX;
+      const dy = cy - ballPxY;
+      const dist = Math.hypot(dx, dy) || 1;
+      this.drawArrow(ctx, ballPxX, ballPxY, (dx / dist) * 38, (dy / dist) * 38, this.p.rose, 'T (Lực hướng tâm)');
+
+      // Vectơ vận tốc tức thời v tiếp tuyến đường tròn
+      const vx = -Math.sin(s.angle) * 38;
+      const vy = Math.cos(s.angle) * 38;
+      this.drawArrow(ctx, ballPxX, ballPxY, vx, vy, this.p.green, 'v (tiếp tuyến)');
+    } else {
+      // Dây đã cắt: vẽ sợi dây đứt buông lỏng ở tâm
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + Math.cos(s.cutAngle) * 20, cy + Math.sin(s.cutAngle) * 20);
+      ctx.strokeStyle = this.p.gray;
       ctx.lineWidth = 2;
       ctx.stroke();
 
-      // Centripetal force towards center
-      const dxToCenter = cx - carPxX;
-      const dyToCenter = cy - carPxY;
-      const dist = Math.hypot(dxToCenter, dyToCenter);
-      this.drawArrow(ctx, carPxX, carPxY, (dxToCenter / dist) * 45, (dyToCenter / dist) * 45, this.p.rose, 'F_hướng tâm');
+      // Đường vết quỹ đạo tiếp tuyến
+      if (s.trail && s.trail.length > 1) {
+        ctx.strokeStyle = this.p.green;
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath();
+        s.trail.forEach((pt, i) => {
+          if (i === 0) ctx.moveTo(cx + pt.x, cy + pt.y);
+          else ctx.lineTo(cx + pt.x, cy + pt.y);
+        });
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      // Vectơ vận tốc quán tính theo tiếp tuyến
+      this.drawArrow(ctx, ballPxX, ballPxY, s.tangentVx * 2.2, s.tangentVy * 2.2, this.p.green, 'v_quán tính (tiếp tuyến!)');
+
+      this.drawHighContrastBadge(ctx, '✂ ĐÃ CẮT DÂY (T = 0): Vật bay theo tiếp tuyến quán tính (Định luật I Newton)!', 40, 20, {
+        fontSize: 10.5,
+        color: this.p.green
+      });
     }
 
-    // Car body
+    // Quả cầu kim loại tròn
     ctx.beginPath();
-    ctx.arc(carPxX, carPxY, 12, 0, Math.PI * 2);
+    ctx.arc(ballPxX, ballPxY, 13, 0, Math.PI * 2);
     ctx.fillStyle = this.p.rose;
     ctx.fill();
     ctx.strokeStyle = this.p.carOutline;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 2.5;
     ctx.stroke();
-
-    // Tangent Velocity Vector
-    if (!s.isStringCut) {
-      const vx = -Math.sin(s.angle) * 40;
-      const vy = Math.cos(s.angle) * 40;
-      this.drawArrow(ctx, carPxX, carPxY, vx, vy, this.p.green, 'v (tiếp tuyến)');
-    } else {
-      this.drawArrow(ctx, carPxX, carPxY, s.tangentVx * 2, s.tangentVy * 2, this.p.green, 'v_quán tính (tiếp tuyến!)');
-    }
+    this.drawHighContrastBadge(ctx, `Quả Cầu ${s.m}kg`, ballPxX + 16, ballPxY - 8, { fontSize: 9.5 });
   }
 
-  // Case 4: Incline Plane & Friction
+  // Case 4: Xe trượt dốc nghiêng & Phân tích lực
   renderCase4(ctx, engine) {
     const s = engine.state;
     const rad = (s.slopeAngleDeg * Math.PI) / 180;
@@ -565,7 +526,7 @@ class VectorRenderer {
     const endX = startX + rampLen * Math.cos(rad);
     const endY = groundY - rampLen * Math.sin(rad);
 
-    // Ramp
+    // Con dốc hình tam giác
     ctx.beginPath();
     ctx.moveTo(startX, groundY);
     ctx.lineTo(endX, groundY);
@@ -574,50 +535,74 @@ class VectorRenderer {
     ctx.fillStyle = this.p.ground;
     ctx.fill();
     ctx.strokeStyle = this.p.teal;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 2.5;
     ctx.stroke();
 
-    // Block on ramp
+    // Góc nghiêng dốc alpha
+    this.drawHighContrastBadge(ctx, `Góc dốc α = ${s.slopeAngleDeg}°`, startX + 40, groundY - 26, { fontSize: 10, color: this.p.amber });
+
+    // Vị trí xe trên dốc
     const d = s.dist;
-    const blockX = startX + d * Math.cos(rad);
-    const blockY = endY + d * Math.sin(rad);
+    const carX = startX + d * Math.cos(rad);
+    const carY = endY + d * Math.sin(rad);
 
     ctx.save();
-    ctx.translate(blockX, blockY);
+    ctx.translate(carX, carY);
     ctx.rotate(rad);
-    ctx.fillStyle = this.p.amber;
-    ctx.fillRect(-20, -35, 40, 35);
-    ctx.strokeStyle = this.p.amberDeep;
-    ctx.lineWidth = 2;
-    ctx.strokeRect(-20, -35, 40, 35);
 
-    // Vectors: Normal force, friction, gravity
-    this.drawArrow(ctx, 0, -17, 0, -s.normalForce / 2, this.p.green, `N=${s.normalForce.toFixed(0)}N`);
-    this.drawArrow(ctx, 0, -5, -s.frictionForce * 1.5, 0, this.p.rose, `F_ms=${s.frictionForce.toFixed(1)}N`);
+    // Thân xe trên dốc
+    ctx.fillStyle = this.p.teal;
+    ctx.fillRect(-22, -26, 44, 24);
+    ctx.strokeStyle = this.p.tealDeep;
+    ctx.lineWidth = 2;
+    ctx.strokeRect(-22, -26, 44, 24);
+
+    // Bánh xe
+    ctx.fillStyle = '#18181b';
+    ctx.beginPath();
+    ctx.arc(-14, 0, 5, 0, Math.PI * 2);
+    ctx.arc(14, 0, 5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Vectơ Áp lực pháp tuyến N hướng vuông góc mặt dốc lên trên
+    this.drawArrow(ctx, 0, -12, 0, -Math.min(50, s.normalForce / 250), this.p.green, `N = mg·cosα (${(s.normalForce).toFixed(0)}N)`);
+
+    // Vectơ Lực ma sát trượt F_ms ngược hướng trượt
+    this.drawArrow(ctx, 0, -2, -Math.min(45, s.frictionForce / 70), 0, this.p.rose, `F_ms = μ·N (${(s.frictionForce).toFixed(0)}N)`);
+
+    // Vectơ P_x kéo xe trượt xuống dọc dốc
+    const fDown = s.m * engine.g * Math.sin(rad);
+    this.drawArrow(ctx, 0, -2, Math.min(50, fDown / 250), 0, this.p.amber, `P_x = mg·sinα`);
     ctx.restore();
 
-    this.drawArrow(ctx, blockX, blockY, 0, (s.m * 9.8) / 2, this.p.purple, `P=${(s.m * 9.8).toFixed(0)}N`);
+    // Vectơ Trọng lực P thẳng đứng xuống
+    const pVal = s.m * engine.g;
+    this.drawArrow(ctx, carX, carY, 0, Math.min(55, pVal / 250), this.p.purple, `P = mg (${(pVal).toFixed(0)}N)`);
+
+    // Thông tin động lực học
+    this.drawHighContrastBadge(ctx, `a = g(sinα - μ·cosα) = ${s.accel.toFixed(2)} m/s² | v = ${s.v.toFixed(1)} m/s`, 40, 20, {
+      fontSize: 10.5,
+      color: this.p.green
+    });
   }
 
-  // Helper: Vẽ xe bọc thép (Armored Vehicle) quân sự chuyên dụng
+  // Helper: Vẽ xe bọc thép quân sự
   drawArmoredVehicle(ctx, x, y, w, h, color, strokeColor, label, isLeader = true) {
     const wheelR = 7;
     const chassisY = y + h - wheelR;
 
     ctx.save();
-    // 1. Thân xe giáp vát nghiêng chống đạn (Sloped armor hull)
     ctx.fillStyle = color;
     ctx.beginPath();
     ctx.moveTo(x + 4, chassisY);
-    ctx.lineTo(x, y + 18);
+    ctx.lineTo(x, y + 16);
     ctx.lineTo(x + 8, y + 10);
     ctx.lineTo(x + 18, y + 8);
-    // Tháp chỉ huy / ụ súng trên nóc xe bọc thép
     ctx.lineTo(x + 20, y + 2);
     ctx.lineTo(x + 36, y + 2);
     ctx.lineTo(x + 38, y + 8);
     ctx.lineTo(x + w - 12, y + 10);
-    ctx.lineTo(x + w, y + 20); // Mũi vát nghiêng giảm chấn
+    ctx.lineTo(x + w, y + 18);
     ctx.lineTo(x + w - 4, chassisY);
     ctx.closePath();
     ctx.fill();
@@ -625,7 +610,6 @@ class VectorRenderer {
     ctx.lineWidth = 2;
     ctx.stroke();
 
-    // Nòng pháo / súng máy hoặc anten bọc thép
     ctx.strokeStyle = strokeColor;
     ctx.lineWidth = 3;
     ctx.beginPath();
@@ -633,69 +617,41 @@ class VectorRenderer {
     ctx.lineTo(x + (isLeader ? 50 : 44), y + 5);
     ctx.stroke();
 
-    // Khe kính quan sát chống đạn màu xanh dương
-    ctx.fillStyle = '#38bdf8';
-    ctx.fillRect(x + w - 16, y + 13, 8, 3);
-
-    // Mối nối giáp thép tấm & đinh tán
-    ctx.strokeStyle = 'rgba(0,0,0,0.25)';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(x + 14, y + 11);
-    ctx.lineTo(x + 14, chassisY - 2);
-    ctx.moveTo(x + 38, y + 10);
-    ctx.lineTo(x + 38, chassisY - 2);
-    ctx.stroke();
-
-    // 2. Bánh xe bọc thép dã chiến (3 bánh lớn viền thép)
     [x + 12, x + 28, x + w - 14].forEach(wx => {
       ctx.fillStyle = '#18181b';
       ctx.beginPath();
       ctx.arc(wx, chassisY, wheelR, 0, Math.PI * 2);
       ctx.fill();
-      ctx.strokeStyle = '#52525b';
+      ctx.strokeStyle = '#71717a';
       ctx.lineWidth = 2;
       ctx.stroke();
-      ctx.fillStyle = '#71717a';
-      ctx.beginPath();
-      ctx.arc(wx, chassisY, 2.5, 0, Math.PI * 2);
-      ctx.fill();
     });
 
-    // Nhãn khối lượng
-    ctx.fillStyle = this.p.onShape;
-    ctx.font = 'bold 9px monospace';
-    ctx.fillText(label, x + 5, y + 24);
+    this.drawHighContrastBadge(ctx, label, x, y - 18, { color: strokeColor });
     ctx.restore();
   }
 
-  // Case 5: Inelastic Collision (Va Chạm Xe Bọc Thép)
+  // Case 5: Va chạm xe bọc thép & Hao hụt cơ năng
   renderCase5(ctx, engine) {
     const s = engine.state;
-    const groundY = this.height - 60;
+    const groundY = this.height - 50;
 
-    // Track / Đường thử nghiệm quân sự
     ctx.fillStyle = this.p.ground;
-    ctx.fillRect(0, groundY, this.width, 60);
+    ctx.fillRect(0, groundY, this.width, 50);
 
-    // Vạch kẻ bãi thử nghiệm
     ctx.strokeStyle = this.p.amber;
     ctx.lineWidth = 2;
     ctx.setLineDash([16, 12]);
     ctx.beginPath();
-    ctx.moveTo(0, groundY + 30);
-    ctx.lineTo(this.width, groundY + 30);
+    ctx.moveTo(0, groundY + 25);
+    ctx.lineTo(this.width, groundY + 25);
     ctx.stroke();
     ctx.setLineDash([]);
 
-    // Xe bọc thép 1 (Đang lao tới với vận tốc v1 = 20m/s)
-    const vW = 60, vH = 40;
+    const vW = 65, vH = 38;
     this.drawArmoredVehicle(ctx, s.x1, groundY - vH, vW, vH, this.p.teal, this.p.tealDeep, 'BỌC THÉP 1', true);
-
-    // Xe bọc thép 2 (Bia thử nghiệm đứng yên)
     this.drawArmoredVehicle(ctx, s.x2, groundY - vH, vW, vH, this.p.green, this.p.greenDeep, 'BỌC THÉP 2', false);
 
-    // Điểm va chạm móp méo / tia lửa biến dạng
     if (s.isAttached) {
       const contactX = (s.x1 + vW + s.x2) / 2;
       ctx.beginPath();
@@ -703,71 +659,137 @@ class VectorRenderer {
       ctx.fillStyle = this.p.spark;
       ctx.fill();
 
-      // Cảnh báo va chạm mềm dính chặt
-      ctx.font = 'bold 11px "Inter", sans-serif';
-      ctx.fillStyle = this.p.rose;
-      ctx.fillText(`💥 VA CHẠM MỀM: DÍNH CHẶT (Vận tốc chung vf = ${s.vf.toFixed(1)}m/s)`, 180, groundY - 50);
+      this.drawHighContrastBadge(ctx, `💥 VA CHẠM MỀM: DÍNH CHẶT (Vận tốc chung vf = ${s.vf.toFixed(1)} m/s)`, 180, groundY - 60, {
+        color: this.p.rose
+      });
     } else {
-      this.drawArrow(ctx, s.x1 + vW / 2, groundY - vH - 10, s.v1 * 3, 0, this.p.teal, `v1=${s.v1.toFixed(1)}m/s`);
+      this.drawArrow(ctx, s.x1 + vW / 2, groundY - vH - 8, s.v1 * 3, 0, this.p.teal, `v1=${s.v1.toFixed(1)}m/s`);
     }
 
-    // Energy HUD Banner
-    ctx.font = 'bold 12px "Inter", sans-serif';
-    ctx.fillStyle = this.p.teal;
-    ctx.fillText(`⚡ ĐỘNG NĂNG BAN ĐẦU: ${(s.energyBefore / 1000).toFixed(1)} kJ`, 40, 30);
-    ctx.fillStyle = s.isAttached ? this.p.rose : this.p.gray;
-    ctx.fillText(`🔥 NHIỆT NĂNG TỎA RA (HAO HỤT DẺO): ${(s.heatGenerated / 1000).toFixed(1)} kJ`, 40, 52);
+    this.drawHighContrastBadge(ctx, `⚡ ĐỘNG NĂNG BAN ĐẦU: ${(s.energyBefore / 1000).toFixed(1)} kJ`, 30, 20, { color: this.p.teal });
+    this.drawHighContrastBadge(ctx, `🔥 NHIỆT NĂNG TỎA RA: ${(s.heatGenerated / 1000).toFixed(1)} kJ`, 30, 46, { color: s.isAttached ? this.p.rose : this.p.gray });
   }
 
-  // Case 6: Terminal Velocity & Parachute
+  // Case 6: Người nhảy dù & Vận tốc tới hạn trong các môi trường thiên thể
   renderCase6(ctx, engine) {
     const s = engine.state;
+    const groundY = this.height - 40;
     const skydiverX = this.width / 2;
-    const skydiverY = this.height - s.y;
+    const skydiverY = groundY - s.y;
 
-    // Cloud / Sky
+    const envKey = engine.currentEnv || 'earth_air';
+    const envInfo = (engine.environments && engine.environments[envKey]) || {
+      name: 'Trái Đất',
+      label: '🌍 MÔI TRƯỜNG: TRÁI ĐẤT - KHÍ QUYỂN (g = 9.8 m/s²)',
+      sky: null,
+      ground: null,
+      groundLine: null
+    };
+
+    if (envInfo.sky) {
+      ctx.fillStyle = envInfo.sky;
+      ctx.fillRect(0, 0, this.width, groundY);
+    }
+
+    ctx.fillStyle = envInfo.ground || this.p.ground;
+    ctx.fillRect(0, groundY, this.width, 40);
+    ctx.strokeStyle = envInfo.groundLine || this.p.teal;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, groundY);
+    ctx.lineTo(this.width, groundY);
+    ctx.stroke();
+
+    // Mây bồng bềnh
     ctx.fillStyle = this.p.cloud;
     ctx.beginPath();
-    ctx.arc(skydiverX - 80, 50, 40, 0, Math.PI * 2);
-    ctx.arc(skydiverX + 80, 50, 50, 0, Math.PI * 2);
+    ctx.arc(skydiverX - 120, 60, 36, 0, Math.PI * 2);
+    ctx.arc(skydiverX - 80, 50, 48, 0, Math.PI * 2);
+    ctx.arc(skydiverX - 40, 60, 36, 0, Math.PI * 2);
+    ctx.arc(skydiverX + 100, 70, 44, 0, Math.PI * 2);
     ctx.fill();
 
-    // Parachute canopy
+    // Huy hiệu môi trường thiên thể
+    this.drawHighContrastBadge(ctx, envInfo.label, 20, 15, { fontSize: 10, color: this.p.teal });
+
+    // Dù cứu sinh khi bung
     if (s.parachuteOpen) {
+      // Vòm dù lớn
+      ctx.save();
       ctx.beginPath();
-      ctx.arc(skydiverX, skydiverY - 45, 45, Math.PI, 0);
+      ctx.arc(skydiverX, skydiverY - 60, 52, Math.PI, 0);
       ctx.fillStyle = this.p.rose;
       ctx.fill();
       ctx.strokeStyle = this.p.roseDeep;
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 3;
       ctx.stroke();
 
-      // Lines
-      ctx.beginPath();
-      ctx.moveTo(skydiverX - 45, skydiverY - 45);
-      ctx.lineTo(skydiverX, skydiverY);
-      ctx.moveTo(skydiverX + 45, skydiverY - 45);
-      ctx.lineTo(skydiverX, skydiverY);
+      // Dây dù nối xuống đai người
       ctx.strokeStyle = this.p.gray;
-      ctx.stroke();
+      ctx.lineWidth = 1.5;
+      [-48, -24, 0, 24, 48].forEach(dx => {
+        ctx.beginPath();
+        ctx.moveTo(skydiverX + dx, skydiverY - 60);
+        ctx.lineTo(skydiverX, skydiverY - 14);
+        ctx.stroke();
+      });
+      this.drawHighContrastBadge(ctx, 'TÁN DÙ A=42m²', skydiverX - 45, skydiverY - 82, { color: this.p.rose });
+      ctx.restore();
     }
 
-    // Diver body
+    // Hình người nhảy dù (Skydiver)
+    ctx.save();
+    // Mũ bảo hộ & đầu
+    ctx.fillStyle = this.p.amber;
     ctx.beginPath();
-    ctx.arc(skydiverX, skydiverY, 14, 0, Math.PI * 2);
-    ctx.fillStyle = this.p.teal;
+    ctx.arc(skydiverX, skydiverY - 18, 7, 0, Math.PI * 2);
     ctx.fill();
+    // Thân áo bay
+    ctx.fillStyle = this.p.teal;
+    ctx.fillRect(skydiverX - 6, skydiverY - 11, 12, 16);
+    // Tay dang rộng đón gió
+    ctx.strokeStyle = this.p.tealDeep;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(skydiverX - 16, skydiverY - 8);
+    ctx.lineTo(skydiverX - 6, skydiverY - 6);
+    ctx.moveTo(skydiverX + 6, skydiverY - 6);
+    ctx.lineTo(skydiverX + 16, skydiverY - 8);
+    // Chân bay
+    ctx.moveTo(skydiverX - 4, skydiverY + 5);
+    ctx.lineTo(skydiverX - 10, skydiverY + 16);
+    ctx.moveTo(skydiverX + 4, skydiverY + 5);
+    ctx.lineTo(skydiverX + 10, skydiverY + 16);
+    ctx.stroke();
 
-    // Vectors: Gravity down, Drag force up
-    this.drawArrow(ctx, skydiverX, skydiverY, 0, 50, this.p.rose, `P=${(s.m * 9.8).toFixed(0)}N`);
-    this.drawArrow(ctx, skydiverX, skydiverY, 0, -s.airResistForce / 15, this.p.green, `F_cản=${s.airResistForce.toFixed(0)}N`);
+    this.drawHighContrastBadge(ctx, `NGƯỜI NHẢY DÙ ${s.m}kg`, skydiverX + 22, skydiverY - 12, { fontSize: 9.5 });
+    ctx.restore();
 
-    // HUD
-    ctx.font = '12px "Inter", sans-serif';
-    ctx.fillStyle = this.p.text;
-    ctx.fillText(`VẬN TỐC HIỆN TẠI: ${s.v.toFixed(1)} m/s`, 40, 30);
-    ctx.fillStyle = this.p.green;
-    ctx.fillText(`VẬN TỐC TỚI HẠN: ${s.terminalV.toFixed(1)} m/s`, 40, 50);
+    // Vectơ lực
+    const pVal = s.m * engine.g;
+    this.drawArrow(ctx, skydiverX, skydiverY, 0, Math.min(55, pVal / 18), this.p.rose, `P=${pVal.toFixed(0)}N`);
+
+    if (s.airResistForce > 1) {
+      this.drawArrow(ctx, skydiverX, skydiverY, 0, -Math.min(55, s.airResistForce / 18), this.p.green, `F_cản=${s.airResistForce.toFixed(0)}N`);
+    }
+
+    // Hiển thị trạng thái Vận tốc & Cân bằng động giải thích theo Định luật I Newton
+    const isTerminal = Math.abs(s.airResistForce - pVal) < 15 && s.v > 2;
+    if (isTerminal) {
+      this.drawHighContrastBadge(ctx, `⚖️ CÂN BẰNG ĐỘNG (F_cản = P => a = 0): RƠI ĐỀU VỚI VẬN TỐC TỚI HẠN v = ${s.v.toFixed(1)} m/s!`, 20, 42, {
+        fontSize: 10.5,
+        color: this.p.green
+      });
+      this.drawHighContrastBadge(ctx, `Định luật I Newton: Tổng lực bằng 0 thì vật tiếp tục chuyển động thẳng đều chứ KHÔNG hề dừng lại lơ lửng!`, 20, 68, {
+        fontSize: 9.5,
+        color: this.p.amber
+      });
+    } else {
+      this.drawHighContrastBadge(ctx, `VẬN TỐC: ${s.v.toFixed(1)} m/s | VẬN TỐC TỚI HẠN: ${isFinite(s.terminalV) ? s.terminalV.toFixed(1) + ' m/s' : 'Vô hạn (chân không)'}`, 20, 42, {
+        fontSize: 10.5,
+        color: this.p.teal
+      });
+    }
   }
 }
 

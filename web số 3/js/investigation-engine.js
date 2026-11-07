@@ -1,6 +1,7 @@
 /* ==========================================================================
    PHYSICS DETECTIVE - Investigation Engine
    Orchestrates 5 Critical Thinking Phases per Physics Case
+   Integrates Mandatory Student Profile Registration & Response Ledger
    ========================================================================== */
 
 class InvestigationEngine {
@@ -23,7 +24,131 @@ class InvestigationEngine {
       t4: 75  // Self-Regulation & POE Confidence Calibration
     };
 
+    // Student Profile & Answer Ledger
+    this.studentProfile = {
+      name: '',
+      className: '',
+      schoolName: '',
+      registeredAt: null
+    };
+
+    this.studentAnswers = {}; // { caseId: { itemId: { chosen, target, isCorrect, text, timestamp } } }
+
     this.container = document.getElementById('investigationContent');
+
+    this.loadSavedProfile();
+    this.loadSavedAnswers();
+  }
+
+  hasValidProfile() {
+    const p = this.studentProfile;
+    return !!(p && p.name && p.name.trim() && p.className && p.className.trim() && p.schoolName && p.schoolName.trim());
+  }
+
+  loadSavedProfile() {
+    try {
+      const saved = localStorage.getItem('physics_student_profile');
+      if (saved) {
+        this.studentProfile = JSON.parse(saved);
+        this.syncStudentDisplay();
+      }
+    } catch (e) {}
+  }
+
+  loadSavedAnswers() {
+    try {
+      const saved = localStorage.getItem('physics_student_answers');
+      if (saved) {
+        this.studentAnswers = JSON.parse(saved);
+      }
+    } catch (e) {}
+  }
+
+  syncStudentDisplay() {
+    const disp = document.getElementById('studentDisplay');
+    if (disp) {
+      if (this.hasValidProfile()) {
+        disp.innerText = `${this.studentProfile.name} • ${this.studentProfile.className} (${this.studentProfile.schoolName})`;
+        disp.style.color = 'var(--cyan)';
+      } else {
+        disp.innerText = 'Chưa đăng ký (Bắt buộc nhập)';
+        disp.style.color = 'var(--crimson)';
+      }
+    }
+  }
+
+  openProfileModal() {
+    const modal = document.getElementById('studentModal');
+    if (modal) {
+      const nameInp = document.getElementById('studentNameInput');
+      const classInp = document.getElementById('studentClassInput');
+      const schoolInp = document.getElementById('studentSchoolInput');
+      const alertBox = document.getElementById('studentModalAlert');
+
+      if (nameInp) nameInp.value = this.studentProfile.name || '';
+      if (classInp) classInp.value = this.studentProfile.className || '';
+      if (schoolInp) schoolInp.value = this.studentProfile.schoolName || '';
+      if (alertBox) alertBox.style.display = 'none';
+
+      modal.classList.add('active');
+    }
+  }
+
+  closeProfileModal() {
+    // Chỉ cho phép đóng nếu đã có thông tin hợp lệ
+    if (!this.hasValidProfile()) {
+      const alertBox = document.getElementById('studentModalAlert');
+      if (alertBox) {
+        alertBox.style.display = 'block';
+        alertBox.innerText = '⚠️ Bạn phải nhập đầy đủ Họ tên, Lớp và Trường thì mới có thể bắt đầu chơi!';
+      }
+      return;
+    }
+    const modal = document.getElementById('studentModal');
+    if (modal) modal.classList.remove('active');
+  }
+
+  saveProfile() {
+    const nameInp = document.getElementById('studentNameInput');
+    const classInp = document.getElementById('studentClassInput');
+    const schoolInp = document.getElementById('studentSchoolInput');
+    const alertBox = document.getElementById('studentModalAlert');
+
+    const name = nameInp ? nameInp.value.trim() : '';
+    const className = classInp ? classInp.value.trim() : '';
+    const schoolName = schoolInp ? schoolInp.value.trim() : '';
+
+    if (!name || !className || !schoolName) {
+      if (alertBox) {
+        alertBox.style.display = 'block';
+        alertBox.innerText = '⚠️ Vui lòng nhập đầy đủ cả 3 thông tin: Họ tên, Lớp và Trường!';
+      } else {
+        alert('Vui lòng nhập đầy đủ cả Họ tên, Lớp và Trường để bắt đầu điều tra!');
+      }
+      return;
+    }
+
+    this.studentProfile = {
+      name: name,
+      className: className,
+      schoolName: schoolName,
+      registeredAt: new Date().toISOString()
+    };
+
+    try {
+      localStorage.setItem('physics_student_profile', JSON.stringify(this.studentProfile));
+    } catch (e) {}
+
+    this.syncStudentDisplay();
+    const modal = document.getElementById('studentModal');
+    if (modal) modal.classList.remove('active');
+
+    if (window.showToast) {
+      window.showToast(`👤 Xin chào điều tra viên: ${name} (Lớp ${className})!`);
+    }
+    if (window.audioFX) window.audioFX.playSuccess();
+
+    this.render();
   }
 
   loadCase(index) {
@@ -44,6 +169,10 @@ class InvestigationEngine {
   }
 
   selectCase(index) {
+    if (!this.hasValidProfile()) {
+      this.openProfileModal();
+      return;
+    }
     this.loadCase(index);
   }
 
@@ -55,7 +184,26 @@ class InvestigationEngine {
     if (!this.container) return;
     const currentCase = this.getCurrentCase();
 
-    let html = `
+    let html = '';
+
+    // Bắt buộc nhập thông tin trước khi chơi
+    if (!this.hasValidProfile()) {
+      html += `
+        <div class="narrative-card" style="border-left: 4px solid var(--crimson); background: rgba(239, 68, 68, 0.08); margin-bottom: 16px;">
+          <h4 style="color:var(--crimson); margin-bottom:4px;">⚠️ YÊU CẦU ĐĂNG KÝ HỌC SINH TRƯỚC KHI CHƠI</h4>
+          <p style="font-size:0.86rem; color:var(--text-main);">
+            Để lưu trữ số liệu nghiên cứu khoa học sư phạm (SPSS 26.0 & Facione T1-T4), bạn bắt buộc phải nhập <strong>Họ tên, Lớp và Trường</strong> trước khi tiếp nhận vụ án và chạy mô phỏng.
+          </p>
+          <div style="margin-top:10px;">
+            <button class="btn btn-primary" onclick="window.investigationEngine.openProfileModal()">
+              ✍️ Nhập Thông Tin Học Sinh Ngay
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    html += `
       <div class="case-header-box">
         <span class="hud-badge" style="margin-bottom:6px; display:inline-block;">${currentCase.badge} • ${currentCase.curriculum}</span>
         <h2>${currentCase.title}</h2>
@@ -95,30 +243,67 @@ class InvestigationEngine {
     this.container.innerHTML = html;
   }
 
-  // Phase 1: Classify statements
+  // Phase 1: Classify statements (Single Answer per Student, Any choice allowed)
   renderPhase1Classify(c) {
+    const caseAnswers = this.studentAnswers[c.id] || {};
+    let allAnswered = true;
+
+    const itemsHtml = c.classifyItems.map((item, idx) => {
+      const saved = caseAnswers[item.id];
+      const isAnswered = !!saved;
+      if (!isAnswered) allAnswered = false;
+
+      const chosen = saved ? saved.chosen : null;
+      const isCorrect = saved ? saved.isCorrect : false;
+
+      return `
+        <div class="classify-item" id="item_${item.id}" data-answered="${isAnswered ? 'true' : 'false'}">
+          <div class="classify-text"><strong>${idx + 1}.</strong> "${item.text}"</div>
+          <div class="classify-options">
+            <button class="btn-classify ${chosen === 'fact' ? 'selected-fact' : ''}" 
+                    ${isAnswered ? 'disabled style="pointer-events:none; opacity:0.85;"' : ''} 
+                    onclick="window.investigationEngine.handleClassify('${item.id}', 'fact')">
+              SỰ THẬT (Fact)
+            </button>
+            <button class="btn-classify ${chosen === 'opinion' ? 'selected-opinion' : ''}" 
+                    ${isAnswered ? 'disabled style="pointer-events:none; opacity:0.85;"' : ''} 
+                    onclick="window.investigationEngine.handleClassify('${item.id}', 'opinion')">
+              Ý KIẾN (Opinion)
+            </button>
+            <button class="btn-classify ${chosen === 'hypothesis' ? 'selected-hypothesis' : ''}" 
+                    ${isAnswered ? 'disabled style="pointer-events:none; opacity:0.85;"' : ''} 
+                    onclick="window.investigationEngine.handleClassify('${item.id}', 'hypothesis')">
+              GIẢ THUYẾT (Hypothesis)
+            </button>
+          </div>
+          <div class="classify-feedback" id="feedback_${item.id}" style="display:${isAnswered ? 'block' : 'none'}; font-size:0.82rem; margin-top:6px; line-height:1.4;">
+            ${isAnswered ? (
+              isCorrect ? `<span style="color:var(--green)">✓ LỰA CHỌN PHÙ HỢP CHUẨN KHOA HỌC: ${item.explanation}</span>`
+                        : `<span style="color:var(--amber)">● Ý KIẾN GHI NHẬN (${chosen.toUpperCase()}): ${item.explanation}</span>`
+            ) : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+
     return `
       <div class="narrative-card">
-        <p><strong>🕵️ NHIỆM VỤ ĐIỀU TRA (PHA 1/5):</strong> Đọc kỹ các phát biểu từ hiện trường và hồ sơ tranh chấp khoa học. Hãy phân loại từng phát biểu vào đúng bản chất nhận thức: 
+        <p><strong>🕵️ NHIỆM VỤ ĐIỀU TRA (PHA 1/5):</strong> Đọc kỹ các phát biểu từ hiện trường. Hãy phân loại từng phát biểu theo nhận thức của bạn: 
         <strong style="color:var(--green)">SỰ THẬT (Fact)</strong>, <strong style="color:var(--amber)">Ý KIẾN (Opinion)</strong> hoặc <strong style="color:var(--cyan)">GIẢ THUYẾT (Hypothesis)</strong>.</p>
+        <p style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">
+          <em>Lưu ý: Mỗi phát biểu chỉ được chọn một lần duy nhất để phục vụ thống kê nghiên cứu năng lực phản biện.</em>
+        </p>
       </div>
 
       <div class="classify-list">
-        ${c.classifyItems.map((item, idx) => `
-          <div class="classify-item" id="item_${item.id}">
-            <div class="classify-text"><strong>${idx + 1}.</strong> "${item.text}"</div>
-            <div class="classify-options">
-              <button class="btn-classify" onclick="window.investigationEngine.handleClassify('${item.id}', 'fact')">SỰ THẬT (Fact)</button>
-              <button class="btn-classify" onclick="window.investigationEngine.handleClassify('${item.id}', 'opinion')">Ý KIẾN (Opinion)</button>
-              <button class="btn-classify" onclick="window.investigationEngine.handleClassify('${item.id}', 'hypothesis')">GIẢ THUYẾT (Hypothesis)</button>
-            </div>
-            <div class="classify-feedback" id="feedback_${item.id}" style="display:none; font-size:0.8rem; margin-top:4px;"></div>
-          </div>
-        `).join('')}
+        ${itemsHtml}
       </div>
 
-      <div style="margin-top: 18px; display:flex; justify-content:flex-end;">
-        <button class="btn btn-primary" id="btnNextPhase" onclick="window.investigationEngine.nextPhase()" disabled>
+      <div style="margin-top: 18px; display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:0.82rem; color:var(--text-muted);">
+          ${this.hasValidProfile() ? `Hồ sơ thí sinh: <strong>${this.studentProfile.name}</strong> (${this.studentProfile.className})` : '<strong style="color:var(--crimson)">Chưa đăng ký thông tin</strong>'}
+        </span>
+        <button class="btn btn-primary" id="btnNextPhase" onclick="window.investigationEngine.nextPhase()" ${allAnswered && this.hasValidProfile() ? '' : 'disabled'}>
           Tiếp tục sang Pha 2: Vạch trần Ngụy biện ➜
         </button>
       </div>
@@ -126,58 +311,91 @@ class InvestigationEngine {
   }
 
   handleClassify(itemId, chosenType) {
+    if (!this.hasValidProfile()) {
+      this.openProfileModal();
+      return;
+    }
+
     const currentCase = this.getCurrentCase();
     const item = currentCase.classifyItems.find(x => x.id === itemId);
     if (!item) return;
 
-    const row = document.getElementById(`item_${itemId}`);
-    const feedback = document.getElementById(`feedback_${itemId}`);
-    const buttons = row.querySelectorAll('.btn-classify');
-
-    buttons.forEach(b => {
-      b.classList.remove('selected-fact', 'selected-opinion', 'selected-hypothesis');
-    });
-
-    const isCorrect = item.type === chosenType;
-    if (isCorrect) {
-      if (chosenType === 'fact') event.target.classList.add('selected-fact');
-      if (chosenType === 'opinion') event.target.classList.add('selected-opinion');
-      if (chosenType === 'hypothesis') event.target.classList.add('selected-hypothesis');
-
-      feedback.style.display = 'block';
-      feedback.style.color = 'var(--green)';
-      feedback.innerHTML = `✓ CHÍNH XÁC: ${item.explanation}`;
-      window.audioFX.playSuccess();
-      this.score += 20;
-      this.facione.t1 = Math.min(100, this.facione.t1 + 4);
-    } else {
-      feedback.style.display = 'block';
-      feedback.style.color = 'var(--crimson)';
-      feedback.innerHTML = `✗ CHƯA ĐÚNG: ${item.explanation}`;
-      window.audioFX.playDamage();
-      this.facione.t1 = Math.max(30, this.facione.t1 - 2);
+    if (!this.studentAnswers[currentCase.id]) {
+      this.studentAnswers[currentCase.id] = {};
     }
 
-    row.dataset.answered = 'true';
+    // Mỗi câu hỏi chỉ được trả lời 1 lần duy nhất!
+    if (this.studentAnswers[currentCase.id][itemId]) {
+      return;
+    }
+
+    const isCorrect = item.type === chosenType;
+
+    // Ghi nhận đáp án vào hồ sơ học sinh
+    this.studentAnswers[currentCase.id][itemId] = {
+      chosen: chosenType,
+      target: item.type,
+      isCorrect: isCorrect,
+      text: item.text,
+      timestamp: new Date().toISOString()
+    };
+
+    try {
+      localStorage.setItem('physics_student_answers', JSON.stringify(this.studentAnswers));
+    } catch (e) {}
+
+    const row = document.getElementById(`item_${itemId}`);
+    const feedback = document.getElementById(`feedback_${itemId}`);
+    if (row) {
+      const buttons = row.querySelectorAll('.btn-classify');
+      buttons.forEach(b => {
+        b.disabled = true;
+        b.style.pointerEvents = 'none';
+        b.style.opacity = '0.85';
+      });
+
+      if (chosenType === 'fact') {
+        const btn = row.querySelector('.btn-classify:nth-child(1)');
+        if (btn) btn.classList.add('selected-fact');
+      } else if (chosenType === 'opinion') {
+        const btn = row.querySelector('.btn-classify:nth-child(2)');
+        if (btn) btn.classList.add('selected-opinion');
+      } else if (chosenType === 'hypothesis') {
+        const btn = row.querySelector('.btn-classify:nth-child(3)');
+        if (btn) btn.classList.add('selected-hypothesis');
+      }
+
+      if (feedback) {
+        feedback.style.display = 'block';
+        if (isCorrect) {
+          feedback.innerHTML = `<span style="color:var(--green)">✓ LỰA CHỌN PHÙ HỢP CHUẨN KHOA HỌC: ${item.explanation}</span>`;
+          if (window.audioFX) window.audioFX.playSuccess();
+          this.score += 20;
+          this.facione.t1 = Math.min(100, this.facione.t1 + 5);
+        } else {
+          feedback.innerHTML = `<span style="color:var(--amber)">● Ý KIẾN GHI NHẬN (${chosenType.toUpperCase()}): ${item.explanation}</span>`;
+          if (window.audioFX) window.audioFX.playAlert();
+          this.facione.t1 = Math.max(30, this.facione.t1 - 1);
+        }
+      }
+      row.dataset.answered = 'true';
+    }
+
     this.updateScoreDisplay();
 
-    // Check if all items answered correctly
+    // Kiểm tra đã hoàn thành toàn bộ phát biểu của vụ án chưa
     const allAnswered = currentCase.classifyItems.every(x => {
-      const el = document.getElementById(`item_${x.id}`);
-      return el && el.dataset.answered === 'true';
+      return this.studentAnswers[currentCase.id] && this.studentAnswers[currentCase.id][x.id];
     });
 
-    if (allAnswered) {
-      document.getElementById('btnNextPhase').disabled = false;
+    const nextBtn = document.getElementById('btnNextPhase');
+    if (allAnswered && nextBtn) {
+      nextBtn.disabled = false;
     }
   }
 
   // Phase 2: Fallacy Hunting
   renderPhase2Fallacy(c) {
-    if (window.audioFX) {
-      window.audioFX.speak(`Cảnh báo: Đây là phát biểu ngụy biện của Dr. Sophos: ${c.sophosStatement}`, 'sophos');
-    }
-
     return `
       <div class="fallacy-banner">
         ⚠️ CẢNH BÁO: ĐÂY LÀ PHÁT BIỂU NGỤY BIỆN CẦN PHẢN BIỆN BẰNG THỰC NGHIỆM!
@@ -235,7 +453,7 @@ class InvestigationEngine {
         </div>
 
         <div class="narrative-card" style="border-left: 4px solid var(--green);">
-          <p>🔬 <strong>HƯỚNG DẪN QUAN SÁT THỰC NGHIỆM (OBSERVE):</strong> Nhìn sang <strong>Phòng Thí Nghiệm Động Lực Học</strong> bên phải màn hình. Bấm nút <strong>"CHẠY MÔ PHỎNG"</strong>, thử thay đổi các tham số (hút chân không, khối lượng, góc dốc, cắt dây) và quan sát các vector lực, số liệu cảm biến!</p>
+          <p>🔬 <strong>HƯỚNG DẪN QUAN SÁT THỰC NGHIỆM (OBSERVE):</strong> Nhìn sang <strong>Phòng Thí Nghiệm Động Lực Học</strong> bên phải màn hình. Bấm nút <strong>"CHẠY MÔ PHỎNG"</strong>, thử thay đổi các tham số (môi trường hành tinh, khối lượng, cắt dây, bung dù) và quan sát các vector lực, số liệu cảm biến!</p>
         </div>
 
         <div style="margin-top: 18px; display:flex; justify-content:space-between;">
@@ -249,6 +467,11 @@ class InvestigationEngine {
   }
 
   handlePoeChoice(optId, isCorrect) {
+    if (!this.hasValidProfile()) {
+      this.openProfileModal();
+      return;
+    }
+
     const buttons = document.querySelectorAll('.choice-btn');
     buttons.forEach(b => b.classList.remove('selected', 'correct', 'fallacy'));
 
@@ -257,12 +480,12 @@ class InvestigationEngine {
       selectedBtn.classList.add('selected');
       if (isCorrect) {
         selectedBtn.classList.add('correct');
-        window.audioFX.playSuccess();
+        if (window.audioFX) window.audioFX.playSuccess();
         this.score += 30;
         this.facione.t2 = Math.min(100, this.facione.t2 + 5);
       } else {
         selectedBtn.classList.add('fallacy');
-        window.audioFX.playDamage();
+        if (window.audioFX) window.audioFX.playDamage();
         this.facione.t2 = Math.max(30, this.facione.t2 - 2);
       }
     }
@@ -275,10 +498,6 @@ class InvestigationEngine {
   renderPhase4SocraticDuel(c) {
     const duel = c.socraticDuel;
     const round = duel.rounds[this.currentRound] || duel.rounds[duel.rounds.length - 1];
-
-    if (window.audioFX) {
-      window.audioFX.speak(round.sophosAttack, 'sophos');
-    }
 
     return `
       <div class="ai-duel-header">
@@ -328,6 +547,11 @@ class InvestigationEngine {
   }
 
   handleDuelResponse(damage, isCorrect, feedbackText) {
+    if (!this.hasValidProfile()) {
+      this.openProfileModal();
+      return;
+    }
+
     const fb = document.getElementById('duelFeedback');
     fb.style.display = 'block';
 
@@ -336,22 +560,21 @@ class InvestigationEngine {
       fb.className = 'dossier-card';
       fb.style.borderLeftColor = 'var(--green)';
       fb.innerHTML = `<strong style="color:var(--green)">✓ BẰNG CHỨNG HỮU HIỆU:</strong> ${feedbackText}`;
-      window.audioFX.playDamage(); // Sophos damaged
+      if (window.audioFX) window.audioFX.playDamage();
       this.score += 40;
       this.facione.t3 = Math.min(100, this.facione.t3 + 8);
     } else {
       fb.className = 'dossier-card';
       fb.style.borderLeftColor = 'var(--crimson)';
       fb.innerHTML = `<strong style="color:var(--crimson)">✗ BỊ DR. SOPHOS BẮT BÀI:</strong> ${feedbackText}`;
-      window.audioFX.playAlert();
+      if (window.audioFX) window.audioFX.playAlert();
       this.facione.t3 = Math.max(30, this.facione.t3 - 4);
     }
 
     this.updateScoreDisplay();
 
-    // Check if HP reaches 0
     if (this.sophosHp <= 0) {
-      window.audioFX.playPurified();
+      if (window.audioFX) window.audioFX.playPurified();
       fb.innerHTML += `
         <div class="purified-badge" style="margin-top:12px;">
           ✓ DR. SOPHOS ĐÃ BỊ THANH TẨY HOÀN TOÀN. CHÂN LÝ VẬT LÝ ĐÃ ĐƯỢC XÁC LẬP.
@@ -407,6 +630,10 @@ class InvestigationEngine {
   }
 
   nextPhase() {
+    if (!this.hasValidProfile()) {
+      this.openProfileModal();
+      return;
+    }
     if (this.currentPhase < 5) {
       this.currentPhase++;
       this.render();
@@ -421,6 +648,10 @@ class InvestigationEngine {
   }
 
   loadNextCase() {
+    if (!this.hasValidProfile()) {
+      this.openProfileModal();
+      return;
+    }
     const nextIdx = (this.currentCaseIndex + 1) % window.CASES_DATA.length;
     this.loadCase(nextIdx);
   }

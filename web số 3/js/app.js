@@ -3,18 +3,43 @@
    Coordinates UI, Simulation 60 FPS Loop, Event Listeners & State
    ========================================================================== */
 
+// 1. Global Navigation & Modal Controls (Always available immediately)
+window.openPedagogyGuide = function () {
+  const modal = document.getElementById('pedagogyGuideModal');
+  if (modal) modal.classList.add('active');
+  const tabs = document.querySelectorAll('.tab-btn');
+  tabs.forEach(t => {
+    if (t.dataset.tab === 'guide') t.classList.add('active');
+    else t.classList.remove('active');
+  });
+};
+
+window.closePedagogyGuide = function () {
+  const modal = document.getElementById('pedagogyGuideModal');
+  if (modal) modal.classList.remove('active');
+  const tabs = document.querySelectorAll('.tab-btn');
+  tabs.forEach(t => {
+    if (t.dataset.tab === 'campaign') t.classList.add('active');
+    else t.classList.remove('active');
+  });
+};
+
 document.addEventListener('DOMContentLoaded', () => {
-  // 1. Initialize Renderer
+  // Ensure PhysicsEngine instance exists
+  if (!window.physicsEngine && window.PhysicsEngine) {
+    window.physicsEngine = new window.PhysicsEngine();
+  }
+
+  // 2. Initialize Renderer
   const renderer = new VectorRenderer('physicsCanvas');
   window.vectorRenderer = renderer;
 
-  // Window resize handler
   window.addEventListener('resize', () => {
     renderer.resize();
   });
   renderer.resize();
 
-  // 2. Initialize Case Selector Chips
+  // 3. Initialize Case Selector Chips
   const caseBar = document.getElementById('caseSelectorBar');
   let suppressClick = false;
 
@@ -33,6 +58,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       const chip = e.target.closest('.case-chip');
       if (!chip) return;
+
+      // Bắt buộc nhập thông tin học sinh trước khi chọn vụ án
+      if (window.investigationEngine && !window.investigationEngine.hasValidProfile()) {
+        window.investigationEngine.openProfileModal();
+        return;
+      }
+
       const idx = parseInt(chip.dataset.caseIndex, 10);
       if (!isNaN(idx) && window.investigationEngine) {
         if (window.audioFX) window.audioFX.playClick();
@@ -102,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // 3. Bind Simulation Control Buttons
+  // 4. Bind Simulation Control Buttons
   const btnRun = document.getElementById('btnRunSim');
   const btnPause = document.getElementById('btnPauseSim');
   const btnReset = document.getElementById('btnResetSim');
@@ -117,16 +149,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (c.simModule === 'case1') {
       if (envSelectRow) envSelectRow.style.display = 'flex';
       if (envSelect) envSelect.value = window.physicsEngine.currentEnv;
-      // Loại bỏ nút bật không khí / hút chân không ở vụ án 1
       if (btnAction) btnAction.style.display = 'none';
     } else if (c.simModule === 'case3') {
       if (envSelectRow) envSelectRow.style.display = 'none';
       if (btnAction) {
         btnAction.style.display = 'inline-block';
-        btnAction.innerText = '✂ Cắt Dây / Mất Bám';
+        btnAction.innerText = '✂ Cắt Dây Quán Tính';
       }
     } else if (c.simModule === 'case6') {
-      if (envSelectRow) envSelectRow.style.display = 'none';
+      // Hỗ trợ môi trường thiên thể trong Vụ án 6
+      if (envSelectRow) envSelectRow.style.display = 'flex';
+      if (envSelect) envSelect.value = window.physicsEngine.currentEnv;
       if (btnAction) {
         btnAction.style.display = 'inline-block';
         btnAction.innerText = '🪂 Bung Dù Cứu Sinh';
@@ -140,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   window.syncCaseControls = syncSpecialActionButton;
 
-  // 4. Load First Case (sau khi đã gán window.syncCaseControls)
+  // 5. Load First Case
   window.investigationEngine.loadCase(0);
   syncSpecialActionButton();
 
@@ -154,8 +187,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Nút Chạy mô phỏng: Kiểm tra thông tin học sinh & Tự động chạy lại nếu đã hoàn thành
   if (btnRun) {
     btnRun.addEventListener('click', () => {
+      if (window.investigationEngine && !window.investigationEngine.hasValidProfile()) {
+        window.investigationEngine.openProfileModal();
+        return;
+      }
+
+      // Nếu mô phỏng đã chạy hết, tự động đặt lại để người dùng xem lại ngay
+      if (window.physicsEngine.isFinished()) {
+        const c = window.investigationEngine.getCurrentCase();
+        window.physicsEngine.initCaseState(c.simModule);
+      }
+
       window.physicsEngine.isRunning = true;
       if (window.audioFX) window.audioFX.playClick();
       showToast('⚡ Mô phỏng vật lý đang chạy ở 60 FPS...');
@@ -174,6 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnReset.addEventListener('click', () => {
       const c = window.investigationEngine.getCurrentCase();
       window.physicsEngine.initCaseState(c.simModule);
+      window.physicsEngine.isRunning = false;
       if (window.audioFX) window.audioFX.playClick();
       syncSpecialActionButton();
       showToast('🔄 Đã đặt lại trạng thái ban đầu.');
@@ -182,19 +228,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnAction) {
     btnAction.addEventListener('click', () => {
-      if (window.audioFX) window.audioFX.playClick();
+      if (window.investigationEngine && !window.investigationEngine.hasValidProfile()) {
+        window.investigationEngine.openProfileModal();
+        return;
+      }
+
       const c = window.investigationEngine.getCurrentCase();
+      window.physicsEngine.isRunning = true; // Luôn đảm bảo đang chạy để thấy hiệu ứng
+
       if (c.simModule === 'case3') {
         window.physicsEngine.cutTractionString();
-        showToast('✂ ĐÃ CẮT DÂY / MẤT BÁM ĐƯỜNG: Xe bay theo tiếp tuyến quán tính!');
+        if (window.audioFX) window.audioFX.playClick();
+        showToast('✂ ĐÃ CẮT DÂY: Quả cầu bay theo tiếp tuyến quán tính (Định luật I Newton)!');
       } else if (c.simModule === 'case6') {
         window.physicsEngine.deployParachute();
-        showToast('🪂 ĐÃ BUNG DÙ CỨU SINH! Lực cản tăng mạnh, hãm tốc an toàn!');
+        if (window.audioFX) window.audioFX.playClick();
+        showToast('🪂 ĐÃ BUNG DÙ CỨU SINH! Lực cản không khí tăng vọt, hãm tốc độ rơi!');
       }
     });
   }
 
-  // 5. Simulation Speed Selector
+  // 6. Simulation Speed Selector
   const speedSelect = document.getElementById('speedSelect');
   if (speedSelect) {
     speedSelect.addEventListener('change', (e) => {
@@ -202,62 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 6. Sound & Speech Toggle
-  const btnAudio = document.getElementById('btnToggleAudio');
-  const audioIcon = document.getElementById('audioBtnIcon');
-  const audioLabel = document.getElementById('audioBtnLabel');
-  const AUDIO_PREF_KEY = 'physics-detective-audio-enabled';
-
-  function syncAudioButton() {
-    const on = window.audioFX.soundEnabled;
-    if (audioIcon) audioIcon.textContent = on ? '🎙️' : '🔇';
-    if (audioLabel) audioLabel.textContent = on ? 'Giọng Adam: BẬT' : 'Giọng đọc: TẮT';
-    if (btnAudio) {
-      btnAudio.setAttribute('aria-pressed', String(on));
-      btnAudio.title = on ? 'Tắt giọng đọc Adam TikTok' : 'Bật giọng đọc Adam TikTok';
-    }
-  }
-
-  if (btnAudio) {
-    // Khôi phục lựa chọn đã lưu để nút không tự bật lại sau khi tải trang
-    try {
-      const saved = localStorage.getItem(AUDIO_PREF_KEY);
-      if (saved !== null) {
-        const on = saved === '1';
-        window.audioFX.soundEnabled = on;
-        window.audioFX.speechEnabled = on;
-      }
-    } catch (e) { /* localStorage có thể bị trình duyệt chặn */ }
-
-    if (!('speechSynthesis' in window)) {
-      btnAudio.disabled = true;
-      btnAudio.title = 'Trình duyệt không hỗ trợ thuyết minh giọng nói';
-      if (audioLabel) audioLabel.textContent = 'Giọng đọc: Không hỗ trợ';
-    } else {
-      syncAudioButton();
-
-      btnAudio.addEventListener('click', () => {
-        const on = !window.audioFX.soundEnabled;
-        window.audioFX.soundEnabled = on;
-        window.audioFX.speechEnabled = on;
-
-        if (!on) window.audioFX.stopSpeech();
-
-        try { localStorage.setItem(AUDIO_PREF_KEY, on ? '1' : '0'); } catch (e) {}
-
-        syncAudioButton();
-
-        if (on) {
-          window.audioFX.speak('Đã kích hoạt giọng đọc Adam TikTok.', 'socrates');
-          showToast('🎙️ Đã kích hoạt giọng đọc Adam (TikTok Style).');
-        } else {
-          showToast('Đã tắt âm thanh và giọng đọc.');
-        }
-      });
-    }
-  }
-
-  // 6b. Light / Dark Theme Toggle
+  // 7. Light / Dark Theme Toggle
   const btnTheme = document.getElementById('btnToggleTheme');
   const themeIcon = document.getElementById('themeBtnIcon');
   const themeLabel = document.getElementById('themeBtnLabel');
@@ -270,7 +269,6 @@ document.addEventListener('DOMContentLoaded', () => {
     root.classList.add('theme-switching');
     if (dark) root.setAttribute('data-theme', 'dark');
     else root.removeAttribute('data-theme');
-    // Ép trình duyệt tính lại màu ngay, không trung gian qua transition.
     void root.offsetWidth;
     root.classList.remove('theme-switching');
 
@@ -292,7 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let savedTheme = 'light';
     try {
       savedTheme = localStorage.getItem(THEME_KEY) === 'dark' ? 'dark' : 'light';
-    } catch (e) { /* localStorage có thể bị chặn */ }
+    } catch (e) {}
 
     applyTheme(savedTheme);
 
@@ -303,31 +301,70 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 7. Navigation Tabs
+  // 8. Navigation Tabs
   const navTabs = document.querySelectorAll('.tab-btn');
   navTabs.forEach(tab => {
     tab.addEventListener('click', () => {
-      navTabs.forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
       const target = tab.dataset.tab;
-      if (target === 'analytics') {
+      if (target === 'campaign') {
+        navTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const guideModal = document.getElementById('pedagogyGuideModal');
+        if (guideModal) guideModal.classList.remove('active');
+        const juryModal = document.getElementById('juryModal');
+        if (juryModal) juryModal.classList.remove('active');
+      } else if (target === 'analytics') {
+        navTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
         window.pedagogyAnalytics.openModal();
       } else if (target === 'guide') {
-        alert("📖 HƯỚNG DẪN TRÒ CHƠI PHÁT TRIỂN NĂNG LỰC TƯ DUY PHẢN BIỆN:\n\n1. Tiếp nhận vụ án & phân loại phát biểu (Fact/Opinion/Hypothesis).\n2. Vạch trần bẫy ngụy biện của Dr. Sophos.\n3. Tiến hành thực nghiệm POE (Dự đoán, đặt độ tự tin 10%-100%, quan sát mô phỏng 60 FPS).\n4. Dùng bằng chứng số liệu đối chất Socratic đánh sập ngụy biện.\n5. Xem báo cáo hồ sơ năng lực tư duy phản biện Facione T1 - T4!");
+        navTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        window.openPedagogyGuide();
       }
     });
-  } );
+  });
 
-  // 8. 60 FPS Animation Loop
+  // Đóng modal khi bấm vào vùng nền mờ bên ngoài
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) {
+        if (overlay.id === 'studentModal') {
+          if (window.investigationEngine && window.investigationEngine.hasValidProfile()) {
+            overlay.classList.remove('active');
+          }
+        } else if (overlay.id === 'pedagogyGuideModal') {
+          window.closePedagogyGuide();
+        } else if (overlay.id === 'juryModal') {
+          window.pedagogyAnalytics.closeModal();
+        }
+      }
+    });
+  });
+
+  // Bắt buộc mở modal đăng ký học sinh ngay lập tức nếu chưa có thông tin
+  setTimeout(() => {
+    if (window.investigationEngine && !window.investigationEngine.hasValidProfile()) {
+      window.investigationEngine.openProfileModal();
+    }
+  }, 200);
+
+  // 9. 60 FPS Animation Loop
   function animLoop() {
-    window.physicsEngine.step();
-    renderer.render(window.physicsEngine);
-    updateSensorDisplay();
+    try {
+      if (window.physicsEngine) {
+        window.physicsEngine.step();
+        renderer.render(window.physicsEngine);
+        updateSensorDisplay();
+      }
+    } catch (err) {
+      console.error('Simulation loop error:', err);
+    }
     requestAnimationFrame(animLoop);
   }
   requestAnimationFrame(animLoop);
 
-  // 9. Update Sensor Display Elements
+  // 10. Update Sensor Display Elements
   function updateSensorDisplay() {
     const s = window.physicsEngine.sensors;
     const tEl = document.getElementById('sensorTime');
@@ -341,7 +378,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (aEl) aEl.innerText = s.a1.toFixed(2) + ' m/s²';
   }
 
-  // 10. Toast Notification Function
+  // 11. Toast Notification Function
   window.showToast = function (msg) {
     let container = document.getElementById('toastContainer');
     if (!container) {

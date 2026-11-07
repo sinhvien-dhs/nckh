@@ -1,6 +1,7 @@
 /* ==========================================================================
    PHYSICS DETECTIVE - Case Data & Socratic Dialogues
    6 Grand Physics Cases (Mechanics & Dynamics Grade 10 - GDPT 2018)
+   Standardized Epistemic Categorization (Fact / Opinion / Hypothesis)
    ========================================================================== */
 
 window.CASES_DATA = [
@@ -56,7 +57,7 @@ window.CASES_DATA = [
           sophosAttack: 'Ngươi nói a = g ư? Vậy giải thích đi: sao ngoài đời thả quả bóng và tờ giấy thì bóng luôn rơi trước? Ngươi chối bỏ hiện thực à?',
           socratesHint: {
             t1: 'Hãy quan sát: Ngoài đời có một lực vô hình nào tác dụng ngược chiều rơi?',
-            t2: 'Hãy dùng nút "Hút chân không" trên phòng thí nghiệm ảo để cô lập biến số lực cản không khí!',
+            t2: 'Hãy dùng thanh chọn môi trường để quan sát trong môi trường chân không, lực cản bị triệt tiêu hoàn toàn!',
             t3: 'Định luật II Newton: F_net = P - F_cản = ma. Khi F_cản = 0, a = P/m = mg/m = g!'
           },
           responses: [
@@ -65,14 +66,14 @@ window.CASES_DATA = [
               text: 'Do lực cản không khí tác dụng lên tờ giấy có diện tích lớn lấn át trọng lượng! Trong chân không, F_cản = 0 thì a = g như nhau!',
               damage: 50,
               correct: true,
-              feedback: 'Chính xác! Bằng chứng từ cổng quang điện chứng minh t1 = t2 = 3.03s trong chân không!'
+              feedback: 'Chính xác! Bằng chứng từ cổng quang điện chứng minh hai vật chạm đất cùng lúc trong chân không!'
             },
             {
               id: 'r2',
-              text: 'Tại vì tờ giấy nhẹ quá nên gió thổi bay.',
+              text: 'Tại vì tờ giấy nhẹ quá nên gió thổi bay lung tung.',
               damage: 10,
               correct: false,
-              feedback: 'Lập luận còn cảm tính, chưa chỉ rõ bản chất công thức F_net = ma.'
+              feedback: 'Lập luận còn cảm tính, chưa chỉ rõ bản chất công thức động lực học F_net = ma.'
             }
           ]
         },
@@ -89,14 +90,14 @@ window.CASES_DATA = [
               text: 'Trọng lực lớn gấp 10 lần nhưng khối lượng quán tính (m) cũng lớn gấp 10 lần, khiến tỉ số a = P/m = g là hằng số!',
               damage: 50,
               correct: true,
-              feedback: 'Đòn phản biện sấm sét! Dr. Sophos đã hoàn toàn tâm phục khẩu phục!'
+              feedback: 'Đòn phản biện sắc bén! Dr. Sophos đã hoàn toàn tâm phục khẩu phục!'
             },
             {
               id: 'r4',
-              text: 'Vì Trái Đất thương hai vật như nhau nên cho rơi đều.',
+              text: 'Vì Trái Đất đối xử với mọi vật công bằng như nhau.',
               damage: 0,
               correct: false,
-              feedback: 'Ngụy biện gán cảm xúc cho vật thể vô tri!'
+              feedback: 'Ngụy biện gán cảm xúc đạo đức cho các định luật vật lý vô tri!'
             }
           ]
         }
@@ -109,7 +110,7 @@ window.CASES_DATA = [
         id: 'v_perfect',
         title: 'BẢN ÁN KHOA HỌC TOÀN DIỆN (CHÂN LÝ GALILEI)',
         result: 'perfect',
-        summary: 'Bạn đã chứng minh xuất sắc: Sự chênh lệch tốc độ rơi ngoài đời là do Lực cản không khí, không phải do trọng lượng. Trong chân không, mọi vật rơi tự do với cùng gia tốc g = 9.8 m/s².'
+        summary: 'Bạn đã chứng minh xuất sắc: Sự chênh lệch tốc độ rơi ngoài đời là do Lực cản không khí, không phải do khối lượng. Trong chân không hoặc khi loại bỏ lực cản, mọi vật rơi tự do với cùng gia tốc g = 9.8 m/s².'
       },
       {
         id: 'v_partial',
@@ -198,10 +199,10 @@ window.CASES_DATA = [
           responses: [
             {
               id: 'r3',
-              text: 'Mức độ biến dạng phụ thuộc vào kết cấu và độ cứng vật liệu của xe, không vi phạm định luật F12 = -F21!',
+              text: 'Cùng chịu một lực 45 kN, nhưng kết cấu tôn vỏ mỏng của xe con có giới hạn bền thấp hơn dầm thép xe tải nên bị bẹp nát!',
               damage: 50,
               correct: true,
-              feedback: 'Tuyệt vời! Dr. Sophos đã bị thanh tẩy hoàn toàn.'
+              feedback: 'Chính xác! Phân biệt rành mạch giữa Lực tác dụng và Giới hạn bền cơ học.'
             }
           ]
         }
@@ -211,71 +212,95 @@ window.CASES_DATA = [
     verdicts: [
       {
         id: 'v_perfect',
-        title: 'PHÁN QUYẾT TÒA ÁN KHOA HỌC: ĐỊNH LUẬT III NEWTON BẤT BIẾN',
+        title: 'BẢN ÁN ĐỊNH LUẬT III NEWTON BẤT BIẾN',
         result: 'perfect',
-        summary: 'Hai xe tác dụng lên nhau hai lực trực đối bằng nhau về độ lớn F = 45 kN. Xe con biến dạng và văng xa do kết cấu vật liệu và gia tốc lớn gấp 5 lần (a = F/m).'
+        summary: 'Bạn đã làm sáng tỏ: Trong mọi vụ va chạm, lực tác dụng và phản lực luôn bằng nhau về độ lớn (F12 = -F21). Hậu quả văng xa và móp méo là do chênh lệch khối lượng (gia tốc a = F/m) và giới hạn bền vật liệu.'
       }
     ]
   },
 
   {
     id: 'case3',
-    title: 'VỤ ÁN 3: KHÚC CUA TỬ THẦN - BÍ ẨN "LỰC VĂNG LY TÂM"',
-    subtitle: 'Chuyển động tròn đều, Lực hướng tâm & Quán tính',
-    curriculum: 'Vật lý 10 - Bài 20: Lực hướng tâm và lực quán tính',
+    title: 'VỤ ÁN 3: SỢI DÂY QUAY TRÒN & BÍ ẨN "LỰC VĂNG LY TÂM"',
+    subtitle: 'Chuyển động tròn đều, Lực hướng tâm & Quán tính khi đứt dây',
+    curriculum: 'Vật lý 10 - Bài 20: Lực hướng tâm và chuyển động tròn',
     badge: 'CHUYỂN ĐỘNG TRÒN',
     simModule: 'case3',
-    description: 'Một chiếc xe đua bị trượt khỏi khúc cua tròn và lao xuống vực. Nhân chứng khẳng định: "Có một con quái vật lực ly tâm vô hình đã thò tay kéo giật xe bay thẳng xuyên tâm ra ngoài!"',
+    description: 'Một người đứng quay một sợi dây có buộc một quả cầu kim loại tròn ở đầu. Nhân chứng tranh cãi nảy lửa: Nếu đột ngột dùng kéo cắt đứt sợi dây (hoặc tuột tay), quả cầu sẽ bay theo hướng nào? Nhiều người tin chắc rằng "sẽ có một con quái vật lực ly tâm vô hình giật văng quả cầu bay thẳng ra xa tâm quay theo phương bán kính"!',
     
     classifyItems: [
       {
         id: 'c3_1',
-        text: 'Bán kính khúc cua là R = 60m, xe chạy với tốc độ 15 m/s.',
+        text: 'Chiều dài sợi dây r = 1.2 m, quả cầu nặng m = 0.5 kg quay đều với tốc độ v = 15 m/s.',
         type: 'fact',
-        explanation: 'Thông số hình học và đồng hồ tốc độ là SỰ THẬT.'
+        explanation: 'Kích thước dây đo bằng thước và tốc độ đo bằng cảm biến quang học là SỰ THẬT (Fact).'
       },
       {
         id: 'c3_2',
-        text: 'Tồn tại một lực ly tâm thực sự kéo vật bay ngược chiều tâm quay.',
+        text: 'Tồn tại một lực ly tâm thực sự kéo giật vật tròn văng ra xa khỏi tâm theo phương bán kính.',
         type: 'opinion',
-        explanation: 'Ngộ nhận kinh điển do cảm giác trong hệ quy chiếu phi quán tính.'
+        explanation: 'Đây là ảo giác nhận thức trong hệ quy chiếu phi quán tính quay, là Ý KIẾN ngụy biện (Opinion).'
       },
       {
         id: 'c3_3',
-        text: 'Lực duy nhất giữ xe trên quỹ đạo cong là lực ma sát nghỉ đóng vai trò Lực hướng tâm.',
+        text: 'Lực duy nhất tác dụng lên quả cầu giữ cho nó quay tròn là lực căng dây T hướng về tâm (Lực hướng tâm F_ht = m·v²/r). Khi cắt dây (T = 0), quả cầu bay theo phương tiếp tuyến theo quán tính Newton.',
         type: 'hypothesis',
-        explanation: 'Giả thuyết bản chất lực thực tế trong hệ quy chiếu quán tính.'
+        explanation: 'Đây là GIẢ THUYẾT KHOA HỌC (Hypothesis) chuẩn mực dựa trên Định luật I Newton cần kiểm chứng.'
       }
     ],
 
-    sophosStatement: 'Ai ngồi xe ôm cua gắt mà chẳng thấy người bị hất văng ra ngoài cửa sổ? Lực ly tâm rõ như ban ngày! Khi mất ma sát, lực ly tâm sẽ ném xe bay thẳng ra xa tâm!',
-    fallacyType: 'NGỤY BIỆN DỰA VÀO CẢM GIÁC CHỦ QUAN (Subjective Validation Fallacy)',
-    fallacyExplanation: 'Cảm giác bị hất ra là do cơ thể giữ quán tính chuyển động thẳng (Định luật I Newton), không có lực ly tâm thực nào tác dụng.',
+    sophosStatement: 'Ai tự tay quay sợi dây mà chẳng cảm thấy có lực giật mạnh kéo tay mình ra ngoài? Khi lấy kéo cắt đứt dây, lực ly tâm sẽ ném quả cầu bay vọt thẳng ra xa tâm quay theo phương bán kính! Đó là lý do cả thế giới gọi là lực văng ly tâm!',
+    fallacyType: 'NGỤY BIỆN BỊ ĐÁNH LỪA BỞI HỆ QUY CHIẾU PHI QUÁN TÍNH (Non-Inertial Reference Frame Fallacy)',
+    fallacyExplanation: 'Lực ly tâm chỉ là lực quán tính ảo xuất hiện khi người quan sát đứng trong hệ quy chiếu quay (phi quán tính). Trong hệ quy chiếu quán tính gắn với mặt đất, chỉ có duy nhất lực căng dây T kéo vật hướng về tâm. Khi cắt dây (T = 0), theo Định luật I Newton, vật bay thẳng đều theo phương TIẾP TUYẾN với quỹ đạo tại thời điểm cắt!',
 
-    poeQuestion: 'Nếu mặt đường đột ngột mất ma sát (hoặc dây buộc bị cắt đứt), xe sẽ bay theo hướng nào?',
+    poeQuestion: 'Khi một người đang quay tròn quả cầu buộc ở đầu dây, nếu đột ngột dùng kéo CẮT ĐỨT SỢI DÂY, quả cầu sẽ chuyển động theo hướng nào?',
     poeOptions: [
-      { id: 'opt1', text: 'Bay thẳng vuông góc ra xa tâm (xuyên tâm) do lực ly tâm kéo.' },
-      { id: 'opt2', text: 'Bay theo phương tiếp tuyến với quỹ đạo cong do quán tính (Định luật I Newton).', correct: true },
-      { id: 'opt3', text: 'Xe tự động dừng lại ngay lập tức tại chỗ.' }
+      { id: 'opt1', text: 'Bay thẳng ra xa khỏi tâm theo phương nối bán kính do lực ly tâm đẩy văng.' },
+      { id: 'opt2', text: 'Bay thẳng đều theo phương TIẾP TUYẾN với đường tròn tại thời điểm cắt dây theo Định luật I Newton.', correct: true },
+      { id: 'opt3', text: 'Dừng lại ngay lập tức và rơi thẳng đứng xuống đất.' }
     ],
 
     socraticDuel: {
       initialSophosHp: 100,
       rounds: [
         {
-          sophosAttack: 'Ngươi dám bảo không có lực ly tâm? Vậy nút "Cắt Dây Quán Tính" trên mô phỏng của ngươi sẽ cho xe bay về đâu?',
+          sophosAttack: 'Ngươi bảo bay tiếp tuyến ư? Thế lực giật căng tay tôi cảm nhận khi quay tròn là lực gì nếu không phải lực ly tâm?',
           socratesHint: {
-            t1: 'Bấm nút "Cắt Dây / Bỏ bám đường" trên màn hình mô phỏng ngay lúc này!',
-            t2: 'Nhìn vector vận tốc màu xanh lá cây tại điểm bị cắt.',
-            t3: 'Vector vận tốc v luôn có phương tiếp tuyến. Định luật I: Khi F_hl = 0, vật chuyển động thẳng đều theo v tiếp tuyến!'
+            t1: 'Định luật III Newton: Lực tác dụng và phản lực.',
+            t2: 'Bàn tay kéo quả cầu vào tâm bằng lực căng dây T (Lực hướng tâm).',
+            t3: 'Theo Định luật III Newton, sợi dây tác dụng ngược lại lên tay bạn một phản lực hướng ra ngoài! Đó là lực tác dụng lên TAY BẠN, KHÔNG PHẢI lực tác dụng lên quả cầu!'
           },
           responses: [
             {
               id: 'r1',
-              text: 'Mô phỏng chứng minh xe bay vọt theo phương TIẾP TUYẾN, hoàn toàn không hề bay xuyên tâm! Đó là quán tính thẳng đều!',
-              damage: 100,
+              text: 'Lực kéo tay bạn chỉ là phản lực của lực căng dây theo Định luật III Newton! Đối với quả cầu, lực duy nhất tác dụng lên nó là lực căng dây T hướng vào tâm!',
+              damage: 50,
               correct: true,
-              feedback: 'Thực nghiệm trực quan đã dập tắt hoàn toàn luận điệu của Dr. Sophos!'
+              feedback: 'Đòn phản biện bậc thầy! Phân biệt chính xác giữa Lực tác dụng lên vật và Phản lực lên tay người giữ.'
+            },
+            {
+              id: 'r2',
+              text: 'Do tay bạn quay nhanh quá nên bị mỏi cơ.',
+              damage: 0,
+              correct: false,
+              feedback: 'Giải thích sinh học tầm thường, né tránh bản chất cơ học lực hướng tâm.'
+            }
+          ]
+        },
+        {
+          sophosAttack: 'Vậy khi cắt dây, tại sao quả cầu lại bay đi mà không đứng yên?',
+          socratesHint: {
+            t1: 'Nhớ lại Định luật I Newton về Quán tính.',
+            t2: 'Trước khi cắt dây, vectơ vận tốc tức thời v của quả cầu có phương gì với đường tròn?',
+            t3: 'Vectơ vận tốc v luôn có phương TIẾP TUYẾN. Khi cắt dây, T = 0, hợp lực bằng 0, vật giữ nguyên vận tốc theo phương tiếp tuyến đó!'
+          },
+          responses: [
+            {
+              id: 'r3',
+              text: 'Tại mọi thời điểm quay, vận tốc v luôn tiếp tuyến với quỹ đạo. Khi cắt dây (T = 0, hợp lực = 0), theo Định luật I Newton, vật tiếp tục bay thẳng theo phương tiếp tuyến đó!',
+              damage: 50,
+              correct: true,
+              feedback: 'Dr. Sophos sụp đổ hoàn toàn trước chân lý Quán tính và Định luật I Newton!'
             }
           ]
         }
@@ -285,71 +310,71 @@ window.CASES_DATA = [
     verdicts: [
       {
         id: 'v_perfect',
-        title: 'BẢN ÁN CHÂN LÝ: XÓA SỔ ẢO TƯỞNG LỰC LY TÂM',
+        title: 'BẢN ÁN BÁC BỎ ẢO GIÁC "LỰC VĂNG LY TÂM"',
         result: 'perfect',
-        summary: 'Trong hệ quy chiếu mặt đất (quán tính), chỉ có Lực hướng tâm giữ xe bẻ cong quỹ đạo. Khi mất lực hướng tâm, xe bay theo phương tiếp tuyến do quán tính.'
+        summary: 'Bạn đã chứng minh xuất sắc: Trong hệ quy chiếu quán tính, lực duy nhất giữ vật tròn chuyển động cong là Lực căng dây hướng tâm (F_ht = m·v²/r). Khi cắt đứt dây, không có lực ly tâm nào đẩy vật ra xa; vật bay thẳng theo phương tiếp tuyến hoàn toàn do QUÁN TÍNH NEWTON.'
       }
     ]
   },
 
   {
     id: 'case4',
-    title: 'VỤ ÁN 4: ĐÈO DỐC MA SÁT KỲ LẠ - TRANH CÃI GÓC NGHIÊNG',
+    title: 'VỤ ÁN 4: XE TRƯỢT TỪ DỐC NGHIÊNG & TRANH CÃI LỰC MA SÁT',
     subtitle: 'Mặt phẳng nghiêng, Phân tích lực & Ma sát trượt',
     curriculum: 'Vật lý 10 - Bài 14: Lực ma sát và mặt phẳng nghiêng',
     badge: 'PHÂN TÍCH LỰC',
     simModule: 'case4',
-    description: 'Tài xế xe tải chở hàng xuống đèo dốc 45 độ bị mất phanh trượt dốc. Đội cứu hộ tranh cãi: Có người bảo tăng độ dốc lên thì lực ma sát vẫn thế vì khối lượng xe không đổi.',
+    description: 'Một chiếc xe bị trượt từ đỉnh con dốc nghiêng góc α xuống chân dốc. Đội điều tra hiện trường tranh cãi: Liệu khi con dốc càng dốc (góc α tăng), lực ma sát trượt tác dụng lên xe có thay đổi không? Nhiều người tin rằng vì xe vẫn nặng ngần ấy tấn (P = mg không đổi) nên lực ma sát trượt luôn không đổi!',
     
     classifyItems: [
       {
         id: 'c4_1',
-        text: 'Khối lượng hàng hóa m = 10kg, hệ số ma sát giữa gỗ và thép mu = 0.35.',
+        text: 'Khối lượng xe m = 1200 kg, hệ số ma sát trượt giữa lốp xe và mặt đường dốc là μ = 0.35, góc nghiêng dốc ban đầu α = 30°.',
         type: 'fact',
-        explanation: 'Đại lượng đo lường thực tế.'
+        explanation: 'Khối lượng xe, hệ số ma sát và góc dốc là các đại lượng đo đạc thực nghiệm, là SỰ THẬT (Fact).'
       },
       {
         id: 'c4_2',
-        text: 'Dù đèo dốc bao nhiêu độ thì ma sát vẫn bằng mu * m * g vì trọng lượng xe không đổi.',
+        text: 'Dù con dốc nghiêng bao nhiêu độ thì lực ma sát trượt vẫn luôn bằng μ·m·g vì khối lượng và trọng lượng xe không đổi.',
         type: 'opinion',
-        explanation: 'Nhầm lẫn nghiêm trọng: F_ms = mu * N chứ không phải mu * P.'
+        explanation: 'Ngộ nhận tai hại do đánh tráo Áp lực vuông góc N với Trọng lực P, là Ý KIẾN ngụy biện (Opinion).'
       },
       {
         id: 'c4_3',
-        text: 'Khi góc dốc tăng lên, áp lực N = mg*cos(alpha) giảm xuống khiến lực ma sát trượt giảm mạnh.',
+        text: 'Khi góc dốc α tăng lên, áp lực vuông góc N = mg·cosα giảm xuống, dẫn tới lực ma sát trượt F_ms = μ·N = μ·mg·cosα giảm mạnh.',
         type: 'hypothesis',
-        explanation: 'Lập luận phân tích lực khoa học cần kiểm chứng.'
+        explanation: 'Đây là GIẢ THUYẾT KHOA HỌC (Hypothesis) dựa trên giải tích phân tích vector lực cần kiểm chứng.'
       }
     ],
 
-    sophosStatement: 'Công thức ma sát ai chả biết F_ms phụ thuộc khối lượng! Xe vẫn nặng ngần ấy tấn thì ma sát làm sao mà tụt được? Đừng có lừa tôi!',
-    fallacyType: 'NGỤY BIỆN ĐÁNH TRÁO KHÁI NIỆM (Equivocation: Đánh tráo Trọng lực P với Áp lực N)',
-    fallacyExplanation: 'Trên mặt phẳng nghiêng, áp lực N chỉ là thành phần pháp tuyến P_y = mg*cos(alpha).',
+    sophosStatement: 'Công thức ma sát ai chả biết: F_ms phụ thuộc khối lượng vật đè lên! Khối lượng xe m có mất đi lạng nào đâu mà áp lực dám tụt? Dù dốc 10 độ hay 60 độ thì xe vẫn nặng 1200kg, ma sát trượt phải giữ nguyên!',
+    fallacyType: 'NGỤY BIỆN ĐÁNH TRÁO KHÁI NIỆM (Equivocation: Đánh tráo Trọng lực P với Áp lực pháp tuyến N)',
+    fallacyExplanation: 'Lực ma sát trượt chỉ tỉ lệ với Áp lực pháp tuyến ép vuông góc vào mặt tiếp xúc: F_ms = μ·N. Trên mặt phẳng nghiêng góc α, trọng lực P phân tích thành hai thành phần: P_x = mg·sinα (kéo trượt dọc dốc) và P_y = mg·cosα (ép vuông góc dốc). Do đó N = P_y = mg·cosα. Khi dốc càng đứng (α tăng), cosα giảm nên áp lực N giảm, kéo theo ma sát trượt giảm mạnh!',
 
-    poeQuestion: 'Khi tăng góc nghiêng của mặt phẳng nghiêng từ 10 độ lên 60 độ, lực ma sát trượt sẽ biến đổi thế nào?',
+    poeQuestion: 'Khi tăng góc dốc α của mặt phẳng nghiêng từ 15° lên 60°, lực ma sát trượt F_ms và gia tốc trượt a sẽ biến đổi như thế nào?',
     poeOptions: [
-      { id: 'opt1', text: 'Giữ nguyên không đổi vì m và mu không đổi.' },
-      { id: 'opt2', text: 'Giảm liên tục vì áp lực N = mg*cos(alpha) giảm khi góc alpha tăng.', correct: true },
-      { id: 'opt3', text: 'Tăng lên vì xe trượt nhanh hơn.' }
+      { id: 'opt1', text: 'Lực ma sát trượt giữ nguyên không đổi vì khối lượng m và hệ số μ không đổi.' },
+      { id: 'opt2', text: 'Lực ma sát trượt F_ms giảm liên tục vì áp lực N = mg·cosα giảm; gia tốc trượt a = g(sinα - μ·cosα) tăng vọt.', correct: true },
+      { id: 'opt3', text: 'Lực ma sát trượt tăng lên vì xe lao nhanh hơn ép mạnh hơn.' }
     ],
 
     socraticDuel: {
       initialSophosHp: 100,
       rounds: [
         {
-          sophosAttack: 'Tại sao góc nghiêng lớn thì áp lực N lại giảm? Giải thích bằng hình học xem nào!',
+          sophosAttack: 'Tại sao góc nghiêng lớn thì áp lực ép vuông góc N lại giảm? Giải thích bằng công thức toán học phân tích lực xem nào!',
           socratesHint: {
-            t1: 'Hãy chiếu trọng lực P lên hai trục vuông góc và song song với mặt dốc.',
-            t2: 'Thành phần ép vuông góc vào mặt dốc là P_y = P * cos(alpha).',
-            t3: 'Khi alpha tăng từ 0 lên 90 độ, cos(alpha) giảm từ 1 về 0. Khi dốc dựng đứng 90 độ, N = 0!'
+            t1: 'Hãy chiếu trọng lực P lên hai trục toạ độ: trục song song dốc và trục vuông góc dốc.',
+            t2: 'Thành phần ép vuông góc vào mặt dốc là P_y = P · cosα = mg · cosα.',
+            t3: 'Khi α tăng từ 0° lên 90°, cosα giảm từ 1 về 0. Khi dốc đứng 90° (thẳng đứng), cos90° = 0 nên N = 0 và F_ms = 0!'
           },
           responses: [
             {
               id: 'r1',
-              text: 'N = mg*cos(alpha). Góc alpha càng dốc, cos(alpha) càng nhỏ làm áp lực N giảm, do đó F_ms = mu*N giảm mạnh!',
+              text: 'Áp lực N = mg·cosα. Khi dốc càng nghiêng thì cosα càng giảm, làm áp lực ép vào mặt đường giảm; do đó F_ms = μ·mg·cosα giảm mạnh!',
               damage: 100,
               correct: true,
-              feedback: 'Phân tích vector chuẩn mực! Dr. Sophos không thể chối cãi.'
+              feedback: 'Phân tích vector lực hoàn hảo! Các công thức P_x = mg·sinα, N = mg·cosα và a = g(sinα - μ·cosα) hoàn toàn chính xác.'
             }
           ]
         }
@@ -359,9 +384,9 @@ window.CASES_DATA = [
     verdicts: [
       {
         id: 'v_perfect',
-        title: 'BẢN ÁN KHOA HỌC: LÀM RÕ BẢN CHẤT LỰC PHÁP TUYẾN',
+        title: 'BẢN ÁN KHOA HỌC: LÀM RÕ BẢN CHẤT ÁP LỰC PHÁP TUYẾN TRÊN DỐC',
         result: 'perfect',
-        summary: 'Lực ma sát trượt phụ thuộc áp lực pháp tuyến N = mg*cos(alpha). Càng dốc, N càng bé dẫn đến ma sát càng giảm, xe trượt càng nhanh.'
+        summary: 'Lực ma sát trượt phụ thuộc vào Áp lực pháp tuyến N = mg·cosα chứ không bằng P = mg. Càng tăng độ dốc α, thành phần P_x = mg·sinα tăng trong khi áp lực N và ma sát trượt F_ms = μ·mg·cosα giảm, khiến gia tốc trượt a = g(sinα - μ·cosα) tăng vọt!'
       }
     ]
   },
@@ -373,26 +398,26 @@ window.CASES_DATA = [
     curriculum: 'Vật lý 10 - Bài 19: Các định luật bảo toàn',
     badge: 'NĂNG LƯỢNG',
     simModule: 'case5',
-    description: 'Một vụ thử nghiệm xe bọc thép 2000kg đâm dính chặt vào xe thứ hai 2000kg đang đứng yên. Giám đốc dự án tức giận: "Tại sao tổng động năng sau va chạm lại mất đi một nửa? Ai đã ăn cắp năng lượng của tôi?"',
+    description: 'Một vụ thử nghiệm va chạm giữa hai xe bọc thép: Xe 1 nặng 2000kg đâm dính chặt vào xe 2 nặng 2000kg đang đứng yên. Giám đốc dự án tức giận: "Tại sao tổng động năng sau va chạm lại mất đi một nửa? Ai đã ăn cắp năng lượng của tôi?"',
     
     classifyItems: [
       {
         id: 'c5_1',
         text: 'Trước va chạm xe 1 có động năng Wd1 = 400 kJ; sau va chạm hai xe dính nhau có tổng động năng Wd2 = 200 kJ.',
         type: 'fact',
-        explanation: 'Số liệu đo đạc năng lượng trước và sau va chạm.'
+        explanation: 'Số liệu đo đạc năng lượng trước và sau va chạm là SỰ THẬT (Fact).'
       },
       {
         id: 'c5_2',
         text: 'Năng lượng tự nhiên biến mất vi phạm định luật bảo toàn năng lượng.',
         type: 'opinion',
-        explanation: 'Nhầm lẫn giữa Động năng (cơ học) với Toàn bộ năng lượng hệ thống.'
+        explanation: 'Nhầm lẫn giữa Động năng (cơ học) với Toàn bộ năng lượng hệ thống, là Ý KIẾN ngụy biện (Opinion).'
       },
       {
         id: 'c5_3',
         text: 'Trong va chạm mềm, động lượng luôn bảo toàn nhưng cơ năng chuyển hóa thành biến dạng và nội nhiệt.',
         type: 'hypothesis',
-        explanation: 'Nguyên lý va chạm mềm trong nhiệt động học.'
+        explanation: 'Nguyên lý va chạm mềm trong nhiệt động học là GIẢ THUYẾT KHOA HỌC (Hypothesis).'
       }
     ],
 
@@ -413,14 +438,14 @@ window.CASES_DATA = [
         {
           sophosAttack: 'Vậy 200 kJ động năng biến đi đâu? Hãy chỉ ra nó đang ở dạng nào!',
           socratesHint: {
-            t1: 'Hãy sờ vào đầu xe sau vụ đâm dính: Nó nóng lên hay lạnh đi?',
-            t2: 'Sắt thép bị bẹp dúm cần một công cơ học để phá vỡ liên kết tinh thể.',
-            t3: '200 kJ đã biến thành Nội năng (nhiệt lượng tỏa ra môi trường) và Công biến dạng dẻo!'
+            t1: 'Hãy quan sát đầu xe sau cú đâm dính: Sắt thép bị bẹp dúm và nóng lên.',
+            t2: 'Sắt thép biến dạng cần tiêu tốn công cơ học để phá vỡ liên kết cấu trúc mạng tinh thể.',
+            t3: '200 kJ động năng đã biến thành Nhiệt năng làm nóng vỏ giáp và Công làm biến dạng dẻo kim loại!'
           },
           responses: [
             {
               id: 'r1',
-              text: '200 kJ đã chuyển hóa thành Nhiệt năng làm nóng đầu xe và Công làm biến dạng dẻo kim loại, tổng năng lượng vẫn bảo toàn tuyệt đối!',
+              text: '200 kJ đã chuyển hóa thành Nhiệt năng làm nóng đầu xe và Công làm biến dạng dẻo vỏ thép bọc giáp, tổng năng lượng vẫn bảo toàn tuyệt đối!',
               damage: 100,
               correct: true,
               feedback: 'Tuyệt đỉnh! Lý thuyết Nhiệt động lực học và Va chạm mềm được giải thích sáng tỏ.'
@@ -435,69 +460,69 @@ window.CASES_DATA = [
         id: 'v_perfect',
         title: 'BẢN ÁN BẢO TOÀN TOÀN DIỆN: NĂNG LƯỢNG KHÔNG TỰ NHIÊN MẤT ĐI',
         result: 'perfect',
-        summary: 'Động lượng bảo toàn p1 = (m1+m2)vf. Động năng hao hụt chuyển hóa thành nội nhiệt và công biến dạng dẻo.'
+        summary: 'Động lượng bảo toàn p1 = (m1+m2)vf. Động năng hao hụt chuyển hóa hoàn toàn thành nội nhiệt và công biến dạng dẻo của kim loại.'
       }
     ]
   },
 
   {
     id: 'case6',
-    title: 'VỤ ÁN 6: CÚ NHẢY TẦNG BÌNH LƯU - VẬN TỐC TỚI HẠN & CHIẾC DÙ CỨU SINH',
-    subtitle: 'Lực cản môi trường & Vận tốc tới hạn (Terminal Velocity)',
-    curriculum: 'Vật lý 10 - Bài 11: Lực cản của chất lưu',
+    title: 'VỤ ÁN 6: NGƯỜI NHẢY DÙ & BÍ MẬT VẬN TỐC TỚI HẠN (TERMINAL VELOCITY)',
+    subtitle: 'Lực cản không khí, Định luật I Newton & Cân bằng động trong các môi trường',
+    curriculum: 'Vật lý 10 - Bài 11: Lực cản của chất lưu & Định luật Newton',
     badge: 'CHẤT LƯU',
     simModule: 'case6',
-    description: 'Một phi hành gia nhảy dù từ độ cao 30.000m. Người ta tranh cãi: Càng rơi lâu trong không khí thì vận tốc sẽ tăng mãi mãi đến vô hạn hay sẽ dừng lại ở một ngưỡng tối đa?',
+    description: 'Một người nhảy dù rơi từ trên cao xuống. Đội điều tra tranh cãi: Tại sao khi lực cản không khí bằng đúng trọng lực (F_cản = P), người nhảy dù không bị khựng lại hay bay lơ lửng trên không mà vẫn tiếp tục rơi xuống đất? Liệu trên các hành tinh khác trong Hệ Mặt Trời, chiếc dù có bung được và hãm được tốc độ rơi không?',
     
     classifyItems: [
       {
         id: 'c6_1',
-        text: 'Vận tốc kế ghi nhận sau khi bung dù, vận tốc người nhảy giảm và duy trì ổn định ở mức 5.5 m/s.',
+        text: 'Cảm biến đo lường ghi nhận sau khi bung dù, vận tốc rơi giảm dần rồi duy trì ổn định không đổi ở mức 5.5 m/s.',
         type: 'fact',
-        explanation: 'Số liệu đo lường thực tế.'
+        explanation: 'Số liệu ghi nhận trực tiếp từ thiết bị đo tốc độ GPS và phong vũ biểu là SỰ THẬT (Fact).'
       },
       {
         id: 'c6_2',
-        text: 'Vật thể rơi tự do thì lúc nào cũng có gia tốc g nên vận tốc luôn tăng không có điểm dừng.',
+        text: 'Khi lực cản không khí bằng trọng lực (F_cản = P), hai lực triệt tiêu lẫn nhau nên người nhảy dù sẽ dừng lại đứng yên lơ lửng trên không trung.',
         type: 'opinion',
-        explanation: 'Ngộ nhận do quên mất lực cản không khí tăng tỉ lệ thuận với v².'
+        explanation: 'Nhầm lẫn nghiêm trọng giữa gia tốc bằng 0 với vận tốc bằng 0, là Ý KIẾN ngụy biện (Opinion).'
       },
       {
         id: 'c6_3',
-        text: 'Khi lực cản khí bằng trọng lực (F_cản = P), gia tốc a = 0 và vật đạt vận tốc tới hạn.',
+        text: 'Theo Định luật I Newton: Khi tổng hợp lực bằng 0 (F_cản = P => ΣF = 0 => a = 0), vật đang chuyển động sẽ TIẾP TỤC CHUYỂN ĐỘNG THẲNG ĐỀU với vận tốc tới hạn v_terminal chứ không đứng yên.',
         type: 'hypothesis',
-        explanation: 'Cơ chế trạng thái cân bằng động trong chất lưu.'
+        explanation: 'Đây là GIẢ THUYẾT KHOA HỌC (Hypothesis) chuẩn mực của cơ học Newton cần kiểm chứng.'
       }
     ],
 
-    sophosStatement: 'Trọng lực kéo liên tục 24/7 thì gia tốc phải có mãi! Làm sao mà vận tốc lại chịu dừng lại được? Vận tốc tới hạn chỉ là bịa đặt!',
-    fallacyType: 'NGỤY BIỆN BỎ QUA BIẾN SỐ ĐỘNG (Ignoring Dynamic Variable: Bỏ qua F_cản phụ thuộc vào v²)',
-    fallacyExplanation: 'Lực cản không phải là hằng số mà tăng theo bình phương vận tốc, dẫn đến trạng thái tự cân bằng.',
+    sophosStatement: 'Hợp lực bằng 0 thì chuyển động phải ngừng lại chứ! Trọng lực P kéo xuống bao nhiêu thì lực cản F_cản đẩy lên bấy nhiêu, hai lực triệt tiêu bằng 0 thì người rơi phải dừng lại lơ lửng giữa trời! Tại sao người đó vẫn tiếp tục rơi cắm đầu xuống đất?',
+    fallacyType: 'NGỤY BIỆN NHẦM LẪN GIỮA VẬN TỐC VÀ GIA TỐC (Confusing Velocity with Acceleration)',
+    fallacyExplanation: 'Tiến sĩ Sophos nhầm lẫn giữa Gia tốc a = 0 (vận tốc không đổi) với Vận tốc v = 0 (đứng yên). Định luật I Newton nêu rõ: Một vật đang có chuyển động, nếu hợp lực tác dụng bằng 0 thì nó sẽ TIẾP TỤC CHUYỂN ĐỘNG THẲNG ĐỀU với vận tốc sẵn có!',
 
-    poeQuestion: 'Khi một người nhảy dù rơi trong không khí đủ lâu, chuyển động của người đó sẽ trở thành gì?',
+    poeQuestion: 'Khi một người nhảy dù rơi trong không khí và đạt trạng thái lực cản không khí bằng đúng trọng lực (F_cản = P), người đó sẽ chuyển động như thế nào?',
     poeOptions: [
-      { id: 'opt1', text: 'Chuyển động nhanh dần đều với gia tốc g không đổi.' },
-      { id: 'opt2', text: 'Chuyển động thẳng đều với vận tốc không đổi gọi là Vận tốc tới hạn (a = 0).', correct: true },
-      { id: 'opt3', text: 'Chuyển động chậm dần và dừng lại lơ lửng trên không trung.' }
+      { id: 'opt1', text: 'Dừng lại ngay lập tức và bay lơ lửng trên không vì hai lực đã triệt tiêu lẫn nhau (Sai lầm phổ biến).' },
+      { id: 'opt2', text: 'Tiếp tục rơi thẳng đều với vận tốc không đổi (gọi là Vận tốc tới hạn v_terminal) theo Định luật I Newton.', correct: true },
+      { id: 'opt3', text: 'Rơi nhanh dần đều mãi mãi với gia tốc g không có giới hạn.' }
     ],
 
     socraticDuel: {
       initialSophosHp: 100,
       rounds: [
         {
-          sophosAttack: 'Khi nào thì gia tốc rơi a trở về số 0 nếu Trái Đất vẫn hút người đó với lực P = mg?',
+          sophosAttack: 'F_cản = P tức là tổng hợp lực ΣF = 0! Không còn lực nào kéo nữa thì lấy đâu ra năng lượng mà rơi tiếp? Phải đứng yên chứ!',
           socratesHint: {
-            t1: 'Viết phương trình định luật II Newton: F_net = P - F_cản = ma.',
-            t2: 'Khi vận tốc v tăng, F_cản = 1/2*rho*C_d*A*v² sẽ tăng đến khi nào?',
-            t3: 'Khi F_cản = P thì Hợp lực F_net = 0, suy ra a = F_net / m = 0! Vận tốc không tăng thêm được nữa!'
+            t1: 'Đọc kỹ Định luật I Newton: "Một vật đang chuyển động mà không chịu lực nào hoặc chịu các lực có hợp lực bằng 0..."',
+            t2: 'Gia tốc a = Δv / Δt = 0 có nghĩa là gì? Có nghĩa là vận tốc v KHÔNG THAY ĐỔI, chứ không phải v = 0!',
+            t3: 'Trước khi hai lực cân bằng, người nhảy dù đã có một vận tốc rơi rất lớn. Khi hai lực cân bằng, người tiếp tục rơi đều với vận tốc đó!'
           },
           responses: [
             {
               id: 'r1',
-              text: 'Khi F_cản tăng đến bằng đúng P, hợp lực F_net = 0 nên a = 0. Vận tốc đạt giá trị tới hạn v_terminal và rơi thẳng đều!',
+              text: 'Theo Định luật I Newton: ΣF = 0 dẫn đến gia tốc a = 0, tức là VẬN TỐC KHÔNG THAY ĐỔI! Người nhảy dù đã có sẵn vận tốc rơi nên sẽ tiếp tục rơi thẳng đều với vận tốc tới hạn đó!',
               damage: 100,
               correct: true,
-              feedback: 'Quá chuẩn xác! Bấm nút "Bung Dù" trên mô phỏng để chứng minh diện tích A tăng làm giảm v_terminal giúp tiếp đất an toàn!'
+              feedback: 'Tuyệt vời! Bạn đã vạch trần dứt điểm sự nhầm lẫn giữa Gia tốc a = 0 và Vận tốc v = 0.'
             }
           ]
         }
@@ -507,9 +532,9 @@ window.CASES_DATA = [
     verdicts: [
       {
         id: 'v_perfect',
-        title: 'BẢN ÁN CÂN BẰNG ĐỘNG LỰC HỌC CHẤT LƯU',
+        title: 'BẢN ÁN VẬN TỐC TỚI HẠN & ĐỊNH LUẬT I NEWTON',
         result: 'perfect',
-        summary: 'Vật rơi trong chất lưu đạt vận tốc tới hạn khi F_cản = P (a = 0). Chiếc dù tăng diện tích cản A giúp giảm vận tốc tới hạn xuống mức an toàn cho con người.'
+        summary: 'Bạn đã làm sáng tỏ chân lý: Lực cản không khí F_cản tăng theo bình phương vận tốc (v²). Khi F_cản = P, hợp lực ΣF = 0, gia tốc a = 0. Người nhảy dù không hề dừng lại lơ lửng mà tiếp tục rơi thẳng đều với Vận tốc tới hạn (v_terminal). Khi bung dù, diện tích cản A tăng vọt giúp hạ v_terminal xuống mức an toàn (~5 m/s).'
       }
     ]
   }

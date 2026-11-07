@@ -44,8 +44,12 @@
     </div>
 
     <div class="header-status">
+      <div class="stat-chip" id="studentProfileChip" style="cursor:pointer;" onclick="window.investigationEngine.openProfileModal()" title="Bấm để cập nhật Họ tên, Lớp, Trường">
+        <span>👤 Thí sinh:</span>
+        <strong id="studentDisplay" style="color:var(--cyan)">Chưa đăng ký</strong>
+      </div>
       <div class="stat-chip">
-        <span>🏆 Điểm Phản Biện (CTS):</span>
+        <span>🏆 Điểm Phản Biện:</span>
         <strong id="scoreDisplay">0</strong>
       </div>
       <div class="stat-chip">
@@ -55,10 +59,6 @@
     </div>
 
     <div class="header-actions">
-      <button class="btn" id="btnToggleAudio" type="button" aria-pressed="true" title="Bật/tắt giọng đọc Adam TikTok">
-        <span id="audioBtnIcon" aria-hidden="true">🎙️</span>
-        <span id="audioBtnLabel">Giọng Adam: BẬT</span>
-      </button>
       <button class="btn btn-primary" onclick="window.pedagogyAnalytics.openModal()">
         📊 Báo Cáo NCKH Sư Phạm
       </button>
@@ -78,7 +78,7 @@
     <button class="tab-btn" data-tab="analytics" onclick="window.pedagogyAnalytics.openModal()">
       <span>📊 Khung NCKH Facione & SPSS</span>
     </button>
-    <button class="tab-btn" data-tab="guide">
+    <button class="tab-btn" data-tab="guide" onclick="window.openPedagogyGuide()">
       <span>📖 Hướng Dẫn Sư Phạm</span>
     </button>
   </nav>
@@ -118,13 +118,9 @@
       </div>
 
       <div class="panel-body sim-container">
-        <!-- Canvas Screen -->
+        <!-- Canvas Screen (Clutter Removed) -->
         <div class="canvas-wrapper">
-          <canvas id="physicsCanvas"></canvas>
-          <div class="canvas-hud">
-            <span class="hud-badge">DYNAMIC VECTOR OVERLAY: ON</span>
-            <span class="hud-badge">CẢM BIẾN LỰC KẾ ÁP ĐIỆN TỬ: SẴN SÀNG</span>
-          </div>
+          <canvas id="physicsCanvas" width="700" height="380"></canvas>
         </div>
 
         <!-- Sensor Readout Grid -->
@@ -153,12 +149,14 @@
             <label for="envSelect">Môi trường trọng lực:</label>
             <div class="slider-wrap">
               <select id="envSelect" style="background:var(--bg-input); color:var(--text-main); border:1px solid var(--border-strong); padding:6px 12px; border-radius:6px; width:100%; font-size:0.85rem;">
-                <option value="earth_air">🌍 Trái Đất (Khí quyển) — g = 9.8 m/s²</option>
+                <option value="earth_air">🌍 Trái Đất (Khí quyển tiêu chuẩn) — g = 9.8 m/s²</option>
                 <option value="earth_vacuum">⚡ Trái Đất (Chân không) — g = 9.8 m/s² (F_cản = 0)</option>
-                <option value="mars">🪐 Sao Hỏa (Mars) — g = 3.72 m/s²</option>
-                <option value="moon">🌕 Mặt Trăng (Moon) — g = 1.62 m/s²</option>
-                <option value="pluto">❄️ Sao Diêm Vương (Pluto) — g = 0.62 m/s²</option>
-                <option value="sun">☀️ Mặt Trời (Sun) — g = 274.0 m/s²</option>
+                <option value="mars">🪐 Sao Hỏa (Mars) — g = 3.72 m/s² (Khí quyển CO₂ mỏng)</option>
+                <option value="moon">🌕 Mặt Trăng (Moon) — g = 1.62 m/s² (Chân không tuyệt đối)</option>
+                <option value="venus">🌋 Sao Kim (Venus) — g = 8.87 m/s² (Khí quyển siêu đặc CO₂)</option>
+                <option value="jupiter">⚡ Sao Mộc (Jupiter) — g = 24.79 m/s² (Hành tinh khí khổng lồ)</option>
+                <option value="pluto">❄️ Sao Diêm Vương (Pluto) — g = 0.62 m/s² (Băng giá)</option>
+                <option value="sun">☀️ Mặt Trời (Sun) — g = 274.0 m/s² (Siêu trọng lực cực đại)</option>
               </select>
             </div>
           </div>
@@ -186,6 +184,109 @@
     </section>
 
   </main>
+
+  <!-- ==================== STUDENT REGISTRATION MODAL ==================== -->
+  <div class="modal-overlay" id="studentModal">
+    <div class="modal-content" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3 style="color:var(--cyan); display:flex; align-items:center; gap:8px;">
+          <span>👤</span> THÔNG TIN HỌC SINH THAM GIA ĐIỀU TRA
+        </h3>
+        <button class="btn" onclick="window.investigationEngine.closeProfileModal()" title="Đóng cửa sổ">✕</button>
+      </div>
+      <div class="modal-body" style="gap:14px;">
+        <div id="studentModalAlert" style="display:none; padding:10px 14px; background:rgba(239,68,68,0.15); border:1px solid var(--crimson); border-radius:6px; color:var(--crimson); font-size:0.85rem; font-weight:600;"></div>
+        <p style="font-size:0.85rem; color:var(--text-muted); line-height:1.5;">
+          Học sinh bắt buộc phải nhập đầy đủ <strong>Họ tên, Lớp và Trường</strong> trước khi tham gia trò chơi để ghi nhận số liệu đánh giá năng lực phản biện (Facione T1 - T4) phục vụ đề tài NCKH:
+        </p>
+        <div>
+          <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">Họ và tên học sinh (*):</label>
+          <input type="text" id="studentNameInput" placeholder="Ví dụ: Nguyễn Văn An" 
+                 style="width:100%; padding:9px 12px; background:var(--bg-input); color:var(--text-main); border:1px solid var(--border-strong); border-radius:6px; font-size:0.9rem;">
+        </div>
+        <div>
+          <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">Lớp học (*):</label>
+          <input type="text" id="studentClassInput" placeholder="Ví dụ: 10A1" 
+                 style="width:100%; padding:9px 12px; background:var(--bg-input); color:var(--text-main); border:1px solid var(--border-strong); border-radius:6px; font-size:0.9rem;">
+        </div>
+        <div>
+          <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">Trường THPT (*):</label>
+          <input type="text" id="studentSchoolInput" placeholder="Ví dụ: THPT Chuyên Sư Phạm" 
+                 style="width:100%; padding:9px 12px; background:var(--bg-input); color:var(--text-main); border:1px solid var(--border-strong); border-radius:6px; font-size:0.9rem;">
+        </div>
+        <div style="margin-top:8px;">
+          <button class="btn btn-primary" onclick="window.investigationEngine.saveProfile()" style="width:100%; justify-content:center; padding:10px;">
+            💾 Xác Nhận & Bắt Đầu Điều Tra
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== PEDAGOGY GUIDE MODAL ==================== -->
+  <div class="modal-overlay" id="pedagogyGuideModal">
+    <div class="modal-content" style="max-width: 900px;">
+      <div class="modal-header">
+        <h3 style="color:var(--cyan); display:flex; align-items:center; gap:8px;">
+          <span>📖</span> HƯỚNG DẪN SƯ PHẠM: TỔ CHỨC DẠY HỌC PHÁT TRIỂN NĂNG LỰC TƯ DUY PHẢN BIỆN (GDPT 2018)
+        </h3>
+        <button class="btn" onclick="window.closePedagogyGuide()">✕ Đóng</button>
+      </div>
+      <div class="modal-body" style="gap:20px; font-size:0.88rem; line-height:1.6;">
+        <!-- Phần 1: Mục tiêu -->
+        <div style="background:var(--bg-alt); padding:16px; border-radius:8px; border-left:4px solid var(--cyan);">
+          <h4 style="color:var(--cyan); margin-bottom:8px;">🎯 1. MỤC TIÊU & ĐỊNH HƯỚNG CHƯƠNG TRÌNH GDPT 2018 (VẬT LÝ 10)</h4>
+          <p>Trò chơi <strong>"Hồ Sơ Vật Lý: Điều Tra Chân Lý Thực Nghiệm"</strong> được thiết kế nhằm hiện thực hóa mục tiêu phát triển phẩm chất và năng lực học sinh, trọng tâm là <em>Năng lực Tìm hiểu thế giới tự nhiên dưới góc độ vật lý</em> và <em>Năng lực Tư duy phản biện</em> trong chủ đề Động lực học (Ba định luật Newton, Rơi tự do, Lực ma sát, Lực cản chất lưu, Chuyển động tròn).</p>
+        </div>
+
+        <!-- Phần 2: Khung năng lực Facione -->
+        <div>
+          <h4 style="color:var(--text-main); margin-bottom:10px;">🧠 2. KHUNG NĂNG LỰC TƯ DUY PHẢN BIỆN (FACIONE 1990 & ENNIS 2011)</h4>
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:12px;">
+            <div style="background:var(--bg-alt); padding:12px; border-radius:6px; border:1px solid var(--border-color);">
+              <strong style="color:var(--cyan)">T1: Phân tích (Analysis)</strong>
+              <p style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">Phân loại chính xác bản chất nhận thức luận: Sự thật (Fact), Ý kiến (Opinion) và Giả thuyết khoa học (Hypothesis).</p>
+            </div>
+            <div style="background:var(--bg-alt); padding:12px; border-radius:6px; border:1px solid var(--border-color);">
+              <strong style="color:var(--green)">T2: Đánh giá bằng chứng (Evaluation)</strong>
+              <p style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">Sử dụng số liệu cảm biến thực nghiệm 60 FPS để kiểm chứng dự đoán và loại bỏ biến số nhiễu.</p>
+            </div>
+            <div style="background:var(--bg-alt); padding:12px; border-radius:6px; border:1px solid var(--border-color);">
+              <strong style="color:var(--crimson)">T3: Bác bỏ ngụy biện (Inference)</strong>
+              <p style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">Nhận diện và đánh sập các bẫy ngụy biện kinh điển của Dr. Sophos qua đối thoại Socratic nhiều cấp độ.</p>
+            </div>
+            <div style="background:var(--bg-alt); padding:12px; border-radius:6px; border:1px solid var(--border-color);">
+              <strong style="color:var(--amber)">T4: Tự điều chỉnh (Self-Regulation)</strong>
+              <p style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">Chu trình POE: Cân chỉnh độ tự tin khoa học và sẵn sàng thay đổi mô hình nhận thức sai lầm (Conceptual Change).</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phần 3: Tiến trình 5 pha -->
+        <div>
+          <h4 style="color:var(--text-main); margin-bottom:10px;">⚡ 3. TIẾN TRÌNH DẠY HỌC 5 PHA ĐIỀU TRA KHÁM PHÁ (5-PHASE INQUIRY CYCLE)</h4>
+          <ol style="padding-left:20px; line-height:1.8;">
+            <li><strong>Pha 1 - Tiếp nhận Vụ án & Phân loại phát biểu:</strong> Học sinh đọc hồ sơ hiện trường, phân biệt dữ liệu đo lường thực tế với định kiến ngụy biện. Mỗi câu chỉ trả lời một lần duy nhất để phản ánh trung thực trạng thái nhận thức.</li>
+            <li><strong>Pha 2 - Nhận diện Bẫy Ngụy biện của Dr. Sophos:</strong> Khám phá nguyên nhân gốc rễ của những ngộ nhận phổ biến trong lịch sử khoa học.</li>
+            <li><strong>Pha 3 - Thao trường Thực nghiệm POE (Predict - Observe - Explain):</strong> Dự đoán, tự đánh giá độ tự tin (10% - 100%), sau đó quan sát thí nghiệm mô phỏng động lực học 60 FPS để đối chiếu.</li>
+            <li><strong>Pha 4 - Đối chất Socratic (Socratic Duel):</strong> Sử dụng bằng chứng số liệu và công thức định luật để phản bác lập luận ngụy biện của Dr. Sophos.</li>
+            <li><strong>Pha 5 - Phán quyết Khoa học & Báo cáo NCKH:</strong> Hoàn thành bản án chân lý và theo dõi biểu đồ radar Facione, số liệu thực nghiệm SPSS 26.0.</li>
+          </ol>
+        </div>
+
+        <!-- Phần 4: Khuyến nghị cho Giáo viên -->
+        <div style="background:var(--bg-alt); padding:14px; border-radius:8px;">
+          <h4 style="color:var(--green); margin-bottom:6px;">👨‍🏫 4. GỢI Ý DÀNH CHO GIÁO VIÊN VẬT LÝ</h4>
+          <p>• <strong>Dạy học theo trạm hoặc nhóm:</strong> Chia lớp thành các tổ điều tra, mỗi nhóm phụ trách một vụ án và bảo vệ kết quả trước hội đồng.</p>
+          <p>• <strong>Thu thập dữ liệu nghiên cứu:</strong> Bấm nút <em>"Xuất File Dữ Liệu SPSS (JSON)"</em> trong mục Báo cáo NCKH để thu thập toàn bộ câu trả lời của từng học sinh phục vụ đề tài nghiên cứu sư phạm ứng dụng.</p>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end;">
+          <button class="btn btn-primary" onclick="window.closePedagogyGuide()">Đã Hiểu & Bắt Đầu Điều Tra</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- ==================== JURY ANALYTICS & NCKH SƯ PHẠM MODAL ==================== -->
   <div class="modal-overlay" id="juryModal">
@@ -251,7 +352,7 @@
                 </tr>
                 <tr>
                   <td><strong>Kiểm định Paired t-test</strong></td>
-                  <td colspan="2">t = 5.46; p < 0.001 (Có ý nghĩa thống kê cao)</td>
+                  <td colspan="2">t = 5.46; p &lt; 0.001 (Có ý nghĩa thống kê cao)</td>
                 </tr>
                 <tr>
                   <td><strong>Độ tin cậy Cronbach's α</strong></td>
@@ -261,6 +362,9 @@
             </table>
           </div>
         </div>
+
+        <!-- Student Critical Thinking Ledger -->
+        <div id="studentLedgerContainer"></div>
 
         <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:14px;">
           <button class="btn btn-primary" onclick="window.pedagogyAnalytics.printReport()">

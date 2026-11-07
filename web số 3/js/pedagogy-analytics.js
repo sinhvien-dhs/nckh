@@ -1,7 +1,7 @@
 /* ==========================================================================
    PHYSICS DETECTIVE - Pedagogy Analytics & Facione Radar Chart
    Standardized Sư phạm NCKH Evaluation (Facione 1990 & Ennis 2011)
-   Includes SPSS 26.0 Statistical Validation Grid
+   Includes SPSS 26.0 Statistical Validation Grid & Student Response Ledger
    ========================================================================== */
 
 class PedagogyAnalytics {
@@ -10,13 +10,12 @@ class PedagogyAnalytics {
     this.canvas = document.getElementById('radarCanvas');
     this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
 
-    // Vẽ lại radar khi đổi nền sáng/tối trong lúc modal đang mở.
+    // Vẽ lại radar khi đổi nền sáng/tối trong lúc modal đang mở
     document.addEventListener('themechange', () => {
       if (this.modal && this.modal.classList.contains('active')) this.renderRadar();
     });
   }
 
-  // Bảng màu radar đồng bộ với giao diện sáng/tối.
   palette() {
     const dark = document.documentElement.getAttribute('data-theme') === 'dark';
     return dark ? {
@@ -44,6 +43,7 @@ class PedagogyAnalytics {
       this.modal.classList.add('active');
       this.renderRadar();
       this.updateMetricsUI();
+      this.renderStudentLedger();
     }
   }
 
@@ -52,6 +52,13 @@ class PedagogyAnalytics {
     if (this.modal) {
       this.modal.classList.remove('active');
     }
+
+    // Reset active tab về Hồ Sơ Vụ Án (Campaign)
+    const tabs = document.querySelectorAll('.tab-btn');
+    tabs.forEach(t => {
+      if (t.dataset.tab === 'campaign') t.classList.add('active');
+      else t.classList.remove('active');
+    });
   }
 
   updateMetricsUI() {
@@ -65,6 +72,106 @@ class PedagogyAnalytics {
     if (t2El) t2El.innerText = `${f.t2}%`;
     if (t3El) t3El.innerText = `${f.t3}%`;
     if (t4El) t4El.innerText = `${f.t4}%`;
+  }
+
+  renderStudentLedger() {
+    const container = document.getElementById('studentLedgerContainer');
+    if (!container) return;
+
+    const prof = window.investigationEngine.studentProfile;
+    const answers = window.investigationEngine.studentAnswers || {};
+
+    let totalAnswered = 0;
+    let correctCount = 0;
+    let rowsHtml = '';
+
+    window.CASES_DATA.forEach((c, cIdx) => {
+      const caseAns = answers[c.id];
+      if (caseAns) {
+        c.classifyItems.forEach(item => {
+          const ans = caseAns[item.id];
+          if (ans) {
+            totalAnswered++;
+            if (ans.isCorrect) correctCount++;
+
+            const badgeColor = ans.chosen === 'fact' ? 'var(--green)' : (ans.chosen === 'opinion' ? 'var(--amber)' : 'var(--cyan)');
+            const targetColor = ans.target === 'fact' ? 'var(--green)' : (ans.target === 'opinion' ? 'var(--amber)' : 'var(--cyan)');
+
+            rowsHtml += `
+              <tr>
+                <td><strong>Vụ án ${cIdx + 1}</strong></td>
+                <td style="font-size:0.8rem;">"${ans.text}"</td>
+                <td><strong style="color:${badgeColor}">${ans.chosen.toUpperCase()}</strong></td>
+                <td><span style="color:${targetColor}">${ans.target.toUpperCase()}</span></td>
+                <td>${ans.isCorrect ? '<span style="color:var(--green)">✓ Chuẩn xác</span>' : '<span style="color:var(--amber)">● Ý kiến riêng</span>'}</td>
+              </tr>
+            `;
+          }
+        });
+      }
+    });
+
+    const accuracyRate = totalAnswered > 0 ? ((correctCount / totalAnswered) * 100).toFixed(1) : '0';
+
+    container.innerHTML = `
+      <div style="background:var(--bg-alt); padding:14px; border-radius:8px; border:1px solid var(--border-color); margin-top:14px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
+          <h4 style="color:var(--text-main); font-size:0.9rem; margin:0;">
+            👤 NHẬT KÝ TƯ DUY PHẢN BIỆN CỦA HỌC SINH
+          </h4>
+          <div style="font-size:0.82rem; color:var(--text-muted);">
+            Thí sinh: <strong style="color:var(--cyan)">${prof.name || 'Chưa nhập'}</strong> | 
+            Lớp: <strong>${prof.className || '-'}</strong> | 
+            Trường: <strong>${prof.schoolName || '-'}</strong>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:16px; margin-bottom:10px; font-size:0.82rem;">
+          <span>Tổng phát biểu đã phân loại: <strong>${totalAnswered}</strong></span>
+          <span>Phù hợp chuẩn nhận thức: <strong style="color:var(--green)">${correctCount} (${accuracyRate}%)</strong></span>
+        </div>
+
+        <div style="max-height:180px; overflow-y:auto;">
+          <table class="spss-table" style="font-size:0.78rem;">
+            <thead>
+              <tr>
+                <th>Vụ án</th>
+                <th>Phát biểu từ hiện trường</th>
+                <th>Lựa chọn học sinh</th>
+                <th>Chuẩn nhận thức</th>
+                <th>Đánh giá</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rowsHtml || '<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">Học sinh chưa thực hiện phân loại phát biểu nào. Hãy vào Vụ án 1 để bắt đầu!</td></tr>'}
+            </tbody>
+          </table>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px;">
+          <button class="btn" onclick="window.pedagogyAnalytics.exportDataJSON()" style="font-size:0.8rem; padding:4px 10px;">
+            📥 Xuất File Dữ Liệu SPSS (JSON)
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  exportDataJSON() {
+    const exportData = {
+      studentProfile: window.investigationEngine.studentProfile,
+      facioneMetrics: window.investigationEngine.facione,
+      score: window.investigationEngine.score,
+      answers: window.investigationEngine.studentAnswers,
+      exportedAt: new Date().toISOString()
+    };
+
+    const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(exportData, null, 2));
+    const dlAnchor = document.createElement('a');
+    dlAnchor.setAttribute('href', dataStr);
+    dlAnchor.setAttribute('download', `physics_critical_thinking_${(exportData.studentProfile.name || 'student').replace(/\s+/g, '_')}.json`);
+    dlAnchor.click();
+    dlAnchor.remove();
   }
 
   renderRadar() {
@@ -93,7 +200,7 @@ class PedagogyAnalytics {
     const values = [f.t1 / 100, f.t2 / 100, f.t3 / 100, f.t4 / 100];
     const numAxes = 4;
 
-    // Draw concentric web rings
+    // Concentric web rings
     ctx.strokeStyle = p.ring;
     ctx.lineWidth = 1;
     for (let r = 0.25; r <= 1.0; r += 0.25) {
@@ -109,7 +216,7 @@ class PedagogyAnalytics {
       ctx.stroke();
     }
 
-    // Draw axes
+    // Axes & labels
     ctx.strokeStyle = p.axis;
     for (let i = 0; i < numAxes; i++) {
       const angle = (i * 2 * Math.PI) / numAxes - Math.PI / 2;
@@ -120,7 +227,6 @@ class PedagogyAnalytics {
       ctx.lineTo(x, y);
       ctx.stroke();
 
-      // Axis Labels
       ctx.font = '10px "Inter", sans-serif';
       ctx.fillStyle = p.label;
       const labelX = cx + (radius + 22) * Math.cos(angle);
@@ -130,7 +236,7 @@ class PedagogyAnalytics {
       ctx.fillText(labels[i], labelX, labelY);
     }
 
-    // Draw filled radar polygon
+    // Radar polygon
     ctx.beginPath();
     for (let i = 0; i < numAxes; i++) {
       const angle = (i * 2 * Math.PI) / numAxes - Math.PI / 2;
