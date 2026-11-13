@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>HỒ SƠ VẬT LÝ: ĐIỀU TRA NGỤY BIỆN & CHÂN LÝ THỰC NGHIỆM (PHYSICS DETECTIVE)</title>
+  <meta name="description"
+    content="Trò chơi học tập kết hợp mô phỏng động lực học HTML5 Canvas 60 FPS và điều tra tư duy phản biện Socratic nhằm phát triển năng lực tư duy phản biện của học sinh trong dạy học Vật lý THPT (GDPT 2018).">
+  <meta name="theme-color" content="#FBFBF9">
+
+  <!-- Áp dụng nền đã lưu trước khi CSS tải để tránh nháy trắng -->
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem('physics-detective-theme') === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) { /* localStorage có thể bị chặn */ }
+    })();
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Newsreader:opsz,wght@6..72,500;6..72,600;6..72,700&display=swap"
+    rel="stylesheet">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/style.css?v=20261114_02">
+</head>
+
+<body>
+
+  <!-- ==================== STUDENT / USER GAME VIEW ==================== -->
+  <div id="studentGameView">
+
+    <!-- ==================== TOP HEADER ==================== -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-icon">⚛️</div>
+        <div class="brand-text">
+          <h1>HỒ SƠ VẬT LÝ: ĐIỀU TRA CHÂN LÝ THỰC NGHIỆM</h1>
+          <p>Phát triển Năng lực Tư duy Phản biện trong Dạy học Vật lý THPT • GDPT 2018</p>
+        </div>
+      </div>
+
+      <div class="header-status">
+        <div class="stat-chip" id="studentProfileChip" style="cursor:pointer;" onclick="window.investigationEngine.openProfileModal()" title="Bấm để cập nhật Họ tên, Lớp, Trường">
+          <span>👤 Thí sinh:</span>
+          <strong id="studentDisplay" style="color:var(--cyan)">Chưa đăng ký</strong>
+        </div>
+        <div class="stat-chip">
+          <span>🏆 Điểm Phản Biện:</span>
+          <strong id="scoreDisplay">0</strong>
+        </div>
+        <div class="stat-chip">
+          <span>🎖️ Cấp bậc:</span>
+          <strong id="rankDisplay" style="color:var(--green)">Tập sự</strong>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn" id="btnOpenGuide" type="button" onclick="window.openPedagogyGuide()" title="Xem Hướng dẫn điều tra sư phạm">
+          📖 Hướng Dẫn
+        </button>
+        <a href="?mode=admin" class="btn" id="btnNavAdmin" title="Khu vực dành cho Giáo viên / Quản trị viên (Cần mã PIN 10112026)">
+          🔐 Giáo Viên
+        </a>
+        <button class="btn" id="btnToggleTheme" type="button" aria-pressed="false"
+          aria-label="Chế độ nền sáng. Bấm để chuyển sang nền tối." title="Chuyển sang nền tối">
+          <span id="themeBtnIcon" aria-hidden="true">☀️</span>
+          <span id="themeBtnLabel">Sáng</span>
+        </button>
+      </div>
+    </header>
+
+  <!-- ==================== CASE SELECTOR BAR ==================== -->
+  <div class="case-bar" id="caseSelectorBar">
+    <!-- Populated by app.js -->
+  </div>
+
+  <!-- ==================== MAIN WORKSPACE ==================== -->
+  <main class="main-layout">
+    
+    <!-- Left Column: Investigation Dossier & Critical Thinking Engine -->
+    <section class="panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <i>🕵️</i>
+          <span>BẢNG ĐIỀU TRA TƯ DUY PHẢN BIỆN (INVESTIGATION DOSSIER)</span>
+        </div>
+      </div>
+      <div class="panel-body" id="investigationContent">
+        <!-- Rendered dynamically by investigation-engine.js -->
+      </div>
+    </section>
+
+    <!-- Right Column: Interactive Physics Sandbox 60 FPS -->
+    <section class="panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <i>🔬</i>
+          <span>PHÒNG THÍ NGHIỆM ĐỘNG LỰC HỌC ẢO (HTML5 CANVAS 60 FPS)</span>
+        </div>
+        <div class="canvas-controls-overlay" style="position:static;">
+          <span class="hud-badge" style="color:var(--green)">● LIVE 60 FPS</span>
+        </div>
+      </div>
+
+      <div class="panel-body sim-container">
+        <!-- Canvas Screen (Clutter Removed) -->
+        <div class="canvas-wrapper">
+          <canvas id="physicsCanvas" width="700" height="380"></canvas>
+        </div>
+
+        <!-- Sensor Readout Grid -->
+        <div class="sensor-grid">
+          <div class="sensor-card">
+            <div class="label">⏱️ Thời gian (t)</div>
+            <div class="value" id="sensorTime">0.00 s</div>
+          </div>
+          <div class="sensor-card">
+            <div class="label">🚀 Vận tốc (v)</div>
+            <div class="value" id="sensorV1">0.0 m/s</div>
+          </div>
+          <div class="sensor-card">
+            <div class="label">💥 Lực tác dụng (F)</div>
+            <div class="value" id="sensorF1" style="color:var(--amber)">0 N</div>
+          </div>
+          <div class="sensor-card">
+            <div class="label">📈 Gia tốc (a)</div>
+            <div class="value" id="sensorA1" style="color:var(--green)">0.00 m/s²</div>
+          </div>
+        </div>
+
+        <!-- Simulation Toolbar -->
+        <div class="sim-controls-panel">
+          <div class="param-slider-row" id="envSelectRow">
+            <label for="envSelect">🌌 Môi trường trọng lực:</label>
+            <div class="slider-wrap">
+              <select id="envSelect" style="background:var(--bg-input); color:var(--text-main); border:1px solid var(--border-strong); padding:6px 12px; border-radius:6px; width:100%; font-size:0.85rem;">
+                <option value="earth_air">Trái Đất (Khí quyển tiêu chuẩn) — g = 9.8 m/s²</option>
+                <option value="earth_vacuum">Trái Đất (Chân không) — g = 9.8 m/s² (F_cản = 0)</option>
+                <option value="mars">Sao Hỏa (Mars) — g = 3.72 m/s² (Khí quyển CO₂ mỏng)</option>
+                <option value="moon">Mặt Trăng (Moon) — g = 1.62 m/s² (Chân không tuyệt đối)</option>
+                <option value="venus">Sao Kim (Venus) — g = 8.87 m/s² (Khí quyển siêu đặc CO₂)</option>
+                <option value="jupiter">Sao Mộc (Jupiter) — g = 24.79 m/s² (Hành tinh khí khổng lồ)</option>
+                <option value="pluto">Sao Diêm Vương (Pluto) — g = 0.62 m/s² (Băng giá)</option>
+                <option value="sun">Mặt Trời (Sun) — g = 274.0 m/s² (Siêu trọng lực cực đại)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Case 1: Tùy chỉnh khối lượng 2 vật rơi (m1 và m2) -->
+          <div class="param-slider-row" id="case1MassRow" style="display:none; flex-direction:column; gap:6px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+              <span style="font-weight:700; color:var(--text-main); font-size:0.85rem;">⚖️ Tùy chỉnh khối lượng vật rơi:</span>
+              <span style="font-size:0.75rem; color:var(--text-muted);">(Kiểm chứng tư duy Aristotle vs Galilei)</span>
+            </div>
+            <div style="display:flex; gap:12px; width:100%; flex-wrap:wrap;">
+              <div style="flex:1; min-width:160px; background:var(--bg-card); padding:8px 12px; border-radius:8px; border:1px solid var(--border-subtle);">
+                <div style="display:flex; justify-content:space-between; font-size:0.83rem; margin-bottom:4px;">
+                  <label for="inputM1" style="font-weight:600; color:var(--teal);">Quả tạ chì (m₁):</label>
+                  <span id="labelM1" style="color:var(--teal); font-weight:700; font-family:monospace;">5.0 kg</span>
+                </div>
+                <input type="range" id="inputM1" min="0.5" max="20" step="0.5" value="5" style="width:100%; accent-color:var(--teal); cursor:pointer;">
+              </div>
+              <div style="flex:1; min-width:160px; background:var(--bg-card); padding:8px 12px; border-radius:8px; border:1px solid var(--border-subtle);">
+                <div style="display:flex; justify-content:space-between; font-size:0.83rem; margin-bottom:4px;">
+                  <label for="inputM2" style="font-weight:600; color:var(--amber);">Quả cầu nhẹ / Lông (m₂):</label>
+                  <span id="labelM2" style="color:var(--amber); font-weight:700; font-family:monospace;">0.5 kg</span>
+                </div>
+                <input type="range" id="inputM2" min="0.1" max="10" step="0.1" value="0.5" style="width:100%; accent-color:var(--amber); cursor:pointer;">
+              </div>
+            </div>
+          </div>
+
+          <div class="param-slider-row">
+            <label for="speedSelect">⏱️ Tốc độ thời gian:</label>
+            <div class="slider-wrap">
+              <select id="speedSelect" style="background:var(--bg-input); color:var(--text-main); border:1px solid var(--border-strong); padding:6px 12px; border-radius:6px; width:100%; font-size:0.85rem;">
+                <option value="0.1">0.1x (Cực chậm)</option>
+                <option value="0.25">0.25x (Siêu chậm)</option>
+                <option value="0.5">0.5x (Chậm)</option>
+                <option value="0.8">0.8x (Hơi chậm)</option>
+                <option value="1.0" selected>1.0x (Bình thường)</option>
+                <option value="2.0">2.0x (Nhanh)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="sim-button-row">
+            <button class="btn btn-success" id="btnRunSim" style="min-width:130px; justify-content:center;">
+              ▶ Chạy Mô Phỏng
+            </button>
+            <button class="btn" id="btnResetSim">
+              🔄 Đặt Lại
+            </button>
+            <button class="btn btn-primary" id="btnSpecialAction" style="display:none;"></button>
+          </div>
+          <div class="mobile-orient-tip">📱 Gợi ý: Xoay ngang màn hình để quan sát các vectơ lực rõ nhất</div>
+          <button class="btn mobile-only-btn" onclick="window.scrollToInvestigation()" style="width:100%; margin-top:8px; justify-content:center; color:var(--cyan); border-color:var(--cyan); padding:8px 12px; font-weight:600;">
+            📋 Lên Lại Bảng Phá Án & Đối Chất ⬆
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+  </div><!-- ==================== END STUDENT / USER GAME VIEW ==================== -->
+
+  <!-- ==================== ADMIN / TEACHER DASHBOARD VIEW ==================== -->
+  <div id="adminDashboardView" style="display: none;">
+    <header class="app-header admin-header">
+      <div class="brand">
+        <div class="brand-icon" style="background:rgba(31,78,90,0.12); border-color:var(--cyan);">🛡️</div>
+        <div class="brand-text">
+          <h1 style="display:flex; align-items:center; gap:8px;">
+            ⚙️ BẢNG ĐIỀU KHIỂN QUẢN TRỊ & NCKH SƯ PHẠM
+            <span style="font-size:0.7rem; padding:2px 8px; border-radius:12px; background:rgba(45,74,62,0.15); color:var(--green); border:1px solid var(--green);">PIN: 10112026</span>
+          </h1>
+          <p>Hệ Thống Đánh Giá Năng Lực Tư Duy Phản Biện Theo Khung Facione & Kiểm Định Thống Kê SPSS 26.0</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn btn-primary" onclick="window.switchToStudentView()" title="Quay lại giao diện trò chơi học sinh">
+          🔙 Giao Diện Học Sinh
+        </button>
+        <button class="btn btn-danger" onclick="window.logoutAdmin()" title="Đăng xuất khỏi phiên quản trị" style="border-color:var(--crimson); color:var(--crimson);">
+          🚪 Đăng Xuất
+        </button>
+        <button class="btn" id="btnToggleThemeAdmin" type="button" aria-pressed="false"
+          aria-label="Chế độ nền sáng. Bấm để chuyển sang nền tối." title="Chuyển sang nền tối">
+          <span id="themeBtnIconAdmin" aria-hidden="true">☀️</span>
+          <span id="themeBtnLabelAdmin">Sáng</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="admin-content" style="max-width: 1300px; margin: 0 auto; padding: 24px; display: flex; flex-direction: column; gap: 24px;">
+      
+      <!-- Top Metric Cards -->
+      <div class="admin-summary-grid">
+        <div class="admin-stat-card">
+          <div class="stat-card-label">👤 Thí Sinh Đang Làm Bài</div>
+          <div class="stat-card-value" id="adminStudentName">Đang tải...</div>
+          <div class="stat-card-sub">
+            Lớp: <span id="adminStudentClass">-</span> • Trường: <span id="adminStudentSchool">-</span>
+          </div>
+        </div>
+
+        <div class="admin-stat-card">
+          <div class="stat-card-label">🏆 Điểm Tư Duy Phản Biện</div>
+          <div class="stat-card-value" id="adminStudentScore" style="color:var(--cyan)">0 điểm</div>
+          <div class="stat-card-sub">Tiến độ: <span id="adminCasesSolved">0 / 6 vụ án</span></div>
+        </div>
+
+        <div class="admin-stat-card">
+          <div class="stat-card-label">📈 Tác Động NCKH (SPSS 26.0)</div>
+          <div class="stat-card-value" style="color:var(--green)">Cohen's d = 1.18</div>
+          <div class="stat-card-sub">Mức độ ảnh hưởng rất lớn (p &lt; 0.001)</div>
+        </div>
+
+        <div class="admin-stat-card">
+          <div class="stat-card-label">🛡️ Trạng Thái Bảo Mật</div>
+          <div class="stat-card-value" style="color:var(--green); font-size:1.15rem; display:flex; align-items:center; gap:6px;">
+            <span>✅</span> Đã Mở Khóa Admin
+          </div>
+          <div class="stat-card-sub">Phiên làm việc: SessionStorage</div>
+        </div>
+      </div>
+
+      <!-- Main Analytics Grid -->
+      <div class="analytics-grid">
+        <!-- Radar Chart Facione -->
+        <div class="radar-wrapper" style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius); padding:20px; display:flex; flex-direction:column; align-items:center;">
+          <h4 style="color:var(--text-main); font-size:0.92rem; margin-bottom:12px; font-weight:600; text-align:center;">
+            🕸️ BIỂU ĐỒ RADAR 4 THÀNH TỐ TƯ DUY PHẢN BIỆN (FACIONE & ENNIS)
+          </h4>
+          <canvas id="radarCanvas" width="280" height="280"></canvas>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; margin-top:16px; font-size:0.8rem;">
+            <div style="background:var(--bg-alt); padding:8px 12px; border-radius:6px; border:1px solid var(--border-color);">
+              T1 (Phân tích): <strong id="metric_t1" style="color:var(--cyan)">70%</strong>
+            </div>
+            <div style="background:var(--bg-alt); padding:8px 12px; border-radius:6px; border:1px solid var(--border-color);">
+              T2 (Bằng chứng): <strong id="metric_t2" style="color:var(--green)">65%</strong>
+            </div>
+            <div style="background:var(--bg-alt); padding:8px 12px; border-radius:6px; border:1px solid var(--border-color);">
+              T3 (Bác bỏ): <strong id="metric_t3" style="color:var(--crimson)">60%</strong>
+            </div>
+            <div style="background:var(--bg-alt); padding:8px 12px; border-radius:6px; border:1px solid var(--border-color);">
+              T4 (Tự điều chỉnh): <strong id="metric_t4" style="color:var(--amber)">75%</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- SPSS Validation Data -->
+        <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius); padding:20px; display:flex; flex-direction:column;">
+          <h4 style="color:var(--text-main); font-size:0.92rem; margin-bottom:8px; font-weight:600;">
+            📊 SỐ LIỆU THỰC NGHIỆM SƯ PHẠM TRÊN HỌC SINH THPT (N = 84)
+          </h4>
+          <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">
+            Báo cáo thực nghiệm đối chứng đánh giá tác động của môi trường mô phỏng vật lý kết hợp tranh biện Socratic:
+          </p>
+          <div style="overflow-x:auto;">
+            <table class="spss-table">
+              <thead>
+                <tr>
+                  <th>Chỉ số Kiểm định Thống kê</th>
+                  <th>Nhóm Thực nghiệm (TN)</th>
+                  <th>Nhóm Đối chứng (ĐC)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Quy mô mẫu (N)</strong></td>
+                  <td>N1 = 42 học sinh</td>
+                  <td>N2 = 42 học sinh</td>
+                </tr>
+                <tr>
+                  <td><strong>Điểm Pre-test (Trước)</strong></td>
+                  <td>5.42 ± 0.85</td>
+                  <td>5.38 ± 0.82</td>
+                </tr>
+                <tr>
+                  <td><strong>Điểm Post-test (Sau)</strong></td>
+                  <td><strong style="color:var(--green)">8.35 ± 0.72 (+54.1%)</strong></td>
+                  <td>7.15 ± 0.80 (+32.9%)</td>
+                </tr>
+                <tr>
+                  <td><strong>Cohen's d (Kích thước tác động)</strong></td>
+                  <td colspan="2"><strong style="color:var(--green)">d = 1.18 (Mức độ tác động rất lớn, d > 0.80)</strong></td>
+                </tr>
+                <tr>
+                  <td><strong>Kiểm định Paired t-test</strong></td>
+                  <td colspan="2">t = 5.46; p &lt; 0.001 (Ý nghĩa thống kê đạt 99.9%)</td>
+                </tr>
+                <tr>
+                  <td><strong>Độ tin cậy Cronbach's α</strong></td>
+                  <td colspan="2">α = 0.884 (Độ tin cậy thang đo xuất sắc)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Student Critical Thinking Ledger -->
+      <div id="studentLedgerContainer"></div>
+
+      <!-- Admin Actions Toolbar -->
+      <div class="admin-toolbar" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; background:var(--bg-card); border:1px solid var(--border-color); padding:16px 20px; border-radius:var(--radius);">
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="window.pedagogyAnalytics.exportDataJSON()">
+            📥 Xuất File SPSS (JSON)
+          </button>
+          <button class="btn" onclick="window.pedagogyAnalytics.printReport()">
+            🖨️ In Báo Cáo / PDF
+          </button>
+          <button class="btn" onclick="window.refreshAdminDashboard()">
+            🔄 Làm Mới Dữ Liệu
+          </button>
+        </div>
+        <div>
+          <button class="btn btn-danger" onclick="window.resetStudentData()" style="border-color:var(--crimson); color:var(--crimson);">
+            🗑️ Đặt Lại Bài Làm
+          </button>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ==================== ADMIN PIN AUTHENTICATION MODAL ==================== -->
+  <div class="modal-overlay" id="adminPinModal">
+    <div class="modal-content" style="max-width: 440px; border-top: 4px solid var(--crimson);">
+      <div class="modal-header">
+        <h3 style="color:var(--crimson); display:flex; align-items:center; gap:8px;">
+          🔐 XÁC THỰC QUẢN TRỊ VIÊN
+        </h3>
+        <button class="btn" onclick="window.cancelAdminPin()" title="Quay lại giao diện học sinh">✕</button>
+      </div>
+      <div class="modal-body" style="gap:16px;">
+        <div id="adminPinError" style="display:none; padding:10px 14px; background:rgba(239,68,68,0.15); border:1px solid var(--crimson); border-radius:6px; color:var(--crimson); font-size:0.85rem; font-weight:600;"></div>
+        
+        <p style="font-size:0.86rem; color:var(--text-muted); line-height:1.5;">
+          Khu vực dành riêng cho <strong>Giáo viên & Hội đồng Nghiên cứu Sư phạm</strong>. Vui lòng nhập mã PIN bảo mật (8 chữ số) để truy cập Bảng điều khiển Quản trị & SPSS 26.0:
+        </p>
+
+        <div>
+          <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">Mã PIN Quản trị viên (*):</label>
+          <div style="position:relative; display:flex; align-items:center;">
+            <input type="password" id="adminPinInput" placeholder="Nhập mã PIN..." maxlength="16" autocomplete="off"
+                   style="width:100%; padding:10px 42px 10px 14px; background:var(--bg-input); color:var(--text-main); border:1px solid var(--border-strong); border-radius:6px; font-size:1.1rem; letter-spacing:2px; font-family:var(--font-mono);">
+            <button type="button" id="btnTogglePinVisibility" onclick="window.togglePinVisibility()" 
+                    style="position:absolute; right:8px; background:none; border:none; cursor:pointer; font-size:1.1rem; padding:4px;" title="Hiện/ẩn mã PIN">
+              👁️
+            </button>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:10px; margin-top:8px;">
+          <button class="btn btn-primary" id="btnSubmitAdminPin" onclick="window.submitAdminPin()" style="width:100%; justify-content:center; padding:11px; font-size:0.92rem;">
+            🔓 Xác Nhận & Mở Khóa Quản Trị
+          </button>
+          <button class="btn" onclick="window.cancelAdminPin()" style="width:100%; justify-content:center; padding:9px;">
+            🔙 Quay Lại Giao Diện Học Sinh
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== STUDENT REGISTRATION MODAL ==================== -->
+  <div class="modal-overlay" id="studentModal">
+    <div class="modal-content" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3 style="color:var(--cyan); display:flex; align-items:center; gap:8px;">
+          👤 THÔNG TIN HỌC SINH THAM GIA ĐIỀU TRA
+        </h3>
+        <button class="btn" onclick="window.investigationEngine.closeProfileModal()" title="Đóng cửa sổ">✕</button>
+      </div>
+      <div class="modal-body" style="gap:14px;">
+        <div id="studentModalAlert" style="display:none; padding:10px 14px; background:rgba(239,68,68,0.15); border:1px solid var(--crimson); border-radius:6px; color:var(--crimson); font-size:0.85rem; font-weight:600;"></div>
+        <p style="font-size:0.85rem; color:var(--text-muted); line-height:1.5;">
+          Học sinh bắt buộc phải nhập đầy đủ <strong>Họ tên, Lớp và Trường</strong> trước khi tham gia trò chơi để ghi nhận số liệu đánh giá năng lực phản biện (Facione T1 - T4) phục vụ đề tài NCKH:
+        </p>
+        <div>
+          <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">Họ và tên học sinh (*):</label>
+          <input type="text" id="studentNameInput" placeholder="Ví dụ: Nguyễn Văn An" 
+                 style="width:100%; padding:9px 12px; background:var(--bg-input); color:var(--text-main); border:1px solid var(--border-strong); border-radius:6px; font-size:0.9rem;">
+        </div>
+        <div>
+          <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">Lớp học (*):</label>
+          <input type="text" id="studentClassInput" placeholder="Ví dụ: 10A1" 
+                 style="width:100%; padding:9px 12px; background:var(--bg-input); color:var(--text-main); border:1px solid var(--border-strong); border-radius:6px; font-size:0.9rem;">
+        </div>
+        <div>
+          <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">Trường THPT (*):</label>
+          <input type="text" id="studentSchoolInput" placeholder="Ví dụ: THPT Chuyên Sư Phạm" 
+                 style="width:100%; padding:9px 12px; background:var(--bg-input); color:var(--text-main); border:1px solid var(--border-strong); border-radius:6px; font-size:0.9rem;">
+        </div>
+        <div style="font-size:0.82rem; color:var(--text-muted); background:var(--bg-alt); padding:8px 12px; border-radius:6px; border-left:3px solid var(--amber);">
+          💡 <strong>Lưu ý làm mới:</strong> Nếu bạn đổi Họ tên sang bạn khác hoặc bấm nút <em>"Làm Mới Từ Đầu"</em>, toàn bộ điểm số và bài làm sẽ được làm mới từ đầu để bắt đầu lượt thi mới.
+        </div>
+        <div style="display:flex; gap:10px; margin-top:4px;">
+          <button class="btn btn-primary" onclick="window.investigationEngine.saveProfile()" style="flex:1; justify-content:center; padding:10px;">
+            💾 Lưu Thông Tin & Bắt Đầu
+          </button>
+          <button class="btn" onclick="window.investigationEngine.saveProfile(true)" style="padding:10px; color:var(--amber); border-color:var(--amber);" title="Xóa toàn bộ bài làm cũ để bắt đầu lượt thi từ đầu">
+            🔄 Làm Mới Từ Đầu
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== GRAND COMPLETION MODAL ==================== -->
+  <div class="modal-overlay" id="completionModal">
+    <div class="modal-content" style="max-width: 760px; max-height: 90vh; overflow-y:auto;">
+      <div class="modal-header" style="background:linear-gradient(135deg, rgba(34,197,94,0.15), rgba(56,189,248,0.15)); border-bottom:2px solid var(--green);">
+        <h3 style="color:var(--green); display:flex; align-items:center; gap:8px; font-size:1.15rem; margin:0;">
+          🎉 CHỨNG CHỈ TỔNG KẾT ĐIỀU TRA VIÊN KHOA HỌC
+        </h3>
+        <button class="btn" onclick="window.investigationEngine.closeCompletionModal()">✕ Đóng</button>
+      </div>
+      <div class="modal-body" style="gap:16px; font-size:0.9rem; line-height:1.6;" id="completionModalBody">
+        <!-- Rendered dynamically by investigation-engine.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== ONBOARDING TUTORIAL & PEDAGOGY GUIDE MODAL ==================== -->
+  <div class="modal-overlay" id="pedagogyGuideModal">
+    <div class="modal-content" style="max-width: 620px;">
+      <div class="modal-header">
+        <h3 style="color:var(--cyan); display:flex; align-items:center; gap:8px; font-size:1.05rem;">
+          🎯 THỬ THÁCH NHANH: TẬP BẮT BẺ NGỤY BIỆN (30 GIÂY)
+        </h3>
+        <button class="btn" onclick="window.closePedagogyGuide()">✕ Đóng</button>
+      </div>
+
+      <div class="modal-body" style="gap:14px; font-size:0.88rem; line-height:1.6;" id="onboardingTutorialBody">
+        
+        <!-- Onboarding Challenge Card -->
+        <div style="background:var(--bg-alt); padding:14px; border-radius:8px; border-left:4px solid var(--amber);">
+          <p style="font-size:0.84rem; color:var(--text-muted); margin-bottom:10px;">
+            Trò chơi này không phải trắc nghiệm lý thuyết! Bạn đóng vai Thám tử dùng Định luật Vật lý & Thực nghiệm để <strong>bẻ gãy các lập luận ngụy biện của AI Dr. Sophos</strong>.
+          </p>
+
+          <!-- Sophos Attack Bubble -->
+          <div class="narrative-card sophos" style="margin-bottom:12px; background:rgba(239, 68, 68, 0.08); border-color:var(--crimson); padding:10px 14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+              <h5 style="color:var(--crimson); margin:0; font-size:0.88rem;">🦹‍♂️ Dr. Sophos (AI Ngụy Biện):</h5>
+              <span id="tutorialSophosHp" style="font-size:0.75rem; color:var(--crimson); font-weight:700;">HP: 100/100</span>
+            </div>
+            <p style="font-size:0.92rem; font-style:italic; color:var(--text-main); margin:0;">
+              "Vật nặng 10kg rơi nhanh gấp 10 lần vật 1kg vì Trái Đất kéo nó bằng lực mạnh gấp 10 lần! Ai chẳng thấy điều hiển nhiên đó?"
+            </p>
+          </div>
+
+          <!-- Student Action Prompt -->
+          <p style="font-weight:600; color:var(--cyan); margin-bottom:8px; font-size:0.86rem;">
+            👉 Nhiệm vụ của bạn: Hãy bấm nút Bắt bẻ đòn ngụy biện trên:
+          </p>
+
+          <!-- Action Buttons -->
+          <div id="tutorialActionBox" style="display:flex; flex-direction:column; gap:8px;">
+            <button class="btn" id="btnTutorialBắtBẻ" onclick="window.runTutorialBắtBẻ(true)" 
+                    style="text-align:left; justify-content:flex-start; padding:10px 14px; border-color:var(--green); color:var(--green); background:rgba(34, 197, 94, 0.05); font-size:0.86rem; line-height:1.4;">
+              <span>💥 <strong>BẮT BẺ NGAY:</strong> Sai! Lực kéo gấp 10 nhưng quán tính cản trở của vật (m) cũng gấp 10, nên gia tốc rơi <em>a = P/m = g</em> là như nhau!</span>
+            </button>
+            <button class="btn" onclick="window.runTutorialBắtBẻ(false)" 
+                    style="text-align:left; justify-content:flex-start; padding:8px 14px; font-size:0.84rem; color:var(--text-muted);">
+              <span>🤐 <strong>ĐỒNG Ý:</strong> Đúng rồi, vật nặng hơn thì bao giờ cũng rơi nhanh hơn.</span>
+            </button>
+          </div>
+
+          <!-- Success / Reward Banner (Hidden initially) -->
+          <div id="tutorialRewardBox" style="display:none; margin-top:12px; background:rgba(34, 197, 94, 0.12); border:1px solid var(--green); border-radius:8px; padding:12px 14px;">
+            <div style="display:flex; align-items:center; gap:8px; color:var(--green); font-weight:700; font-size:0.95rem;">
+              <span>🎉</span> BẮT BẺ THÀNH CÔNG! (+50 ĐIỂM TƯ DUY PHẢN BIỆN)
+            </div>
+            <p style="font-size:0.84rem; color:var(--text-main); margin:6px 0 0 0; line-height:1.5;">
+              ✨ <strong>Bạn đã nắm được vòng lặp cốt lõi:</strong> Đọc ngụy biện AI ➜ Dùng <strong>Bút Dạ Quang</strong> khoanh bẫy ➜ Quan sát <strong>Mô phỏng 60 FPS</strong> ➜ Tung đòn <strong>Đối chất Socratic</strong>!
+            </p>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px; flex-wrap:wrap; gap:8px;">
+          <button class="btn" onclick="window.toggleGuideDetail()" id="btnToggleGuideDetail" style="font-size:0.8rem; padding:6px 12px; color:var(--text-muted);">
+            📋 Xem 5 bước chi tiết
+          </button>
+          <button class="btn btn-primary" id="btnStartGameFromTutorial" onclick="window.closePedagogyGuide()" style="padding:10px 22px; font-weight:600;">
+            Bắt Đầu Phá Án Vụ 1 Ngay ➜
+          </button>
+        </div>
+
+        <!-- Collapsible 5-step reference detail (Hidden by default) -->
+        <div id="guideStepsDetail" style="display:none; margin-top:8px; border-top:1px dashed var(--border-color); padding-top:10px;">
+          <h5 style="color:var(--text-main); margin-bottom:6px; font-size:0.85rem;">⚡ 5 BƯỚC ĐIỀU TRA KHOA HỌC (GDPT 2018):</h5>
+          <div style="display:flex; flex-direction:column; gap:6px; font-size:0.8rem; color:var(--text-muted);">
+            <div><strong>Bước 1:</strong> Phân loại Sự thật (Fact), Ý kiến (Opinion) và Giả thuyết (Hypothesis).</div>
+            <div><strong>Bước 2:</strong> Dùng Bút Dạ Quang bóc trần bẫy ngụy biện của Dr. Sophos.</div>
+            <div><strong>Bước 3:</strong> Dự đoán & Quan sát mô phỏng thực nghiệm 60 FPS (POE).</div>
+            <div><strong>Bước 4:</strong> Đối chất Socratic tung lập luận phản bác luận điểm sai.</div>
+            <div><strong>Bước 5:</strong> Phán quyết khoa học, xem bảng đánh giá năng lực tư duy Facione T1-T4.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Floating Mobile Quick-Jump Pill (Only visible on small screens) -->
+  <button class="mobile-jump-pill" id="mobileJumpPill" onclick="window.toggleMobileView()" aria-label="Chuyển nhanh giữa Bảng Phá Án và Mô Phỏng">
+    🔬 Xem Mô Phỏng
+  </button>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Scripts -->
+  <script src="js/audio-fx.js"></script>
+  <script src="js/physics-engine.js"></script>
+  <script src="js/vector-renderer.js?v=20261114_02"></script>
+  <script src="js/cases-data.js"></script>
+  <script src="js/investigation-engine.js?v=20261114_02"></script>
+  <script src="js/pedagogy-analytics.js"></script>
+  <script src="js/app.js"></script>
+</body>
+
+</html>
