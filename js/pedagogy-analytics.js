@@ -78,12 +78,13 @@ class PedagogyAnalytics {
             const badgeColor = ans.chosen === 'fact' ? 'var(--green)' : (ans.chosen === 'opinion' ? 'var(--amber)' : 'var(--cyan)');
             const targetColor = ans.target === 'fact' ? 'var(--green)' : (ans.target === 'opinion' ? 'var(--amber)' : 'var(--cyan)');
 
+            const typeLabels = { fact: 'SỰ THẬT', opinion: 'Ý KIẾN', hypothesis: 'GIẢ THUYẾT' };
             rowsHtml += `
               <tr>
                 <td><strong>Vụ án ${cIdx + 1}</strong></td>
                 <td style="font-size:0.8rem;">"${ans.text}"</td>
-                <td><strong style="color:${badgeColor}">${ans.chosen.toUpperCase()}</strong></td>
-                <td><span style="color:${targetColor}">${ans.target.toUpperCase()}</span></td>
+                <td><strong style="color:${badgeColor}">${typeLabels[ans.chosen] || ans.chosen}</strong></td>
+                <td><span style="color:${targetColor}">${typeLabels[ans.target] || ans.target}</span></td>
                 <td>${ans.isCorrect ? '<span style="color:var(--green)">✅ Chuẩn xác</span>' : '<span style="color:var(--amber)">💡 Ý kiến riêng</span>'}</td>
               </tr>
             `;

@@ -616,7 +616,7 @@ function initStudentGameOnce() {
         window.physicsEngine.isRunning = true;
         updateRunButtonState();
         if (window.audioFX) window.audioFX.playClick();
-        showToast('⚡ Mô phỏng vật lý đang chạy ở 60 FPS...');
+        showToast('⚡ Mô phỏng vật lý đang chạy trực quan...');
       }
     });
   }

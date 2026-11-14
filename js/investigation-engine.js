@@ -393,7 +393,7 @@ class InvestigationEngine {
           EM ĐÃ LÀM RẤT TỐT! XUẤT SẮC HOÀN THÀNH CHUYÊN ÁN!
         </h2>
         <p style="font-size:0.92rem; color:var(--text-main); margin:0; line-height:1.6;">
-          Chúc mừng học sinh <strong>${this.studentProfile.name || 'Em'}</strong> (Lớp <strong>${this.studentProfile.className || '-'}</strong>, Trường <strong>${this.studentProfile.schoolName || '-'}</strong>) đã phá đảo thành công toàn bộ 6 chuyên đề Vật lý Động lực học. Em đã dùng tư duy phản biện sắc bén và chân lý thực nghiệm 60 FPS để đánh bại mọi lập luận ngụy biện của Dr. Sophos!
+          Chúc mừng học sinh <strong>${this.studentProfile.name || 'Em'}</strong> (Lớp <strong>${this.studentProfile.className || '-'}</strong>, Trường <strong>${this.studentProfile.schoolName || '-'}</strong>) đã phá đảo thành công toàn bộ 6 chuyên đề Vật lý Động lực học. Em đã dùng tư duy phản biện sắc bén và chân lý thực nghiệm để đánh bại mọi lập luận ngụy biện của Tiến sĩ Sophos!
         </p>
       </div>
 
@@ -579,7 +579,7 @@ class InvestigationEngine {
   renderPhase1Classify(c) {
     const caseAnswers = this.studentAnswers[c.id] || {};
     let allAnswered = true;
-    const typeNames = { fact: 'Sự Thật (Fact)', opinion: 'Ý Kiến (Opinion)', hypothesis: 'Giả Thuyết (Hypothesis)' };
+    const typeNames = { fact: 'Sự Thật', opinion: 'Ý Kiến', hypothesis: 'Giả Thuyết' };
 
     const itemsHtml = c.classifyItems.map((item, idx) => {
       const saved = caseAnswers[item.id];
@@ -596,17 +596,17 @@ class InvestigationEngine {
             <button class="btn-classify ${chosen === 'fact' ? 'selected-fact' : ''}" 
                     ${isAnswered ? 'disabled style="pointer-events:none; opacity:0.85;"' : ''} 
                     onclick="window.investigationEngine.handleClassify('${item.id}', 'fact')">
-              SỰ THẬT (Fact)
+              SỰ THẬT
             </button>
             <button class="btn-classify ${chosen === 'opinion' ? 'selected-opinion' : ''}" 
                     ${isAnswered ? 'disabled style="pointer-events:none; opacity:0.85;"' : ''} 
                     onclick="window.investigationEngine.handleClassify('${item.id}', 'opinion')">
-              Ý KIẾN (Opinion)
+              Ý KIẾN
             </button>
             <button class="btn-classify ${chosen === 'hypothesis' ? 'selected-hypothesis' : ''}" 
                     ${isAnswered ? 'disabled style="pointer-events:none; opacity:0.85;"' : ''} 
                     onclick="window.investigationEngine.handleClassify('${item.id}', 'hypothesis')">
-              GIẢ THUYẾT (Hypothesis)
+              GIẢ THUYẾT
             </button>
           </div>
           <div class="classify-feedback" id="feedback_${item.id}" style="display:${isAnswered ? 'block' : 'none'}; font-size:0.82rem; margin-top:6px; line-height:1.4;">
@@ -622,7 +622,7 @@ class InvestigationEngine {
     return `
       <div class="narrative-card">
         <p><strong>NHIỆM VỤ ĐIỀU TRA:</strong> Đọc kỹ các phát biểu từ hiện trường. Hãy phân loại từng phát biểu theo nhận thức của bạn: 
-        <strong style="color:var(--green)">SỰ THẬT (Fact)</strong>, <strong style="color:var(--amber)">Ý KIẾN (Opinion)</strong> hoặc <strong style="color:var(--cyan)">GIẢ THUYẾT (Hypothesis)</strong>.</p>
+        <strong style="color:var(--green)">SỰ THẬT</strong>, <strong style="color:var(--amber)">Ý KIẾN</strong> hoặc <strong style="color:var(--cyan)">GIẢ THUYẾT</strong>.</p>
         <p style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">
           <em>Lưu ý: Mỗi phát biểu chỉ được chọn một lần duy nhất để phục vụ thống kê nghiên cứu năng lực phản biện.</em>
         </p>
@@ -663,7 +663,7 @@ class InvestigationEngine {
     }
 
     const isCorrect = item.type === chosenType;
-    const typeNames = { fact: 'Sự Thật (Fact)', opinion: 'Ý Kiến (Opinion)', hypothesis: 'Giả Thuyết (Hypothesis)' };
+    const typeNames = { fact: 'Sự Thật', opinion: 'Ý Kiến', hypothesis: 'Giả Thuyết' };
 
     // Ghi nhận đáp án vào hồ sơ học sinh
     this.studentAnswers[currentCase.id][itemId] = {
@@ -775,7 +775,7 @@ class InvestigationEngine {
           <strong>BÚT DẠ QUANG PHẢN BIỆN</strong>
         </div>
         <div class="highlighter-instruction">
-          Chạm trực tiếp vào câu chứa <strong>bẫy ngụy biện</strong> của Dr. Sophos bên dưới để bôi vàng bóc tách luận điểm!
+          Chạm trực tiếp vào câu chứa <strong>bẫy ngụy biện</strong> của Tiến sĩ Sophos bên dưới để bôi vàng bóc tách luận điểm!
         </div>
       </div>
 
@@ -966,7 +966,7 @@ class InvestigationEngine {
 
     return `
       <div class="poe-container">
-        <h3 style="color:var(--cyan); margin-bottom:8px;">⚡ DỰ ĐOÁN & QUAN SÁT THỰC NGHIỆM (POE)</h3>
+        <h3 style="color:var(--cyan); margin-bottom:8px;">⚡ DỰ ĐOÁN & QUAN SÁT THỰC NGHIỆM</h3>
         <p style="font-size:0.88rem; margin-bottom:12px;"><strong>Câu hỏi giả thuyết:</strong> ${c.poeQuestion}</p>
 
         <div class="choice-list">
@@ -1006,7 +1006,7 @@ class InvestigationEngine {
 
         <div class="confidence-slider-box">
           <label style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; margin-bottom:10px;">
-            <span style="color:var(--text-main);">ĐỘ TIN CẬY NHẬN THỨC CỦA BẠN (Cognitive Confidence Score):</span>
+            <span style="color:var(--text-main);">ĐỘ TIN CẬY NHẬN THỨC CỦA BẠN:</span>
             <span id="confidenceVal" style="color:${currentConf.color}; font-weight:700;">
               ${currentConf.pct}% — <strong>${currentConf.vibe}</strong> <span style="font-size:0.85em; opacity:0.85;">(${currentConf.short})</span>
             </span>
@@ -1042,9 +1042,9 @@ class InvestigationEngine {
         </div>
 
         <div class="narrative-card" style="border-left: 4px solid var(--green);">
-          <p><strong>HƯỚNG DẪN QUAN SÁT THỰC NGHIỆM (OBSERVE):</strong> Bấm nút <strong>"Chạy Mô Phỏng"</strong>, thử thay đổi các tham số (môi trường hành tinh, khối lượng, cắt dây, bung dù) và quan sát các vector lực, số liệu cảm biến!</p>
+          <p><strong>HƯỚNG DẪN QUAN SÁT THỰC NGHIỆM:</strong> Bấm nút <strong>"Chạy Mô Phỏng"</strong>, thử thay đổi các tham số (môi trường hành tinh, khối lượng, cắt dây, bung dù) và quan sát các vectơ lực, số liệu cảm biến!</p>
           <button class="btn btn-primary mobile-only-btn" onclick="window.scrollToSimulation()" style="margin-top:10px; width:100%; justify-content:center; padding:10px; font-weight:600;">
-            🔬 Xuống Xem Mô Phỏng Thực Nghiệm 60 FPS ⬇
+            🔬 Xuống Xem Mô Phỏng Thực Nghiệm ⬇
           </button>
         </div>
 
@@ -1155,7 +1155,7 @@ class InvestigationEngine {
     return `
       <div class="ai-duel-header">
         <div>
-          <strong style="color:var(--crimson)">🩸 DR. SOPHOS HP:</strong>
+          <strong style="color:var(--crimson)">🩸 SINH LỰC TIẾN SĨ SOPHOS:</strong>
           <span style="font-family:var(--font-mono); color:var(--text-main);">${this.sophosHp}%</span>
         </div>
         <div class="hp-track">
@@ -1207,7 +1207,7 @@ class InvestigationEngine {
           </div>
           ${this.sophosHp <= 0 ? `
             <div class="purified-badge" style="margin-top:12px;">
-              🏆 DR. SOPHOS ĐÃ BỊ THANH TẨY HOÀN TOÀN. CHÂN LÝ VẬT LÝ ĐÃ ĐƯỢC XÁC LẬP.
+              🏆 TIẾN SĨ SOPHOS ĐÃ BỊ THUYẾT PHỤC HOÀN TOÀN. CHÂN LÝ VẬT LÝ ĐÃ ĐƯỢC XÁC LẬP.
             </div>
           ` : ''}
         ` : ''}
@@ -1287,7 +1287,7 @@ class InvestigationEngine {
         if (window.audioFX) window.audioFX.playPurified();
         fb.innerHTML += `
           <div class="purified-badge" style="margin-top:12px;">
-            🏆 DR. SOPHOS ĐÃ BỊ THANH TẨY HOÀN TOÀN. CHÂN LÝ VẬT LÝ ĐÃ ĐƯỢC XÁC LẬP.
+            🏆 TIẾN SĨ SOPHOS ĐÃ BỊ THUYẾT PHỤC HOÀN TOÀN. CHÂN LÝ VẬT LÝ ĐÃ ĐƯỢC XÁC LẬP.
           </div>
         `;
       }
@@ -1350,7 +1350,7 @@ class InvestigationEngine {
         : 'Khá: Cần rèn luyện thêm kỹ năng quan sát các vectơ lực và gia tốc để đưa ra dự đoán thực nghiệm chính xác hơn.';
 
       const t3Feedback = this.facione.t3 >= 80
-        ? 'Sắc bén: Lập luận logic chặt chẽ, sử dụng thành thạo các định luật Newton để đập tan các luận điểm ngụy biện của Dr. Sophos.'
+        ? 'Sắc bén: Lập luận logic chặt chẽ, sử dụng thành thạo các định luật Newton để đập tan các luận điểm ngụy biện của Tiến sĩ Sophos.'
         : 'Đang tiến bộ: Nên bám sát nguyên lý tác dụng - phản lực và định luật quán tính khi tham gia tranh biện khoa học.';
 
       const t4Feedback = this.facione.t4 >= 80
@@ -1382,19 +1382,19 @@ class InvestigationEngine {
             <h4 style="color:var(--text-main); font-size:0.9rem; margin-bottom:8px;">👨‍🏫 NHẬN XÉT CHI TIẾT THEO 4 THÀNH TỐ FACIONE (1990):</h4>
             <div style="display:grid; grid-template-columns:1fr; gap:10px; font-size:0.84rem;">
               <div style="background:var(--bg-alt); padding:10px 14px; border-radius:6px; border-left:3px solid var(--cyan);">
-                <strong style="color:var(--cyan)">T1 - Phân tích phát biểu (Analysis): ${this.facione.t1}%</strong>
+                <strong style="color:var(--cyan)">T1 - Phân tích phát biểu: ${this.facione.t1}%</strong>
                 <p style="margin-top:4px; color:var(--text-main);">${t1Feedback}</p>
               </div>
               <div style="background:var(--bg-alt); padding:10px 14px; border-radius:6px; border-left:3px solid var(--green);">
-                <strong style="color:var(--green)">T2 - Đánh giá bằng chứng thực nghiệm (Evaluation): ${this.facione.t2}%</strong>
+                <strong style="color:var(--green)">T2 - Đánh giá bằng chứng thực nghiệm: ${this.facione.t2}%</strong>
                 <p style="margin-top:4px; color:var(--text-main);">${t2Feedback}</p>
               </div>
               <div style="background:var(--bg-alt); padding:10px 14px; border-radius:6px; border-left:3px solid var(--crimson);">
-                <strong style="color:var(--crimson)">T3 - Bác bỏ ngụy biện Socratic (Inference): ${this.facione.t3}%</strong>
+                <strong style="color:var(--crimson)">T3 - Bác bỏ ngụy biện Socratic: ${this.facione.t3}%</strong>
                 <p style="margin-top:4px; color:var(--text-main);">${t3Feedback}</p>
               </div>
               <div style="background:var(--bg-alt); padding:10px 14px; border-radius:6px; border-left:3px solid var(--amber);">
-                <strong style="color:var(--amber)">T4 - Tự điều chỉnh nhận thức (Self-Regulation): ${this.facione.t4}%</strong>
+                <strong style="color:var(--amber)">T4 - Tự điều chỉnh nhận thức: ${this.facione.t4}%</strong>
                 <p style="margin-top:4px; color:var(--text-main);">${t4Feedback}</p>
               </div>
             </div>
@@ -1419,7 +1419,7 @@ class InvestigationEngine {
         <ul style="padding-left:18px; line-height:1.6; font-size:0.84rem; color:var(--text-main);">
           <li>Bản chất vật lý cốt lõi: <strong>${c.subtitle}</strong>.</li>
           <li>Đã vạch trần bẫy ngụy biện: <strong>${c.fallacyType}</strong>.</li>
-          <li>Đã đối chứng thực nghiệm ảo HTML5 Canvas 60 FPS thành công.</li>
+          <li>Đã đối chứng thực nghiệm mô phỏng trực quan thành công.</li>
           <li>Chỉ số năng lực Phản biện Facione T1 - T4 được cập nhật vào Báo cáo NCKH.</li>
         </ul>
       </div>
@@ -1430,7 +1430,7 @@ class InvestigationEngine {
           <strong style="color:var(--green); font-size:0.95rem;">LỜI KHEN & NHẬN XÉT CỦA GIÁO VIÊN:</strong>
         </div>
         <p style="font-size:0.88rem; margin:0; line-height:1.6; color:var(--text-main);">
-          🎉 <strong>Em đã làm rất tốt!</strong> Học sinh <strong>${this.studentProfile.name || 'Em'}</strong> (Lớp ${this.studentProfile.className || '-'}) đã phá án thành công <strong>Vụ án ${this.currentCaseIndex + 1}: ${c.title.split(':')[1] || c.title}</strong>! Em đã đối chiếu bằng chứng thực nghiệm 60 FPS, nhận diện đúng bẫy ngụy biện và bảo vệ thành công định luật khoa học chân chính trước lập luận của Dr. Sophos.
+          🎉 <strong>Em đã làm rất tốt!</strong> Học sinh <strong>${this.studentProfile.name || 'Em'}</strong> (Lớp ${this.studentProfile.className || '-'}) đã phá án thành công <strong>Vụ án ${this.currentCaseIndex + 1}: ${c.title.split(':')[1] || c.title}</strong>! Em đã đối chiếu bằng chứng thực nghiệm trực quan, nhận diện đúng bẫy ngụy biện và bảo vệ thành công định luật khoa học chân chính trước lập luận của Tiến sĩ Sophos.
         </p>
       </div>
 

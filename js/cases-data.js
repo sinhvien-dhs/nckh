@@ -8,11 +8,11 @@ window.CASES_DATA = [
   {
     id: 'case1',
     title: 'VỤ ÁN 1: BÍ ẨN THÁP PISA & CUỘC CHIẾN RƠI TỰ DO',
-    subtitle: 'Rơi tự do, Trọng lực & Chân không (Galilei vs Aristotle)',
+    subtitle: 'Rơi tự do, Trọng lực & Chân không (Galilei và Aristotle)',
     curriculum: 'Vật lý 10 - Bài 10: Sự rơi tự do',
     badge: 'CƠ HỌC CỔ ĐIỂN',
     simModule: 'case1',
-    description: 'Một tài liệu lịch sử vừa được phục dựng: Dr. Sophos công bố "định lý ngộ nhận" khẳng định vật nặng phải rơi nhanh hơn vật nhẹ vì lực hút Trái Đất P = mg lớn hơn. Cả hội đồng khoa học đang hoang mang.',
+    description: 'Một tài liệu lịch sử vừa được phục dựng: Tiến sĩ Sophos công bố "định lý ngộ nhận" khẳng định vật nặng phải rơi nhanh hơn vật nhẹ vì lực hút Trái Đất P = mg lớn hơn. Cả hội đồng khoa học đang hoang mang.',
     
     // Phase 1: Classify statements (Fact / Opinion / Hypothesis)
     classifyItems: [
@@ -20,19 +20,19 @@ window.CASES_DATA = [
         id: 'c1_1',
         text: 'Quả tạ chì 5kg có khối lượng lớn gấp 10 lần chiếc lông vũ 0.5kg.',
         type: 'fact',
-        explanation: 'Đây là dữ liệu đo lường vật lý khách quan bằng cân điện tử, là SỰ THẬT (Fact).'
+        explanation: 'Đây là dữ liệu đo lường vật lý khách quan bằng cân điện tử, là SỰ THẬT.'
       },
       {
         id: 'c1_2',
         text: 'Vật nặng rơi nhanh hơn vì bản chất tự nhiên của nó mong muốn trở về tâm Trái Đất mau hơn.',
         type: 'opinion',
-        explanation: 'Đây là quan điểm thần bí chủ quan thời tiền khoa học của Aristotle, là Ý KIẾN (Opinion).'
+        explanation: 'Đây là quan điểm thần bí chủ quan thời tiền khoa học của Aristotle, là Ý KIẾN.'
       },
       {
         id: 'c1_3',
         text: 'Nếu loại bỏ hoàn toàn lực cản không khí (hút chân không), mọi vật sẽ rơi với cùng một gia tốc g.',
         type: 'hypothesis',
-        explanation: 'Đây là GIẢ THUYẾT KHOA HỌC (Hypothesis) của Galilei có thể kiểm chứng bằng thực nghiệm.'
+        explanation: 'Đây là GIẢ THUYẾT KHOA HỌC của Galilei có thể kiểm chứng bằng thực nghiệm.'
       }
     ],
 
@@ -41,10 +41,10 @@ window.CASES_DATA = [
     sophosSegments: [
       { id: 's1', text: 'Hàng ngàn năm nay từ thời Aristotle vĩ đại đến đời sống hàng ngày, ai cũng thấy hòn đá rơi nhanh hơn chiếc lá!', isFallacy: false, hint: 'Đây là kinh nghiệm quan sát bề ngoài, chưa phải suy diễn sai lầm.' },
       { id: 's2', text: 'Lực hút P = mg, m lớn hơn thì lực lớn hơn, rõ ràng vật nặng phải chạm đất trước!', isFallacy: true, hint: 'Chính xác! Đánh đồng Lực hút (P = mg) với Tốc độ rơi, bỏ quên Quán tính cản trở (m).' },
-      { id: 's3', text: 'Kẻ nào dám cãi lại Aristotle?', isFallacy: true, hint: 'Chính xác! Ngụy biện viện dẫn thẩm quyền (Appeal to Authority) để áp đặt chân lý.' }
+      { id: 's3', text: 'Kẻ nào dám cãi lại Aristotle?', isFallacy: true, hint: 'Chính xác! Ngụy biện viện dẫn uy tín thẩm quyền để áp đặt chân lý.' }
     ],
-    fallacyType: 'NGỤY BIỆN THẨM QUYỀN (Appeal to Authority) & KHÁI QUÁT HÓA VỘI VÃ (Hasty Generalization)',
-    fallacyExplanation: 'Dr. Sophos lấy uy tín cổ nhân áp đặt chân lý và nhầm lẫn giữa Lực hút (P = mg) với Gia tốc rơi (a = P/m = g).',
+    fallacyType: 'NGỤY BIỆN VIỆN DẪN THẨM QUYỀN & KHÁI QUÁT HÓA VỘI VÃ',
+    fallacyExplanation: 'Tiến sĩ Sophos lấy uy tín cổ nhân áp đặt chân lý và nhầm lẫn giữa Lực hút (P = mg) với Gia tốc rơi (a = P/m = g).',
 
     // Phase 3: POE (Predict - Observe - Explain)
     poeQuestion: 'Nếu hút hết không khí trong ống nghiệm (chân không), quả tạ chì 5kg và lông vũ 0.5kg vật nào sẽ chạm đất trước?',
@@ -95,7 +95,7 @@ window.CASES_DATA = [
               text: 'Trọng lực lớn gấp 10 lần nhưng khối lượng quán tính (m) cũng lớn gấp 10 lần, khiến tỉ số a = P/m = g là hằng số!',
               damage: 50,
               correct: true,
-              feedback: 'Đòn phản biện sắc bén! Dr. Sophos đã hoàn toàn tâm phục khẩu phục!'
+              feedback: 'Đòn phản biện sắc bén! Tiến sĩ Sophos đã hoàn toàn tâm phục khẩu phục!'
             },
             {
               id: 'r4',
@@ -140,13 +140,13 @@ window.CASES_DATA = [
         id: 'c2_1',
         text: 'Cảm biến lực kế điện tử ghi nhận cả hai xe chịu xung lực cực đại F = 45 kN.',
         type: 'fact',
-        explanation: 'Số liệu đo trực tiếp bằng cảm biến áp điện tử là SỰ THẬT (Fact).'
+        explanation: 'Số liệu đo trực tiếp bằng cảm biến áp điện tử là SỰ THẬT.'
       },
       {
         id: 'c2_2',
         text: 'Xe con bị bẹp nặng hơn chứng tỏ nó phải nhận lực đâm mạnh hơn từ xe tải.',
         type: 'opinion',
-        explanation: 'Nhầm lẫn giữa Hậu quả biến dạng với Độ lớn lực tác dụng, là Ý KIẾN ngụy biện (Opinion).'
+        explanation: 'Nhầm lẫn giữa Hậu quả biến dạng với Độ lớn lực tác dụng, là Ý KIẾN NGỤY BIỆN.'
       },
       {
         id: 'c2_3',
@@ -162,7 +162,7 @@ window.CASES_DATA = [
       { id: 's2', text: 'Nếu hai lực bằng nhau thì sao một bên nát một bên lành?', isFallacy: false, hint: 'Đây là câu hỏi tu từ đặt vấn đề.' },
       { id: 's3', text: 'Rõ ràng xe tải tác dụng lực lớn hơn nhiều!', isFallacy: true, hint: 'Chính xác! Đánh đồng hậu quả biến dạng vỏ xe với độ lớn lực tương tác Newton (F12 = -F21).' }
     ],
-    fallacyType: 'NGỤY BIỆN ĐÁNH ĐỒNG HẬU QUẢ VỚI NGUYÊN NHÂN (Confusion of Effect and Force)',
+    fallacyType: 'NGỤY BIỆN ĐÁNH ĐỒNG HẬU QUẢ VỚI NGUYÊN NHÂN',
     fallacyExplanation: 'Mức độ biến dạng phụ thuộc vào kết cấu cơ học và gia tốc a = F/m, không phải do lực F12 khác F21.',
 
     poeQuestion: 'Khi xe tải 5000kg va chạm với xe con 1000kg, lực tương tác giữa chúng quan hệ thế nào?',
@@ -250,19 +250,19 @@ window.CASES_DATA = [
         id: 'c3_1',
         text: 'Chiều dài sợi dây r = 1.2 m, quả cầu nặng m = 0.5 kg quay đều với tốc độ v = 15 m/s.',
         type: 'fact',
-        explanation: 'Kích thước dây đo bằng thước và tốc độ đo bằng cảm biến quang học là SỰ THẬT (Fact).'
+        explanation: 'Kích thước dây đo bằng thước và tốc độ đo bằng cảm biến quang học là SỰ THẬT.'
       },
       {
         id: 'c3_2',
         text: 'Tồn tại một lực ly tâm thực sự kéo giật vật tròn văng ra xa khỏi tâm theo phương bán kính.',
         type: 'opinion',
-        explanation: 'Đây là ảo giác nhận thức trong hệ quy chiếu phi quán tính quay, là Ý KIẾN ngụy biện (Opinion).'
+        explanation: 'Đây là ảo giác nhận thức trong hệ quy chiếu phi quán tính quay, là Ý KIẾN NGỤY BIỆN.'
       },
       {
         id: 'c3_3',
         text: 'Lực duy nhất tác dụng lên quả cầu giữ cho nó quay tròn là lực căng dây T hướng về tâm (Lực hướng tâm F_ht = m·v²/r). Khi cắt dây (T = 0), quả cầu bay theo phương tiếp tuyến theo quán tính Newton.',
         type: 'hypothesis',
-        explanation: 'Đây là GIẢ THUYẾT KHOA HỌC (Hypothesis) chuẩn mực dựa trên Định luật I Newton cần kiểm chứng.'
+        explanation: 'Đây là GIẢ THUYẾT KHOA HỌC chuẩn mực dựa trên Định luật I Newton cần kiểm chứng.'
       }
     ],
 
@@ -270,9 +270,9 @@ window.CASES_DATA = [
     sophosSegments: [
       { id: 's1', text: 'Ai tự tay quay sợi dây mà chẳng cảm thấy có lực giật mạnh kéo tay mình ra ngoài?', isFallacy: false, hint: 'Đây là cảm giác cơ sinh học do phản lực của lực căng dây tác dụng lên tay.' },
       { id: 's2', text: 'Khi lấy kéo cắt đứt dây, lực ly tâm sẽ ném quả cầu bay vọt thẳng ra xa tâm quay theo phương bán kính!', isFallacy: true, hint: 'Chính xác! Ngộ nhận ảo giác lực ly tâm: không có lực nào đẩy văng ra xa, vật bay tiếp tuyến do quán tính.' },
-      { id: 's3', text: 'Đó là lý do cả thế giới gọi là lực văng ly tâm!', isFallacy: true, hint: 'Chính xác! Ngụy biện viện dẫn số đông (Ad Populum) để che đậy bản chất vật lý.' }
+      { id: 's3', text: 'Đó là lý do cả thế giới gọi là lực văng ly tâm!', isFallacy: true, hint: 'Chính xác! Ngụy biện viện dẫn số đông để che đậy bản chất vật lý.' }
     ],
-    fallacyType: 'NGỤY BIỆN BỊ ĐÁNH LỪA BỞI HỆ QUY CHIẾU PHI QUÁN TÍNH (Non-Inertial Reference Frame Fallacy)',
+    fallacyType: 'NGỤY BIỆN BỊ ĐÁNH LỪA BỞI HỆ QUY CHIẾU PHI QUÁN TÍNH',
     fallacyExplanation: 'Lực ly tâm chỉ là lực quán tính ảo xuất hiện khi người quan sát đứng trong hệ quy chiếu quay (phi quán tính). Trong hệ quy chiếu quán tính gắn với mặt đất, chỉ có duy nhất lực căng dây T kéo vật hướng về tâm. Khi cắt dây (T = 0), theo Định luật I Newton, vật bay thẳng đều theo phương TIẾP TUYẾN với quỹ đạo tại thời điểm cắt!',
 
     poeQuestion: 'Khi một người đang quay tròn quả cầu buộc ở đầu dây, nếu đột ngột dùng kéo CẮT ĐỨT SỢI DÂY, quả cầu sẽ chuyển động theo hướng nào?',
@@ -322,7 +322,7 @@ window.CASES_DATA = [
               text: 'Tại mọi thời điểm quay, vận tốc v luôn tiếp tuyến với quỹ đạo. Khi cắt dây (T = 0, hợp lực = 0), theo Định luật I Newton, vật tiếp tục bay thẳng theo phương tiếp tuyến đó!',
               damage: 50,
               correct: true,
-              feedback: 'Dr. Sophos sụp đổ hoàn toàn trước chân lý Quán tính và Định luật I Newton!'
+              feedback: 'Tiến sĩ Sophos sụp đổ hoàn toàn trước chân lý Quán tính và Định luật I Newton!'
             },
             {
               id: 'r4',
@@ -360,19 +360,19 @@ window.CASES_DATA = [
         id: 'c4_1',
         text: 'Khối lượng xe m = 1200 kg, hệ số ma sát trượt giữa lốp xe và mặt đường dốc là μ = 0.35, góc nghiêng dốc ban đầu α = 30°.',
         type: 'fact',
-        explanation: 'Khối lượng xe, hệ số ma sát và góc dốc là các đại lượng đo đạc thực nghiệm, là SỰ THẬT (Fact).'
+        explanation: 'Khối lượng xe, hệ số ma sát và góc dốc là các đại lượng đo đạc thực nghiệm, là SỰ THẬT.'
       },
       {
         id: 'c4_2',
         text: 'Dù con dốc nghiêng bao nhiêu độ thì lực ma sát trượt vẫn luôn bằng μ·m·g vì khối lượng và trọng lượng xe không đổi.',
         type: 'opinion',
-        explanation: 'Ngộ nhận tai hại do đánh tráo Áp lực vuông góc N với Trọng lực P, là Ý KIẾN ngụy biện (Opinion).'
+        explanation: 'Ngộ nhận tai hại do đánh tráo Áp lực vuông góc N với Trọng lực P, là Ý KIẾN NGỤY BIỆN.'
       },
       {
         id: 'c4_3',
         text: 'Khi góc dốc α tăng lên, áp lực vuông góc N = mg·cosα giảm xuống, dẫn tới lực ma sát trượt F_ms = μ·N = μ·mg·cosα giảm mạnh.',
         type: 'hypothesis',
-        explanation: 'Đây là GIẢ THUYẾT KHOA HỌC (Hypothesis) dựa trên giải tích phân tích vector lực cần kiểm chứng.'
+        explanation: 'Đây là GIẢ THUYẾT KHOA HỌC dựa trên giải tích phân tích vectơ lực cần kiểm chứng.'
       }
     ],
 
@@ -382,7 +382,7 @@ window.CASES_DATA = [
       { id: 's2', text: 'Khối lượng xe m có mất đi lạng nào đâu mà áp lực dám tụt?', isFallacy: true, hint: 'Chính xác! Đánh tráo Trọng lượng P với Áp lực vuông góc N = mg·cosα.' },
       { id: 's3', text: 'Dù dốc 10 độ hay 60 độ thì xe vẫn nặng 1200kg, ma sát trượt phải giữ nguyên!', isFallacy: true, hint: 'Chính xác! Càng dốc (α tăng) thì cosα giảm, áp lực N giảm kéo theo ma sát trượt giảm mạnh.' }
     ],
-    fallacyType: 'NGỤY BIỆN ĐÁNH TRÁO KHÁI NIỆM (Equivocation: Đánh tráo Trọng lực P với Áp lực pháp tuyến N)',
+    fallacyType: 'NGỤY BIỆN ĐÁNH TRÁO KHÁI NIỆM (Đánh tráo Trọng lực P với Áp lực pháp tuyến N)',
     fallacyExplanation: 'Lực ma sát trượt chỉ tỉ lệ với Áp lực pháp tuyến ép vuông góc vào mặt tiếp xúc: F_ms = μ·N. Trên mặt phẳng nghiêng góc α, trọng lực P phân tích thành hai thành phần: P_x = mg·sinα (kéo trượt dọc dốc) và P_y = mg·cosα (ép vuông góc dốc). Do đó N = P_y = mg·cosα. Khi dốc càng đứng (α tăng), cosα giảm nên áp lực N giảm, kéo theo ma sát trượt giảm mạnh!',
 
     poeQuestion: 'Khi tăng góc dốc α của mặt phẳng nghiêng từ 15° lên 60°, lực ma sát trượt F_ms và gia tốc trượt a sẽ biến đổi như thế nào?',
@@ -408,7 +408,7 @@ window.CASES_DATA = [
               text: 'Áp lực N = mg·cosα. Khi dốc càng nghiêng thì cosα càng giảm, làm áp lực ép vào mặt đường giảm; do đó F_ms = μ·mg·cosα giảm mạnh!',
               damage: 100,
               correct: true,
-              feedback: 'Phân tích vector lực hoàn hảo! Các công thức P_x = mg·sinα, N = mg·cosα và a = g(sinα - μ·cosα) hoàn toàn chính xác.'
+              feedback: 'Phân tích vectơ lực hoàn hảo! Các công thức P_x = mg·sinα, N = mg·cosα và a = g(sinα - μ·cosα) hoàn toàn chính xác.'
             },
             {
               id: 'r2',
@@ -446,19 +446,19 @@ window.CASES_DATA = [
         id: 'c5_1',
         text: 'Trước va chạm xe 1 có động năng Wd1 = 400 kJ; sau va chạm hai xe dính nhau có tổng động năng Wd2 = 200 kJ.',
         type: 'fact',
-        explanation: 'Số liệu đo đạc năng lượng trước và sau va chạm là SỰ THẬT (Fact).'
+        explanation: 'Số liệu đo đạc năng lượng trước và sau va chạm là SỰ THẬT.'
       },
       {
         id: 'c5_2',
         text: 'Năng lượng tự nhiên biến mất vi phạm định luật bảo toàn năng lượng.',
         type: 'opinion',
-        explanation: 'Nhầm lẫn giữa Động năng (cơ học) với Toàn bộ năng lượng hệ thống, là Ý KIẾN ngụy biện (Opinion).'
+        explanation: 'Nhầm lẫn giữa Động năng (cơ học) với Toàn bộ năng lượng hệ thống, là Ý KIẾN NGỤY BIỆN.'
       },
       {
         id: 'c5_3',
         text: 'Trong va chạm mềm, động lượng luôn bảo toàn nhưng cơ năng chuyển hóa thành biến dạng và nội nhiệt.',
         type: 'hypothesis',
-        explanation: 'Nguyên lý va chạm mềm trong nhiệt động học là GIẢ THUYẾT KHOA HỌC (Hypothesis).'
+        explanation: 'Nguyên lý va chạm mềm trong nhiệt động học là GIẢ THUYẾT KHOA HỌC.'
       }
     ],
 
@@ -467,7 +467,7 @@ window.CASES_DATA = [
       { id: 's1', text: 'Các người học vẹt định luật bảo toàn năng lượng mà lại để mất 200 kJ động năng à?', isFallacy: false, hint: 'Đây là câu châm chọc về hao hụt động năng cơ học.' },
       { id: 's2', text: 'Định luật bảo toàn sai bét rồi!', isFallacy: true, hint: 'Chính xác! Ngụy biện Bù nhìn rơm: Đánh đồng bảo toàn cơ năng với bảo toàn toàn phần năng lượng.' }
     ],
-    fallacyType: 'NGỤY BIỆN BÙ NHÌN RƠM (Strawman: Đánh đồng bảo toàn cơ năng với bảo toàn toàn phần)',
+    fallacyType: 'NGỤY BIỆN BÙ NHÌN RƠM (Đánh đồng bảo toàn cơ năng với bảo toàn năng lượng toàn phần)',
     fallacyExplanation: 'Định luật bảo toàn năng lượng áp dụng cho toàn phần (nhiệt + cơ), còn cơ năng không bắt buộc bảo toàn trong va chạm mềm.',
 
     poeQuestion: 'Khi hai xe dính chặt vào nhau sau va chạm (va chạm mềm), động lượng và động năng bảo toàn thế nào?',
@@ -519,7 +519,7 @@ window.CASES_DATA = [
 
   {
     id: 'case6',
-    title: 'VỤ ÁN 6: NGƯỜI NHẢY DÙ & BÍ MẬT VẬN TỐC TỚI HẠN (TERMINAL VELOCITY)',
+    title: 'VỤ ÁN 6: NGƯỜI NHẢY DÙ & BÍ MẬT VẬN TỐC TỚI HẠN',
     subtitle: 'Lực cản không khí, Định luật I Newton & Cân bằng động trong các môi trường',
     curriculum: 'Vật lý 10 - Bài 11: Lực cản của chất lưu & Định luật Newton',
     badge: 'CHẤT LƯU',
@@ -531,19 +531,19 @@ window.CASES_DATA = [
         id: 'c6_1',
         text: 'Cảm biến đo lường ghi nhận sau khi bung dù, vận tốc rơi giảm dần rồi duy trì ổn định không đổi ở mức 5.5 m/s.',
         type: 'fact',
-        explanation: 'Số liệu ghi nhận trực tiếp từ thiết bị đo tốc độ GPS và phong vũ biểu là SỰ THẬT (Fact).'
+        explanation: 'Số liệu ghi nhận trực tiếp từ thiết bị đo tốc độ GPS và phong vũ biểu là SỰ THẬT.'
       },
       {
         id: 'c6_2',
         text: 'Khi lực cản không khí bằng trọng lực (F_cản = P), hai lực triệt tiêu lẫn nhau nên người nhảy dù sẽ dừng lại đứng yên lơ lửng trên không trung.',
         type: 'opinion',
-        explanation: 'Nhầm lẫn nghiêm trọng giữa gia tốc bằng 0 với vận tốc bằng 0, là Ý KIẾN ngụy biện (Opinion).'
+        explanation: 'Nhầm lẫn nghiêm trọng giữa gia tốc bằng 0 với vận tốc bằng 0, là Ý KIẾN NGỤY BIỆN.'
       },
       {
         id: 'c6_3',
-        text: 'Theo Định luật I Newton: Khi tổng hợp lực bằng 0 (F_cản = P => ΣF = 0 => a = 0), vật đang chuyển động sẽ TIẾP TỤC CHUYỂN ĐỘNG THẲNG ĐỀU với vận tốc tới hạn v_terminal chứ không đứng yên.',
+        text: 'Theo Định luật I Newton: Khi tổng hợp lực bằng 0 (F_cản = P => ΣF = 0 => a = 0), vật đang chuyển động sẽ TIẾP TỤC CHUYỂN ĐỘNG THẲNG ĐỀU với vận tốc tới hạn chứ không đứng yên.',
         type: 'hypothesis',
-        explanation: 'Đây là GIẢ THUYẾT KHOA HỌC (Hypothesis) chuẩn mực của cơ học Newton cần kiểm chứng.'
+        explanation: 'Đây là GIẢ THUYẾT KHOA HỌC chuẩn mực của cơ học Newton cần kiểm chứng.'
       }
     ],
 
@@ -553,14 +553,14 @@ window.CASES_DATA = [
       { id: 's2', text: 'Trọng lực P kéo xuống bao nhiêu thì lực cản F_cản đẩy lên bấy nhiêu, hai lực triệt tiêu bằng 0 thì người rơi phải dừng lại lơ lửng giữa trời!', isFallacy: true, hint: 'Chính xác! Bẫy suy diễn hoang đường cho rằng cân bằng lực sẽ hãm vật đứng yên giữa không trung.' },
       { id: 's3', text: 'Tại sao người đó vẫn tiếp tục rơi cắm đầu xuống đất?', isFallacy: false, hint: 'Đây là câu hỏi thắc mắc hiện tượng.' }
     ],
-    fallacyType: 'NGỤY BIỆN NHẦM LẪN GIỮA VẬN TỐC VÀ GIA TỐC (Confusing Velocity with Acceleration)',
+    fallacyType: 'NGỤY BIỆN NHẦM LẪN GIỮA VẬN TỐC VÀ GIA TỐC',
     fallacyExplanation: 'Tiến sĩ Sophos nhầm lẫn giữa Gia tốc a = 0 (vận tốc không đổi) với Vận tốc v = 0 (đứng yên). Định luật I Newton nêu rõ: Một vật đang có chuyển động, nếu hợp lực tác dụng bằng 0 thì nó sẽ TIẾP TỤC CHUYỂN ĐỘNG THẲNG ĐỀU với vận tốc sẵn có!',
 
     poeQuestion: 'Khi một người nhảy dù rơi trong không khí và đạt trạng thái lực cản không khí bằng đúng trọng lực (F_cản = P), người đó sẽ chuyển động như thế nào?',
     poeOptions: [
       { id: 'opt1', text: 'Dừng lại ngay lập tức và bay lơ lửng trên không vì hai lực đã triệt tiêu lẫn nhau.', correct: false, explanation: 'Ngộ nhận nghiêm trọng giữa v = 0 và a = 0: Khi F_cản = P thì hợp lực ΣF = 0, theo Định luật I Newton gia tốc a = 0 (vận tốc không đổi). Người nhảy dù đã có sẵn tốc độ rơi nên tiếp tục rơi thẳng đều chứ không đứng yên.' },
-      { id: 'opt2', text: 'Tiếp tục rơi thẳng đều với vận tốc không đổi theo Định luật I Newton.', correct: true, explanation: 'Dự đoán hoàn toàn chính xác: Khi F_cản = P thì hợp lực ΣF = 0 => gia tốc a = 0. Theo Định luật I Newton, người rơi tiếp tục rơi thẳng đều với vận tốc tới hạn v_terminal.' },
-      { id: 'opt3', text: 'Rơi nhanh dần đều mãi mãi với gia tốc g không có giới hạn.', correct: false, explanation: 'Ngộ nhận bỏ qua lực cản: Lực cản không khí tăng tỉ lệ thuận với bình phương vận tốc (v²). Do đó gia tốc giảm dần về 0, vận tốc bị chặn trên bởi vận tốc tới hạn v_terminal.' }
+      { id: 'opt2', text: 'Tiếp tục rơi thẳng đều với vận tốc không đổi theo Định luật I Newton.', correct: true, explanation: 'Dự đoán hoàn toàn chính xác: Khi F_cản = P thì hợp lực ΣF = 0 => gia tốc a = 0. Theo Định luật I Newton, người rơi tiếp tục rơi thẳng đều với vận tốc tới hạn.' },
+      { id: 'opt3', text: 'Rơi nhanh dần đều mãi mãi với gia tốc g không có giới hạn.', correct: false, explanation: 'Ngộ nhận bỏ qua lực cản: Lực cản không khí tăng tỉ lệ thuận với bình phương vận tốc (v²). Do đó gia tốc giảm dần về 0, vận tốc bị chặn trên bởi vận tốc tới hạn.' }
     ],
 
     socraticDuel: {
@@ -586,7 +586,7 @@ window.CASES_DATA = [
               text: 'Khi ΣF = 0 thì người nhảy dù lơ lửng dừng lại trên không trung một lúc rồi mới rơi tiếp do lực hút Trái Đất thắng thế.',
               damage: 0,
               correct: false,
-              feedback: 'Nhầm lẫn giữa hợp lực bằng 0 (gia tốc a = 0) và đứng yên (v = 0). Người nhảy dù vẫn đang chuyển động với vận tốc tới hạn v_terminal theo quán tính!'
+              feedback: 'Nhầm lẫn giữa hợp lực bằng 0 (gia tốc a = 0) và đứng yên (v = 0). Người nhảy dù vẫn đang chuyển động với vận tốc tới hạn theo quán tính!'
             }
           ]
         }
@@ -598,7 +598,7 @@ window.CASES_DATA = [
         id: 'v_perfect',
         title: 'BẢN ÁN VẬN TỐC TỚI HẠN & ĐỊNH LUẬT I NEWTON',
         result: 'perfect',
-        summary: 'Bạn đã làm sáng tỏ chân lý: Lực cản không khí F_cản tăng theo bình phương vận tốc (v²). Khi F_cản = P, hợp lực ΣF = 0, gia tốc a = 0. Người nhảy dù không hề dừng lại lơ lửng mà tiếp tục rơi thẳng đều với Vận tốc tới hạn (v_terminal). Khi bung dù, diện tích cản A tăng vọt giúp hạ v_terminal xuống mức an toàn (~5 m/s).'
+        summary: 'Bạn đã làm sáng tỏ chân lý: Lực cản không khí F_cản tăng theo bình phương vận tốc (v²). Khi F_cản = P, hợp lực ΣF = 0, gia tốc a = 0. Người nhảy dù không hề dừng lại lơ lửng mà tiếp tục rơi thẳng đều với Vận tốc tới hạn. Khi bung dù, diện tích cản A tăng vọt giúp hạ vận tốc tới hạn xuống mức an toàn (~5 m/s).'
       }
     ]
   }
