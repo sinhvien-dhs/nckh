@@ -238,6 +238,119 @@ window.resetStudentData = function () {
   }
 };
 
+// Google Sheets Integration Handlers
+window.saveGoogleSheetsUrl = function () {
+  const input = document.getElementById('googleSheetsUrlInput');
+  const badge = document.getElementById('googleSheetsStatusBadge');
+  const fb = document.getElementById('googleSheetsFeedback');
+  if (!input) return;
+
+  const url = input.value.trim();
+  if (url && !url.startsWith('http')) {
+    if (fb) {
+      fb.style.display = 'block';
+      fb.style.color = 'var(--crimson)';
+      fb.innerText = '❌ Đường link không hợp lệ! Vui lòng dán link Web App của Google Apps Script bắt đầu bằng https://script.google.com/...';
+    }
+    return;
+  }
+
+  try {
+    if (url) {
+      localStorage.setItem('physics_google_sheets_url', url);
+      if (badge) {
+        badge.innerText = '🟢 Đã Cấu Hình Webhook';
+        badge.style.background = 'rgba(34,197,94,0.15)';
+        badge.style.color = 'var(--green)';
+      }
+      if (fb) {
+        fb.style.display = 'block';
+        fb.style.color = 'var(--green)';
+        fb.innerText = '✅ Đã lưu cấu hình Google Sheets thành công! Dữ liệu của học sinh nộp bài sẽ tự động gửi về đây.';
+      }
+      if (window.showToast) window.showToast('✅ Đã lưu liên kết Google Sheets!');
+    } else {
+      localStorage.removeItem('physics_google_sheets_url');
+      if (badge) {
+        badge.innerText = '⏳ Chưa cấu hình Webhook URL';
+        badge.style.background = 'rgba(234,179,8,0.15)';
+        badge.style.color = 'var(--amber)';
+      }
+      if (fb) {
+        fb.style.display = 'block';
+        fb.style.color = 'var(--text-muted)';
+        fb.innerText = 'ℹ️ Đã xóa liên kết Google Sheets.';
+      }
+    }
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+window.testGoogleSheetsConnection = async function () {
+  const input = document.getElementById('googleSheetsUrlInput');
+  const fb = document.getElementById('googleSheetsFeedback');
+  const url = input ? input.value.trim() : (localStorage.getItem('physics_google_sheets_url') || '');
+
+  if (!url || !url.startsWith('http')) {
+    alert('Vui lòng dán đường link Web App Google Apps Script trước khi kiểm tra!');
+    return;
+  }
+
+  if (fb) {
+    fb.style.display = 'block';
+    fb.style.color = 'var(--cyan)';
+    fb.innerText = '⏳ Đang gửi dữ liệu kiểm tra thử nghiệm tới Google Sheets...';
+  }
+
+  const testPayload = {
+    id: 'test_' + Date.now(),
+    studentProfile: {
+      name: 'Kiểm Tra Kết Nối (Thử nghiệm)',
+      className: 'Test-10A',
+      schoolName: 'Hệ Thống Sư Phạm Vật Lý',
+      registeredAt: new Date().toISOString()
+    },
+    score: 900,
+    solvedCasesCount: 6,
+    solvedCaseIds: ['case1', 'case2', 'case3', 'case4', 'case5', 'case6'],
+    facione: { t1: 100, t2: 100, t3: 100, t4: 100 },
+    completedAt: new Date().toISOString(),
+    studentAnswers: {}
+  };
+
+  try {
+    await fetch(url, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(testPayload)
+    });
+    if (fb) {
+      fb.style.display = 'block';
+      fb.style.color = 'var(--green)';
+      fb.innerText = '🚀 Đã gửi tín hiệu kiểm tra thành công! Hãy mở Google Sheets kiểm tra xem xuất hiện dòng "Kiểm Tra Kết Nối" chưa nhé.';
+    }
+    if (window.showToast) window.showToast('🚀 Đã gửi kiểm tra kết nối Google Sheets!');
+  } catch (err) {
+    if (fb) {
+      fb.style.display = 'block';
+      fb.style.color = 'var(--crimson)';
+      fb.innerText = '❌ Gặp lỗi khi gửi tới Google Sheets: ' + err.message;
+    }
+  }
+};
+
+window.syncAllRecordsToGoogleSheets = async function () {
+  if (!window.investigationEngine) return;
+  const res = await window.investigationEngine.syncAllRecordsToGoogleSheets();
+  if (res.success) {
+    alert(`🎉 Đã đồng bộ thành công ${res.count} bản ghi bài làm lên Google Sheets!`);
+  } else {
+    alert(`⚠️ ${res.message || 'Không thể đồng bộ lên Google Sheets. Vui lòng kiểm tra lại URL!'}`);
+  }
+};
+
 // 6. Light / Dark Theme Management
 const THEME_KEY = 'physics-detective-theme';
 
@@ -775,6 +888,25 @@ function renderAdminDashboard() {
     window.pedagogyAnalytics.renderRadar();
     window.pedagogyAnalytics.updateMetricsUI();
     window.pedagogyAnalytics.renderStudentLedger();
+  }
+
+  // Cập nhật trạng thái cấu hình Google Sheets
+  const sheetInput = document.getElementById('googleSheetsUrlInput');
+  const sheetBadge = document.getElementById('googleSheetsStatusBadge');
+  const savedSheetUrl = localStorage.getItem('physics_google_sheets_url') || '';
+  if (sheetInput && !sheetInput.value) {
+    sheetInput.value = savedSheetUrl;
+  }
+  if (sheetBadge) {
+    if (savedSheetUrl) {
+      sheetBadge.innerText = '🟢 Đã Cấu Hình Webhook';
+      sheetBadge.style.background = 'rgba(34,197,94,0.15)';
+      sheetBadge.style.color = 'var(--green)';
+    } else {
+      sheetBadge.innerText = '⏳ Chưa cấu hình Webhook URL';
+      sheetBadge.style.background = 'rgba(234,179,8,0.15)';
+      sheetBadge.style.color = 'var(--amber)';
+    }
   }
 }
 

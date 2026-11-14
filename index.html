@@ -366,6 +366,35 @@
       <!-- Student Critical Thinking Ledger -->
       <div id="studentLedgerContainer"></div>
 
+      <!-- Google Sheets Database Integration Card -->
+      <div class="stat-card" style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius); padding:20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+          <h3 style="margin:0; font-size:1.05rem; display:flex; align-items:center; gap:8px; color:var(--green);">
+            <span>📊</span> CSDL Google Sheets (Tự Động Lưu Kết Quả Thí Sinh)
+          </h3>
+          <span id="googleSheetsStatusBadge" style="padding:4px 10px; border-radius:12px; font-size:0.75rem; font-weight:700; background:rgba(234,179,8,0.15); color:var(--amber);">
+            ⏳ Chưa cấu hình Webhook URL
+          </span>
+        </div>
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:14px; line-height:1.5;">
+          Dán đường link Web App của Google Apps Script bên dưới. Mỗi khi học sinh nhấn <strong>"Hoàn thành"</strong>, toàn bộ điểm số, 4 năng lực tư duy phản biện (T1-T4) và chi tiết từng đáp án sẽ được tự động gửi về Google Sheets ngay lập tức.
+        </p>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <input type="url" id="googleSheetsUrlInput" placeholder="https://script.google.com/macros/s/AKfycb.../exec"
+                 style="flex:1; min-width:280px; background:var(--bg-input); color:var(--text-main); border:1px solid var(--border-strong); padding:8px 14px; border-radius:6px; font-size:0.85rem;">
+          <button class="btn btn-primary" onclick="window.saveGoogleSheetsUrl()" style="white-space:nowrap; padding:8px 16px;">
+            💾 Lưu Cấu Hình
+          </button>
+          <button class="btn" onclick="window.testGoogleSheetsConnection()" style="white-space:nowrap; padding:8px 14px;">
+            🚀 Kiểm Tra Kết Nối
+          </button>
+          <button class="btn" onclick="window.syncAllRecordsToGoogleSheets()" style="white-space:nowrap; padding:8px 14px; border-color:var(--green); color:var(--green);">
+            🔄 Đồng Bộ Tất Cả Lên Sheet
+          </button>
+        </div>
+        <div id="googleSheetsFeedback" style="display:none; margin-top:10px; font-size:0.82rem; font-weight:600;"></div>
+      </div>
+
       <!-- Admin Actions Toolbar -->
       <div class="admin-toolbar" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; background:var(--bg-card); border:1px solid var(--border-color); padding:16px 20px; border-radius:var(--radius);">
         <div style="display:flex; gap:10px; flex-wrap:wrap;">

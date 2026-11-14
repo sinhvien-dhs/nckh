@@ -289,10 +289,76 @@ class InvestigationEngine {
       };
       records.push(record);
       localStorage.setItem('physics_student_records', JSON.stringify(records));
+      // Tự động đẩy dữ liệu sang Google Sheets (nếu giáo viên đã cấu hình Webhook URL)
+      this.syncToGoogleSheets(record);
       return record;
     } catch (e) {
       console.error('Lỗi khi lưu kết quả bài thi:', e);
       return null;
+    }
+  }
+
+  // Đồng bộ 1 bản ghi lên Google Sheets Webhook
+  async syncToGoogleSheets(record) {
+    if (!record) return { success: false, message: 'Không có dữ liệu bản ghi' };
+    let url = '';
+    try {
+      url = localStorage.getItem('physics_google_sheets_url') || window.GOOGLE_SHEETS_URL || '';
+    } catch (e) {}
+    if (!url || !url.startsWith('http')) {
+      return { success: false, message: 'Chưa cấu hình URL Google Sheets' };
+    }
+
+    try {
+      await fetch(url, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'text/plain;charset=utf-8'
+        },
+        body: JSON.stringify(record)
+      });
+      console.log('[Google Sheets] Đã gửi bản ghi lên CSDL:', record.id);
+      return { success: true };
+    } catch (err) {
+      console.warn('[Google Sheets] Lỗi khi gửi dữ liệu:', err);
+      return { success: false, error: err };
+    }
+  }
+
+  // Đồng bộ toàn bộ danh mục bài làm đã lưu trong máy lên Google Sheets
+  async syncAllRecordsToGoogleSheets() {
+    let records = [];
+    try {
+      const recordsStr = localStorage.getItem('physics_student_records');
+      if (recordsStr) records = JSON.parse(recordsStr);
+    } catch (e) {}
+
+    if (!records.length) {
+      return { success: false, message: 'Chưa có bản ghi bài làm nào trong bộ nhớ máy!' };
+    }
+
+    let url = '';
+    try {
+      url = localStorage.getItem('physics_google_sheets_url') || window.GOOGLE_SHEETS_URL || '';
+    } catch (e) {}
+    if (!url || !url.startsWith('http')) {
+      return { success: false, message: 'Vui lòng dán và lưu URL Google Sheets Web App hợp lệ!' };
+    }
+
+    try {
+      await fetch(url, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'text/plain;charset=utf-8'
+        },
+        body: JSON.stringify(records)
+      });
+      return { success: true, count: records.length };
+    } catch (err) {
+      console.error('[Google Sheets] Lỗi khi đồng bộ toàn bộ bản ghi:', err);
+      return { success: false, error: err };
     }
   }
 
