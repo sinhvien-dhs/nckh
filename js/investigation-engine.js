@@ -759,7 +759,7 @@ class InvestigationEngine {
   getConfidenceInfo(val) {
     const num = parseInt(val, 10) || 80;
     if (num <= 20) {
-      return { pct: 20, vibe: 'Phỏng đoán mơ hồ', short: 'Đoán bừa', color: 'var(--text-muted)' };
+      return { pct: 20, vibe: 'Phỏng đoán mơ hồ', short: 'Đoán bừa', color: 'var(--crimson)' };
     }
     if (num <= 40) {
       return { pct: 40, vibe: 'Chưa đủ cơ sở', short: 'Hơi nghi ngờ', color: 'var(--amber)' };
@@ -770,7 +770,7 @@ class InvestigationEngine {
     if (num <= 80) {
       return { pct: 80, vibe: 'Có cơ sở vững', short: 'Khá chắc chắn', color: 'var(--green)' };
     }
-    return { pct: 100, vibe: 'Khẳng định tuyệt đối', short: 'Chắc chắn 100%', color: 'var(--green)' };
+    return { pct: 100, vibe: 'Khẳng định tuyệt đối', short: 'Chắc chắn 100%', color: 'var(--purple)' };
   }
 
   alignConfidenceTicks() {
@@ -791,7 +791,9 @@ class InvestigationEngine {
     });
     const currentVal = parseInt(slider.value, 10) || 80;
     const fillPct = ((currentVal - 20) / 80) * 100;
+    const info = this.getConfidenceInfo(currentVal);
     slider.style.setProperty('--fill-pct', `${fillPct}%`);
+    slider.style.setProperty('--conf-color', info.color);
   }
 
   updateConfidence(val) {
@@ -805,6 +807,7 @@ class InvestigationEngine {
       }
       const fillPct = ((info.pct - 20) / 80) * 100;
       slider.style.setProperty('--fill-pct', `${fillPct}%`);
+      slider.style.setProperty('--conf-color', info.color);
     }
 
     const valEl = document.getElementById('confidenceVal');
@@ -816,14 +819,24 @@ class InvestigationEngine {
     const ticks = document.querySelectorAll('.conf-tick-item');
     ticks.forEach(t => {
       const tVal = parseInt(t.dataset.val, 10);
+      const tInfo = this.getConfidenceInfo(tVal);
+      const mark = t.querySelector('.conf-tick-mark');
       if (tVal === info.pct) {
         t.classList.add('active');
         t.style.fontWeight = '700';
-        t.style.color = info.color;
+        t.style.color = tInfo.color;
+        if (mark) {
+          mark.style.background = tInfo.color;
+          mark.style.boxShadow = `0 0 6px ${tInfo.color}`;
+        }
       } else {
         t.classList.remove('active');
         t.style.fontWeight = '400';
         t.style.color = 'var(--text-muted)';
+        if (mark) {
+          mark.style.background = 'var(--border-strong)';
+          mark.style.boxShadow = 'none';
+        }
       }
     });
 
@@ -896,35 +909,27 @@ class InvestigationEngine {
           </label>
           <div class="confidence-track-wrap">
             <input type="range" class="slider-input" id="confidenceSlider" min="20" max="100" step="20" value="${currentConf.pct}" 
-                   style="--fill-pct: ${((currentConf.pct - 20) / 80) * 100}%;"
-                   ${isAnswered ? 'disabled style="opacity:0.85; --fill-pct: ' + (((currentConf.pct - 20) / 80) * 100) + '%;"' : ''}
+                   style="--fill-pct: ${((currentConf.pct - 20) / 80) * 100}%; --conf-color: ${currentConf.color};"
+                   ${isAnswered ? 'disabled style="opacity:0.85; --fill-pct: ' + (((currentConf.pct - 20) / 80) * 100) + '%; --conf-color: ' + currentConf.color + ';"' : ''}
                    oninput="window.investigationEngine.updateConfidence(this.value)">
             <div class="confidence-ticks-track" id="confidenceTicksTrack">
-              <div class="conf-tick-item ${currentConf.pct === 20 ? 'active' : ''}" data-val="20" ${!isAnswered ? 'onclick="window.investigationEngine.updateConfidence(20)"' : ''} style="cursor:${isAnswered ? 'default' : 'pointer'}; ${currentConf.pct === 20 ? 'font-weight:700; color:' + currentConf.color : 'color:var(--text-muted)'}">
-                <div class="conf-tick-mark"></div>
-                <strong>20%</strong>
-                <small style="color:var(--text-dim); font-size:0.7rem;">Đoán bừa</small>
-              </div>
-              <div class="conf-tick-item ${currentConf.pct === 40 ? 'active' : ''}" data-val="40" ${!isAnswered ? 'onclick="window.investigationEngine.updateConfidence(40)"' : ''} style="cursor:${isAnswered ? 'default' : 'pointer'}; ${currentConf.pct === 40 ? 'font-weight:700; color:' + currentConf.color : 'color:var(--text-muted)'}">
-                <div class="conf-tick-mark"></div>
-                <strong>40%</strong>
-                <small style="color:var(--text-dim); font-size:0.7rem;">Hơi nghi ngờ</small>
-              </div>
-              <div class="conf-tick-item ${currentConf.pct === 60 ? 'active' : ''}" data-val="60" ${!isAnswered ? 'onclick="window.investigationEngine.updateConfidence(60)"' : ''} style="cursor:${isAnswered ? 'default' : 'pointer'}; ${currentConf.pct === 60 ? 'font-weight:700; color:' + currentConf.color : 'color:var(--text-muted)'}">
-                <div class="conf-tick-mark"></div>
-                <strong>60%</strong>
-                <small style="color:var(--text-dim); font-size:0.7rem;">Phân vân 50/50</small>
-              </div>
-              <div class="conf-tick-item ${currentConf.pct === 80 ? 'active' : ''}" data-val="80" ${!isAnswered ? 'onclick="window.investigationEngine.updateConfidence(80)"' : ''} style="cursor:${isAnswered ? 'default' : 'pointer'}; ${currentConf.pct === 80 ? 'font-weight:700; color:' + currentConf.color : 'color:var(--text-muted)'}">
-                <div class="conf-tick-mark"></div>
-                <strong>80%</strong>
-                <small style="color:var(--text-dim); font-size:0.7rem;">Khá chắc chắn</small>
-              </div>
-              <div class="conf-tick-item ${currentConf.pct === 100 ? 'active' : ''}" data-val="100" ${!isAnswered ? 'onclick="window.investigationEngine.updateConfidence(100)"' : ''} style="cursor:${isAnswered ? 'default' : 'pointer'}; ${currentConf.pct === 100 ? 'font-weight:700; color:' + currentConf.color : 'color:var(--text-muted)'}">
-                <div class="conf-tick-mark"></div>
-                <strong>100%</strong>
-                <small style="color:var(--text-dim); font-size:0.7rem;">Chắc chắn 100%</small>
-              </div>
+              ${[20, 40, 60, 80, 100].map(val => {
+                const itemInfo = this.getConfidenceInfo(val);
+                const isActive = currentConf.pct === val;
+                const styleColor = isActive ? itemInfo.color : 'var(--text-muted)';
+                const styleWeight = isActive ? '700' : '400';
+                const markBg = isActive ? itemInfo.color : 'var(--border-strong)';
+                const markShadow = isActive ? `box-shadow:0 0 6px ${itemInfo.color};` : '';
+                return `
+                  <div class="conf-tick-item ${isActive ? 'active' : ''}" data-val="${val}" 
+                       ${!isAnswered ? `onclick="window.investigationEngine.updateConfidence(${val})"` : ''} 
+                       style="cursor:${isAnswered ? 'default' : 'pointer'}; font-weight:${styleWeight}; color:${styleColor};">
+                    <div class="conf-tick-mark" style="background:${markBg}; ${markShadow}"></div>
+                    <strong>${val}%</strong>
+                    <small style="color:var(--text-dim); font-size:0.7rem;">${itemInfo.short}</small>
+                  </div>
+                `;
+              }).join('')}
             </div>
           </div>
           <small style="color:var(--text-dim); display:block; margin-top:6px;">Kéo thanh trượt hoặc chạm vào từng mức để tự đánh giá mức độ chắc chắn của bạn trước khi quan sát thí nghiệm.</small>
