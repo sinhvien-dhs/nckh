@@ -48,7 +48,7 @@
 
       <div class="header-status">
         <div class="stat-chip" id="studentProfileChip" style="cursor:pointer;" onclick="window.investigationEngine.openProfileModal()" title="Bấm để cập nhật Họ tên, Lớp, Trường">
-          <span>👤 Thí sinh:</span>
+          <span id="studentProfileLabel">👤 Thí sinh:</span>
           <strong id="studentDisplay" style="color:var(--cyan)">Chưa đăng ký</strong>
         </div>
         <div class="stat-chip">
@@ -62,6 +62,9 @@
       </div>
 
       <div class="header-actions">
+        <button class="btn btn-success" id="btnFinishExam" type="button" onclick="window.investigationEngine.finishAndSubmitExam()" title="Bấm khi hoàn thành bài thi để lưu kết quả và chuyển lượt thí sinh mới">
+          ✅ Hoàn Thành
+        </button>
         <button class="btn" id="btnOpenGuide" type="button" onclick="window.openPedagogyGuide()" title="Xem Hướng dẫn điều tra sư phạm">
           📖 Hướng Dẫn
         </button>

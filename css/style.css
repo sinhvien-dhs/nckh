@@ -259,6 +259,15 @@ a:focus-visible {
   border-color: var(--green-hover);
 }
 
+#btnFinishExam {
+  font-weight: 700;
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.25);
+}
+
+#btnFinishExam:hover {
+  box-shadow: 0 0 14px rgba(34, 197, 94, 0.45);
+}
+
 .btn-amber {
   background: var(--amber);
   border-color: var(--amber);

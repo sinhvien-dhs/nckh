@@ -138,18 +138,40 @@ class InvestigationEngine {
 
   syncStudentDisplay() {
     const disp = document.getElementById('studentDisplay');
+    const label = document.getElementById('studentProfileLabel');
+    const chip = document.getElementById('studentProfileChip');
     if (disp) {
       if (this.hasValidProfile()) {
         disp.innerText = `${this.studentProfile.name} • ${this.studentProfile.className} (${this.studentProfile.schoolName})`;
         disp.style.color = 'var(--cyan)';
+        if (label) label.innerText = '🔒 Thí sinh (Đã khóa):';
+        if (chip) {
+          chip.title = 'Thông tin thí sinh đã khóa trong suốt lượt thi. Bấm nút "Hoàn Thành" khi làm xong để nộp bài và đổi thí sinh.';
+          chip.style.cursor = 'default';
+        }
       } else {
         disp.innerText = 'Chưa đăng ký (Bắt buộc nhập)';
         disp.style.color = 'var(--crimson)';
+        if (label) label.innerText = '👤 Thí sinh:';
+        if (chip) {
+          chip.title = 'Bấm để đăng ký Họ tên, Lớp, Trường';
+          chip.style.cursor = 'pointer';
+        }
       }
     }
   }
 
   openProfileModal(isForNew = false) {
+    // Khóa thông tin: Không cho phép sửa đổi tên/lớp/trường khi đang trong lượt thi
+    if (this.hasValidProfile() && !isForNew) {
+      if (window.showToast) {
+        window.showToast('🔒 Thông tin thí sinh đã được khóa trong suốt lượt thi. Hãy bấm nút "Hoàn Thành" sau khi làm bài xong để nộp bài và chuyển lượt!');
+      } else {
+        alert('Thông tin thí sinh đã được khóa trong suốt lượt thi. Vui lòng bấm nút "Hoàn Thành" sau khi làm bài xong để chuyển lượt cho thí sinh khác!');
+      }
+      return;
+    }
+
     const modal = document.getElementById('studentModal');
     if (modal) {
       const nameInp = document.getElementById('studentNameInput');
@@ -159,8 +181,8 @@ class InvestigationEngine {
 
       if (isForNew) {
         if (nameInp) nameInp.value = '';
-        if (classInp) classInp.value = this.studentProfile.className || '';
-        if (schoolInp) schoolInp.value = this.studentProfile.schoolName || '';
+        if (classInp) classInp.value = '';
+        if (schoolInp) schoolInp.value = '';
       } else {
         if (nameInp) nameInp.value = this.studentProfile.name || '';
         if (classInp) classInp.value = this.studentProfile.className || '';
@@ -247,6 +269,89 @@ class InvestigationEngine {
         window.openPedagogyGuide();
       }, 250);
     }
+  }
+
+  // Lưu bản ghi kết quả của thí sinh vào lịch sử vĩnh viễn (physics_student_records)
+  saveCompletedRecord() {
+    if (!this.hasValidProfile()) return null;
+    try {
+      const recordsStr = localStorage.getItem('physics_student_records');
+      const records = recordsStr ? JSON.parse(recordsStr) : [];
+      const record = {
+        id: 'rec_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+        studentProfile: { ...this.studentProfile },
+        score: this.score,
+        solvedCasesCount: this.solvedCases.size,
+        solvedCaseIds: [...this.solvedCases],
+        facione: { ...this.facione },
+        completedAt: new Date().toISOString(),
+        studentAnswers: JSON.parse(JSON.stringify(this.studentAnswers))
+      };
+      records.push(record);
+      localStorage.setItem('physics_student_records', JSON.stringify(records));
+      return record;
+    } catch (e) {
+      console.error('Lỗi khi lưu kết quả bài thi:', e);
+      return null;
+    }
+  }
+
+  // Nộp bài & Hoàn thành lượt thi: Lưu kết quả vĩnh viễn, xóa tiến độ hiện tại, mở form nhập thí sinh mới
+  finishAndSubmitExam(forceWithoutConfirm = false) {
+    if (!this.hasValidProfile()) {
+      this.openProfileModal(true);
+      return;
+    }
+
+    const name = this.studentProfile.name;
+    const className = this.studentProfile.className;
+    const schoolName = this.studentProfile.schoolName;
+    const solvedCount = this.solvedCases.size;
+    const currentScore = this.score;
+
+    if (!forceWithoutConfirm) {
+      const confirmMsg = `Bạn có chắc chắn muốn nộp bài và HOÀN THÀNH lượt thi này không?\n\n` +
+        `• Thí sinh: ${name} (Lớp ${className} - ${schoolName})\n` +
+        `• Điểm phản biện: ${currentScore} / 900 điểm\n` +
+        `• Vụ án đã hoàn thành: ${solvedCount} / 6 vụ án\n\n` +
+        `Dữ liệu kết quả sẽ được lưu vĩnh viễn vào hệ thống.\n` +
+        `Sau khi hoàn thành, hệ thống sẽ mở bảng để nhập Tên, Lớp, Trường mới cho lượt thi tiếp theo!`;
+      if (!confirm(confirmMsg)) {
+        return;
+      }
+    }
+
+    // 1. Lưu kết quả thi vào danh mục lịch sử (physics_student_records)
+    this.saveCompletedRecord();
+
+    // 2. Xóa tiến độ bài làm hiện tại
+    this.resetAllProgress();
+
+    // 3. Xóa thông tin thí sinh hiện tại để mở khóa lượt mới
+    this.studentProfile = {
+      name: '',
+      className: '',
+      schoolName: '',
+      registeredAt: null
+    };
+    try {
+      localStorage.removeItem('physics_student_profile');
+    } catch (e) {}
+
+    // 4. Đồng bộ giao diện
+    this.syncStudentDisplay();
+    this.closeCompletionModal();
+    this.loadCase(0);
+
+    // 5. Thông báo và mở modal nhập thông tin thí sinh mới
+    if (window.showToast) {
+      window.showToast(`🎉 Đã lưu bài thi của "${name}"! Mời nhập thông tin thí sinh tiếp theo.`);
+    }
+    if (window.audioFX) window.audioFX.playSuccess();
+
+    setTimeout(() => {
+      this.openProfileModal(true);
+    }, 350);
   }
 
   // Grand Completion Modal & Post-Game Actions
@@ -345,8 +450,8 @@ class InvestigationEngine {
           <button class="btn" onclick="window.investigationEngine.retryCurrentPlayer()" style="padding:10px; font-weight:600; justify-content:center; color:var(--green); border-color:var(--green);">
             🔄 3. Chơi Lại Cải Thiện Điểm
           </button>
-          <button class="btn" onclick="window.investigationEngine.switchNewStudent()" style="padding:10px; font-weight:600; justify-content:center; color:var(--amber); border-color:var(--amber);">
-            👥 4. Đổi Thí Sinh (Lượt Mới)
+          <button class="btn btn-success" onclick="window.investigationEngine.finishAndSubmitExam()" style="padding:10px; font-weight:700; justify-content:center; box-shadow:0 0 10px rgba(34,197,94,0.3);">
+            ✅ 4. Hoàn Thành & Đổi Thí Sinh Mới
           </button>
         </div>
       </div>
@@ -361,7 +466,8 @@ class InvestigationEngine {
 
   retryCurrentPlayer() {
     const name = this.studentProfile.name || 'Em';
-    if (confirm(`Bạn có chắc muốn chơi lại từ đầu để cải thiện điểm số và rèn luyện tư duy phản biện không?\n(Thông tin thí sinh "${name}" vẫn được giữ nguyên)`)) {
+    if (confirm(`Bạn có chắc muốn chơi lại từ đầu để cải thiện điểm số và rèn luyện tư duy phản biện không?\n(Kết quả hiện tại sẽ được lưu vào lịch sử, và thông tin thí sinh "${name}" được giữ nguyên)`)) {
+      this.saveCompletedRecord();
       this.resetAllProgress();
       this.closeCompletionModal();
       this.loadCase(0);
@@ -372,8 +478,7 @@ class InvestigationEngine {
   }
 
   switchNewStudent() {
-    this.closeCompletionModal();
-    this.openProfileModal(true);
+    this.finishAndSubmitExam();
   }
 
   loadCase(index) {
@@ -1334,8 +1439,11 @@ class InvestigationEngine {
 
       <div style="margin-top: 24px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;">
         <button class="btn" onclick="window.investigationEngine.prevPhase()">⬅ Quay lại</button>
-        <div style="display:flex; gap:10px;">
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
           ${isAllCasesSolved ? `
+            <button class="btn btn-success" onclick="window.investigationEngine.finishAndSubmitExam()" style="font-weight:700;">
+              ✅ Hoàn Thành & Nộp Bài
+            </button>
             <button class="btn btn-primary" onclick="window.investigationEngine.openCompletionModal()" style="font-weight:700; background:var(--green); border-color:var(--green); box-shadow:0 0 12px rgba(34,197,94,0.35);">
               🏆 Xem Báo Cáo Vinh Danh & Bước Tiếp Theo ➜
             </button>

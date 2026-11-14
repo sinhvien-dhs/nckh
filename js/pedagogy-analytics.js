@@ -94,11 +94,79 @@ class PedagogyAnalytics {
 
     const accuracyRate = totalAnswered > 0 ? ((correctCount / totalAnswered) * 100).toFixed(1) : '0';
 
+    // Lấy danh sách các lượt thi đã hoàn thành trong hệ thống
+    let records = [];
+    try {
+      const saved = localStorage.getItem('physics_student_records');
+      if (saved) records = JSON.parse(saved);
+    } catch (e) {}
+
+    let historyTableHtml = '';
+    if (records.length > 0) {
+      const historyRows = records.map((rec, idx) => {
+        const p = rec.studentProfile || {};
+        const f = rec.facione || {};
+        const dateStr = rec.completedAt ? new Date(rec.completedAt).toLocaleString('vi-VN') : '-';
+        return `
+          <tr>
+            <td><strong>${idx + 1}</strong></td>
+            <td><strong style="color:var(--cyan)">${p.name || '-'}</strong></td>
+            <td>${p.className || '-'}</td>
+            <td>${p.schoolName || '-'}</td>
+            <td><strong style="color:var(--green)">${rec.score || 0} / 900</strong></td>
+            <td>${rec.solvedCasesCount || 0}/6</td>
+            <td style="font-size:0.75rem;">
+              T1:${f.t1 || 0}% | T2:${f.t2 || 0}% | T3:${f.t3 || 0}% | T4:${f.t4 || 0}%
+            </td>
+            <td style="font-size:0.75rem; color:var(--text-muted);">${dateStr}</td>
+          </tr>
+        `;
+      }).join('');
+
+      historyTableHtml = `
+        <div style="background:var(--bg-alt); padding:14px; border-radius:8px; border:1px solid var(--border-color); margin-bottom:14px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
+            <h4 style="color:var(--green); font-size:0.9rem; margin:0; display:flex; align-items:center; gap:6px;">
+              📁 LỊCH SỬ CÁC LƯỢT THI ĐÃ HOÀN THÀNH (${records.length} THÍ SINH ĐÃ LƯU)
+            </h4>
+            <div style="display:flex; gap:8px;">
+              <button class="btn btn-primary" onclick="window.pedagogyAnalytics.exportAllRecordsJSON()" style="font-size:0.8rem; padding:4px 10px;">
+                📥 Xuất Báo Cáo Cả Lớp (SPSS/JSON)
+              </button>
+              <button class="btn btn-danger" onclick="window.pedagogyAnalytics.clearHistoryRecords()" style="font-size:0.8rem; padding:4px 10px; border-color:var(--crimson); color:var(--crimson);">
+                🗑️ Xóa Lịch Sử
+              </button>
+            </div>
+          </div>
+          <div style="max-height:200px; overflow-y:auto;">
+            <table class="spss-table" style="font-size:0.78rem;">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Họ và Tên</th>
+                  <th>Lớp</th>
+                  <th>Trường</th>
+                  <th>Điểm số</th>
+                  <th>Vụ án</th>
+                  <th>Facione T1-T4</th>
+                  <th>Thời gian hoàn thành</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${historyRows}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
     container.innerHTML = `
-      <div style="background:var(--bg-alt); padding:14px; border-radius:8px; border:1px solid var(--border-color); margin-top:14px;">
+      ${historyTableHtml}
+      <div style="background:var(--bg-alt); padding:14px; border-radius:8px; border:1px solid var(--border-color);">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
           <h4 style="color:var(--text-main); font-size:0.9rem; margin:0;">
-            📋 NHẬT KÝ TƯ DUY PHẢN BIỆN CỦA HỌC SINH
+            📋 NHẬT KÝ CHI TIẾT CỦA THÍ SINH ĐANG LÀM BÀI
           </h4>
           <div style="font-size:0.82rem; color:var(--text-muted);">
             Thí sinh: <strong style="color:var(--cyan)">${prof.name || 'Chưa nhập'}</strong> | 
@@ -131,7 +199,7 @@ class PedagogyAnalytics {
 
         <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px;">
           <button class="btn" onclick="window.pedagogyAnalytics.exportDataJSON()" style="font-size:0.8rem; padding:4px 10px;">
-            📥 Xuất File Dữ Liệu SPSS (JSON)
+            📥 Xuất File Dữ Liệu Thí Sinh Này (JSON)
           </button>
         </div>
       </div>
@@ -139,11 +207,18 @@ class PedagogyAnalytics {
   }
 
   exportDataJSON() {
+    let records = [];
+    try {
+      const saved = localStorage.getItem('physics_student_records');
+      if (saved) records = JSON.parse(saved);
+    } catch (e) {}
+
     const exportData = {
       studentProfile: window.investigationEngine.studentProfile,
       facioneMetrics: window.investigationEngine.facione,
       score: window.investigationEngine.score,
       answers: window.investigationEngine.studentAnswers,
+      completedRecords: records,
       exportedAt: new Date().toISOString()
     };
 
@@ -153,6 +228,38 @@ class PedagogyAnalytics {
     dlAnchor.setAttribute('download', `physics_critical_thinking_${(exportData.studentProfile.name || 'student').replace(/\s+/g, '_')}.json`);
     dlAnchor.click();
     dlAnchor.remove();
+  }
+
+  exportAllRecordsJSON() {
+    let records = [];
+    try {
+      const saved = localStorage.getItem('physics_student_records');
+      if (saved) records = JSON.parse(saved);
+    } catch (e) {}
+
+    const exportData = {
+      description: 'Dữ liệu nghiên cứu sư phạm đánh giá tư duy phản biện - Môn Vật lý THPT (GDPT 2018)',
+      totalRecords: records.length,
+      exportedAt: new Date().toISOString(),
+      records: records
+    };
+
+    const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(exportData, null, 2));
+    const dlAnchor = document.createElement('a');
+    dlAnchor.setAttribute('href', dataStr);
+    dlAnchor.setAttribute('download', `physics_research_all_students_${new Date().toISOString().slice(0, 10)}.json`);
+    dlAnchor.click();
+    dlAnchor.remove();
+  }
+
+  clearHistoryRecords() {
+    if (confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử các lượt thi đã lưu của cả lớp không? Thao tác này không thể hoàn tác.')) {
+      try {
+        localStorage.removeItem('physics_student_records');
+      } catch (e) {}
+      this.renderStudentLedger();
+      if (window.showToast) window.showToast('🗑️ Đã xóa sạch lịch sử các lượt thi đã lưu.');
+    }
   }
 
   renderRadar() {
