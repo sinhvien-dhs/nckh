@@ -340,7 +340,7 @@ a:focus-visible {
 .case-bar {
   width: 100%;
   background: transparent;
-  padding: 10px 52px 10px 16px;
+  padding: 10px 52px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -349,7 +349,6 @@ a:focus-visible {
   scrollbar-width: none;
   -ms-overflow-style: none;
   user-select: none;
-  scroll-behavior: smooth;
   box-sizing: border-box;
 }
 
@@ -388,25 +387,27 @@ a:focus-visible {
   cursor: pointer;
   padding: 0;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4), 0 0 10px rgba(0, 240, 255, 0.25);
-  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
-  z-index: 10;
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+  z-index: 20;
   flex-shrink: 0;
-  animation: circlePulse 2.4s infinite ease-in-out;
+  pointer-events: auto;
 }
 
 .case-scroll-circle.right {
   right: 12px;
+  animation: circlePulse 2.4s infinite ease-in-out;
 }
 
 .case-scroll-circle.left {
   left: 12px;
+  animation: circlePulse 2.4s infinite ease-in-out;
 }
 
 .case-scroll-circle:hover {
   background: var(--cyan);
   color: var(--bg-dark);
-  transform: translateY(-50%) scale(1.12);
-  box-shadow: 0 0 14px var(--cyan);
+  transform: translateY(-50%) scale(1.15);
+  box-shadow: 0 0 16px var(--cyan);
   animation: none;
 }
 
@@ -416,6 +417,7 @@ a:focus-visible {
 
 .case-scroll-circle .scroll-arrow-icon {
   display: block;
+  pointer-events: none;
 }
 
 @keyframes circlePulse {
@@ -1534,7 +1536,7 @@ a:focus-visible {
   }
 
   .case-bar {
-    padding: 6px 44px 6px 10px;
+    padding: 6px 40px;
     gap: 6px;
   }
 

@@ -1,5 +1,5 @@
 /* Physics Detective PWA Service Worker (Zero-Dependency Offline Cache) */
-const CACHE_NAME = 'physics-detective-v8';
+const CACHE_NAME = 'physics-detective-v9';
 const ASSETS = [
   './',
   './index.html',

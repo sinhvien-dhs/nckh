@@ -363,11 +363,11 @@ function initStudentGameOnce() {
     // Nút tròn kéo cuộn danh sách vụ án ở hai đầu
     const btnScrollRight = document.getElementById('btnCaseScrollRight');
     const btnScrollLeft = document.getElementById('btnCaseScrollLeft');
-
-    const getScrollStep = () => Math.max(260, Math.floor(caseBar.clientWidth * 0.7));
+    let scrollAnimId = null;
 
     const syncCaseScrollCircles = () => {
-      const isScrollable = caseBar.scrollWidth > caseBar.clientWidth + 5;
+      const maxScroll = Math.max(0, caseBar.scrollWidth - caseBar.clientWidth);
+      const isScrollable = maxScroll > 10;
       caseBar.classList.toggle('is-scrollable', isScrollable);
 
       if (!btnScrollRight || !btnScrollLeft) return;
@@ -377,26 +377,57 @@ function initStudentGameOnce() {
         return;
       }
 
-      const atStart = caseBar.scrollLeft <= 8;
-      const atEnd = caseBar.scrollLeft + caseBar.clientWidth >= caseBar.scrollWidth - 10;
-
-      // Khi kéo đến cuối thì đổi sang cái bên trái để kéo về
-      btnScrollLeft.style.display = atStart ? 'none' : 'inline-flex';
-      btnScrollRight.style.display = atEnd ? 'none' : 'inline-flex';
+      // Khi ở nửa đầu: Hiện nút phải (➔) để kéo tiếp
+      // Khi kéo đến cuối: Đổi sang nút bên trái (⬅) để kéo về
+      const isPastHalf = caseBar.scrollLeft >= maxScroll * 0.45;
+      btnScrollLeft.style.display = isPastHalf ? 'inline-flex' : 'none';
+      btnScrollRight.style.display = isPastHalf ? 'none' : 'inline-flex';
     };
     window.syncCaseScrollCircles = syncCaseScrollCircles;
 
+    function scrollCaseBarTo(target) {
+      if (scrollAnimId) cancelAnimationFrame(scrollAnimId);
+      const maxScroll = Math.max(0, caseBar.scrollWidth - caseBar.clientWidth);
+      const clampedTarget = Math.max(0, Math.min(maxScroll, target));
+      const start = caseBar.scrollLeft;
+      const change = clampedTarget - start;
+      if (Math.abs(change) < 2) return;
+
+      const duration = 350;
+      const startTime = performance.now();
+
+      function step(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const ease = 1 - Math.pow(1 - progress, 3); // easeOutCubic
+        caseBar.scrollLeft = start + change * ease;
+        syncCaseScrollCircles();
+        if (progress < 1) {
+          scrollAnimId = requestAnimationFrame(step);
+        } else {
+          caseBar.scrollLeft = clampedTarget;
+          syncCaseScrollCircles();
+          scrollAnimId = null;
+        }
+      }
+      scrollAnimId = requestAnimationFrame(step);
+    }
+
     if (btnScrollRight) {
-      btnScrollRight.addEventListener('click', () => {
+      btnScrollRight.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         if (window.audioFX) window.audioFX.playClick();
-        caseBar.scrollBy({ left: getScrollStep(), behavior: 'smooth' });
+        scrollCaseBarTo(caseBar.scrollWidth - caseBar.clientWidth);
       });
     }
 
     if (btnScrollLeft) {
-      btnScrollLeft.addEventListener('click', () => {
+      btnScrollLeft.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         if (window.audioFX) window.audioFX.playClick();
-        caseBar.scrollBy({ left: -getScrollStep(), behavior: 'smooth' });
+        scrollCaseBarTo(0);
       });
     }
 
