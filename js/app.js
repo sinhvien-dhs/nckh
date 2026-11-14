@@ -360,52 +360,40 @@ function initStudentGameOnce() {
     let startScrollLeft = 0;
     const DRAG_THRESHOLD = 8;
 
-    // Điều hướng cuộn thanh Vụ án bằng hai nút tròn ở hai đầu
-    const btnNavPrev = document.getElementById('btnCaseNavPrev');
-    const btnNavNext = document.getElementById('btnCaseNavNext');
-    const caseWrapper = document.getElementById('caseSelectorWrapper');
+    // Nút tròn kéo cuộn danh sách vụ án ở cuối thanh tab
+    const scrollCircleBtn = document.getElementById('btnCaseScrollCircle');
 
-    const getScrollStep = () => Math.max(240, Math.floor(caseBar.clientWidth * 0.65));
+    const getScrollStep = () => Math.max(260, Math.floor(caseBar.clientWidth * 0.7));
 
-    const syncCaseNavButtons = () => {
-      const isScrollable = caseBar.scrollWidth > caseBar.clientWidth + 2;
+    const syncCaseScrollCircle = () => {
+      const isScrollable = caseBar.scrollWidth > caseBar.clientWidth + 5;
       caseBar.classList.toggle('is-scrollable', isScrollable);
-      if (caseWrapper) caseWrapper.classList.toggle('has-scroll', isScrollable);
 
-      if (!btnNavPrev || !btnNavNext) return;
+      if (!scrollCircleBtn) return;
       if (!isScrollable) {
-        btnNavPrev.style.display = 'none';
-        btnNavNext.style.display = 'none';
+        scrollCircleBtn.style.display = 'none';
         return;
       }
-      btnNavPrev.style.display = 'inline-flex';
-      btnNavNext.style.display = 'inline-flex';
+      scrollCircleBtn.style.display = 'inline-flex';
 
-      const atStart = caseBar.scrollLeft <= 4;
-      const atEnd = caseBar.scrollLeft + caseBar.clientWidth >= caseBar.scrollWidth - 6;
-
-      btnNavPrev.classList.toggle('disabled', atStart);
-      btnNavPrev.setAttribute('aria-disabled', atStart ? 'true' : 'false');
-
+      const atEnd = caseBar.scrollLeft + caseBar.clientWidth >= caseBar.scrollWidth - 10;
       if (atEnd) {
-        btnNavNext.classList.add('at-end');
-        btnNavNext.setAttribute('title', 'Quay lại các vụ án đầu');
-        btnNavNext.setAttribute('aria-label', 'Quay lại các vụ án đầu');
-        btnNavNext.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>`;
+        scrollCircleBtn.classList.add('reverse');
+        scrollCircleBtn.setAttribute('title', 'Quay lại các vụ án đầu');
+        scrollCircleBtn.setAttribute('aria-label', 'Quay lại các vụ án đầu');
       } else {
-        btnNavNext.classList.remove('at-end');
-        btnNavNext.setAttribute('title', 'Xem các vụ án tiếp theo');
-        btnNavNext.setAttribute('aria-label', 'Xem các vụ án tiếp theo');
-        btnNavNext.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>`;
+        scrollCircleBtn.classList.remove('reverse');
+        scrollCircleBtn.setAttribute('title', 'Xem tiếp các vụ án');
+        scrollCircleBtn.setAttribute('aria-label', 'Xem tiếp các vụ án');
       }
     };
-    window.syncCaseNavButtons = syncCaseNavButtons;
+    window.syncCaseScrollCircle = syncCaseScrollCircle;
 
-    if (btnNavNext) {
-      btnNavNext.addEventListener('click', () => {
+    if (scrollCircleBtn) {
+      scrollCircleBtn.addEventListener('click', () => {
         if (window.audioFX) window.audioFX.playClick();
-        const atEnd = caseBar.scrollLeft + caseBar.clientWidth >= caseBar.scrollWidth - 6;
-        if (atEnd) {
+        const atEnd = caseBar.scrollLeft + caseBar.clientWidth >= caseBar.scrollWidth - 10;
+        if (atEnd || scrollCircleBtn.classList.contains('reverse')) {
           caseBar.scrollTo({ left: 0, behavior: 'smooth' });
         } else {
           caseBar.scrollBy({ left: getScrollStep(), behavior: 'smooth' });
@@ -413,14 +401,7 @@ function initStudentGameOnce() {
       });
     }
 
-    if (btnNavPrev) {
-      btnNavPrev.addEventListener('click', () => {
-        if (window.audioFX) window.audioFX.playClick();
-        caseBar.scrollBy({ left: -getScrollStep(), behavior: 'smooth' });
-      });
-    }
-
-    caseBar.addEventListener('scroll', syncCaseNavButtons, { passive: true });
+    caseBar.addEventListener('scroll', syncCaseScrollCircle, { passive: true });
 
     caseBar.addEventListener('pointerdown', (e) => {
       if (e.button !== 0 || e.pointerType === 'touch') return;
@@ -466,10 +447,10 @@ function initStudentGameOnce() {
     caseBar.addEventListener('pointercancel', endDrag);
     window.addEventListener('blur', endDrag);
 
-    syncCaseNavButtons();
-    window.addEventListener('resize', syncCaseNavButtons);
+    syncCaseScrollCircle();
+    window.addEventListener('resize', syncCaseScrollCircle);
     if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(syncCaseNavButtons).catch(() => {});
+      document.fonts.ready.then(syncCaseScrollCircle).catch(() => {});
     }
   }
 

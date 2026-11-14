@@ -334,17 +334,13 @@ a:focus-visible {
   width: 100%;
   background: var(--bg-alt);
   border-bottom: 1px solid var(--border-color);
-  display: flex;
-  align-items: center;
-  padding: 0 10px;
   box-sizing: border-box;
 }
 
 .case-bar {
-  flex: 1;
-  min-width: 0;
+  width: 100%;
   background: transparent;
-  padding: 10px 8px;
+  padding: 10px 52px 10px 16px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -354,6 +350,7 @@ a:focus-visible {
   -ms-overflow-style: none;
   user-select: none;
   scroll-behavior: smooth;
+  box-sizing: border-box;
 }
 
 .case-bar::-webkit-scrollbar {
@@ -372,56 +369,61 @@ a:focus-visible {
   cursor: grabbing;
 }
 
-.case-nav-btn {
-  width: 32px;
-  height: 32px;
-  min-width: 32px;
-  min-height: 32px;
+/* Floating circle button at the end of the case bar */
+.case-scroll-circle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  min-height: 34px;
   border-radius: 50%;
-  border: 1px solid var(--border-color);
   background: var(--bg-card);
+  border: 1.5px solid var(--cyan);
   color: var(--cyan);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   padding: 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-  transition: transform 0.2s ease, opacity 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-  z-index: 5;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4), 0 0 10px rgba(0, 240, 255, 0.25);
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  z-index: 10;
   flex-shrink: 0;
+  animation: circlePulse 2.4s infinite ease-in-out;
 }
 
-.case-nav-btn:hover {
-  background: var(--bg-hover, var(--bg-card));
-  border-color: var(--cyan);
-  color: #ffffff;
-  transform: scale(1.1);
-  box-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
+.case-scroll-circle:hover {
+  background: var(--cyan);
+  color: var(--bg-dark);
+  transform: translateY(-50%) scale(1.12);
+  box-shadow: 0 0 14px var(--cyan);
+  animation: none;
 }
 
-.case-nav-btn:active {
-  transform: scale(0.95);
+.case-scroll-circle:active {
+  transform: translateY(-50%) scale(0.95);
 }
 
-.case-nav-btn.disabled {
-  opacity: 0;
-  pointer-events: none;
-  transform: scale(0.8);
+.case-scroll-circle .scroll-arrow-icon {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: block;
 }
 
-.case-nav-btn.next:not(.disabled):not(.at-end) {
-  animation: caseNavGlow 2.5s infinite ease-in-out;
+.case-scroll-circle.reverse .scroll-arrow-icon {
+  transform: rotate(180deg);
 }
 
-@keyframes caseNavGlow {
+@keyframes circlePulse {
   0%, 100% {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-    border-color: var(--border-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 0 6px rgba(0, 240, 255, 0.25);
+    border-color: var(--cyan);
   }
   50% {
-    box-shadow: 0 0 12px rgba(0, 240, 255, 0.5);
-    border-color: var(--cyan);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4), 0 0 16px rgba(0, 240, 255, 0.65);
+    border-color: #ffffff;
   }
 }
 
@@ -1529,16 +1531,13 @@ a:focus-visible {
     justify-content: space-around;
   }
 
-  .case-bar-wrapper {
-    padding: 0 4px;
-  }
-
   .case-bar {
-    padding: 6px 4px;
+    padding: 6px 44px 6px 10px;
     gap: 6px;
   }
 
-  .case-nav-btn {
+  .case-scroll-circle {
+    right: 8px;
     width: 28px;
     height: 28px;
     min-width: 28px;
