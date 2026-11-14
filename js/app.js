@@ -360,9 +360,67 @@ function initStudentGameOnce() {
     let startScrollLeft = 0;
     const DRAG_THRESHOLD = 8;
 
-    const syncScrollable = () => {
-      caseBar.classList.toggle('is-scrollable', caseBar.scrollWidth > caseBar.clientWidth + 1);
+    // Điều hướng cuộn thanh Vụ án bằng hai nút tròn ở hai đầu
+    const btnNavPrev = document.getElementById('btnCaseNavPrev');
+    const btnNavNext = document.getElementById('btnCaseNavNext');
+    const caseWrapper = document.getElementById('caseSelectorWrapper');
+
+    const getScrollStep = () => Math.max(240, Math.floor(caseBar.clientWidth * 0.65));
+
+    const syncCaseNavButtons = () => {
+      const isScrollable = caseBar.scrollWidth > caseBar.clientWidth + 2;
+      caseBar.classList.toggle('is-scrollable', isScrollable);
+      if (caseWrapper) caseWrapper.classList.toggle('has-scroll', isScrollable);
+
+      if (!btnNavPrev || !btnNavNext) return;
+      if (!isScrollable) {
+        btnNavPrev.style.display = 'none';
+        btnNavNext.style.display = 'none';
+        return;
+      }
+      btnNavPrev.style.display = 'inline-flex';
+      btnNavNext.style.display = 'inline-flex';
+
+      const atStart = caseBar.scrollLeft <= 4;
+      const atEnd = caseBar.scrollLeft + caseBar.clientWidth >= caseBar.scrollWidth - 6;
+
+      btnNavPrev.classList.toggle('disabled', atStart);
+      btnNavPrev.setAttribute('aria-disabled', atStart ? 'true' : 'false');
+
+      if (atEnd) {
+        btnNavNext.classList.add('at-end');
+        btnNavNext.setAttribute('title', 'Quay lại các vụ án đầu');
+        btnNavNext.setAttribute('aria-label', 'Quay lại các vụ án đầu');
+        btnNavNext.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>`;
+      } else {
+        btnNavNext.classList.remove('at-end');
+        btnNavNext.setAttribute('title', 'Xem các vụ án tiếp theo');
+        btnNavNext.setAttribute('aria-label', 'Xem các vụ án tiếp theo');
+        btnNavNext.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>`;
+      }
     };
+    window.syncCaseNavButtons = syncCaseNavButtons;
+
+    if (btnNavNext) {
+      btnNavNext.addEventListener('click', () => {
+        if (window.audioFX) window.audioFX.playClick();
+        const atEnd = caseBar.scrollLeft + caseBar.clientWidth >= caseBar.scrollWidth - 6;
+        if (atEnd) {
+          caseBar.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          caseBar.scrollBy({ left: getScrollStep(), behavior: 'smooth' });
+        }
+      });
+    }
+
+    if (btnNavPrev) {
+      btnNavPrev.addEventListener('click', () => {
+        if (window.audioFX) window.audioFX.playClick();
+        caseBar.scrollBy({ left: -getScrollStep(), behavior: 'smooth' });
+      });
+    }
+
+    caseBar.addEventListener('scroll', syncCaseNavButtons, { passive: true });
 
     caseBar.addEventListener('pointerdown', (e) => {
       if (e.button !== 0 || e.pointerType === 'touch') return;
@@ -408,10 +466,10 @@ function initStudentGameOnce() {
     caseBar.addEventListener('pointercancel', endDrag);
     window.addEventListener('blur', endDrag);
 
-    syncScrollable();
-    window.addEventListener('resize', syncScrollable);
+    syncCaseNavButtons();
+    window.addEventListener('resize', syncCaseNavButtons);
     if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(syncScrollable).catch(() => {});
+      document.fonts.ready.then(syncCaseNavButtons).catch(() => {});
     }
   }
 

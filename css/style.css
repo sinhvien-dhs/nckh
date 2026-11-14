@@ -329,10 +329,22 @@ a:focus-visible {
 }
 
 /* ==================== CASE SELECTOR BAR ==================== */
-.case-bar {
+.case-bar-wrapper {
+  position: relative;
+  width: 100%;
   background: var(--bg-alt);
-  padding: 10px 24px;
   border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+
+.case-bar {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  padding: 10px 8px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -341,6 +353,7 @@ a:focus-visible {
   scrollbar-width: none;
   -ms-overflow-style: none;
   user-select: none;
+  scroll-behavior: smooth;
 }
 
 .case-bar::-webkit-scrollbar {
@@ -357,6 +370,59 @@ a:focus-visible {
 
 .case-bar.dragging .case-chip {
   cursor: grabbing;
+}
+
+.case-nav-btn {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  color: var(--cyan);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s ease, opacity 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  z-index: 5;
+  flex-shrink: 0;
+}
+
+.case-nav-btn:hover {
+  background: var(--bg-hover, var(--bg-card));
+  border-color: var(--cyan);
+  color: #ffffff;
+  transform: scale(1.1);
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
+}
+
+.case-nav-btn:active {
+  transform: scale(0.95);
+}
+
+.case-nav-btn.disabled {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.8);
+}
+
+.case-nav-btn.next:not(.disabled):not(.at-end) {
+  animation: caseNavGlow 2.5s infinite ease-in-out;
+}
+
+@keyframes caseNavGlow {
+  0%, 100% {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    border-color: var(--border-color);
+  }
+  50% {
+    box-shadow: 0 0 12px rgba(0, 240, 255, 0.5);
+    border-color: var(--cyan);
+  }
 }
 
 .case-chip {
@@ -1463,9 +1529,20 @@ a:focus-visible {
     justify-content: space-around;
   }
 
+  .case-bar-wrapper {
+    padding: 0 4px;
+  }
+
   .case-bar {
-    padding: 6px 10px;
+    padding: 6px 4px;
     gap: 6px;
+  }
+
+  .case-nav-btn {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    min-height: 28px;
   }
 
   .case-chip {

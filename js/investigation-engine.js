@@ -1392,10 +1392,17 @@ class InvestigationEngine {
   updateCaseSelectorUI() {
     const chips = document.querySelectorAll('.case-chip');
     chips.forEach((chip, i) => {
-      chip.classList.toggle('active', i === this.currentCaseIndex);
+      const isActive = i === this.currentCaseIndex;
+      chip.classList.toggle('active', isActive);
       const caseId = window.CASES_DATA[i].id;
       chip.classList.toggle('solved', this.solvedCases.has(caseId));
+      if (isActive) {
+        try {
+          chip.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+        } catch (e) {}
+      }
     });
+    if (window.syncCaseNavButtons) window.syncCaseNavButtons();
   }
 }
 

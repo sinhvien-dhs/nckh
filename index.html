@@ -77,8 +77,16 @@
     </header>
 
   <!-- ==================== CASE SELECTOR BAR ==================== -->
-  <div class="case-bar" id="caseSelectorBar">
-    <!-- Populated by app.js -->
+  <div class="case-bar-wrapper" id="caseSelectorWrapper">
+    <button type="button" class="case-nav-btn prev disabled" id="btnCaseNavPrev" aria-label="Xem các vụ án trước" title="Xem các vụ án trước">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </button>
+    <div class="case-bar" id="caseSelectorBar">
+      <!-- Populated by app.js -->
+    </div>
+    <button type="button" class="case-nav-btn next" id="btnCaseNavNext" aria-label="Xem các vụ án tiếp theo" title="Xem các vụ án tiếp theo">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </button>
   </div>
 
   <!-- ==================== MAIN WORKSPACE ==================== -->
