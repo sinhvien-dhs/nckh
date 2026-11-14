@@ -146,7 +146,7 @@ class InvestigationEngine {
         disp.style.color = 'var(--cyan)';
         if (label) label.innerText = '🔒 Thí sinh (Đã khóa):';
         if (chip) {
-          chip.title = 'Thông tin thí sinh đã khóa trong suốt lượt thi. Bấm nút "Hoàn Thành" khi làm xong để nộp bài và đổi thí sinh.';
+          chip.title = 'Thông tin thí sinh đã khóa trong suốt bài thi. Hoàn thành toàn bộ 6 vụ án để nhận chúc mừng và bấm nút Hoàn Thành đổi người dùng.';
           chip.style.cursor = 'default';
         }
       } else {
@@ -165,9 +165,9 @@ class InvestigationEngine {
     // Khóa thông tin: Không cho phép sửa đổi tên/lớp/trường khi đang trong lượt thi
     if (this.hasValidProfile() && !isForNew) {
       if (window.showToast) {
-        window.showToast('🔒 Thông tin thí sinh đã được khóa trong suốt lượt thi. Hãy bấm nút "Hoàn Thành" sau khi làm bài xong để nộp bài và chuyển lượt!');
+        window.showToast('🔒 Thông tin thí sinh đã được khóa trong suốt bài thi. Sau khi làm xong tất cả các vụ án, hãy bấm nút "Hoàn Thành" ở phần chúc mừng để đổi người dùng khác!');
       } else {
-        alert('Thông tin thí sinh đã được khóa trong suốt lượt thi. Vui lòng bấm nút "Hoàn Thành" sau khi làm bài xong để chuyển lượt cho thí sinh khác!');
+        alert('Thông tin thí sinh đã được khóa trong suốt bài thi. Vui lòng hoàn thành tất cả các vụ án để bấm nút "Hoàn Thành" ở phần chúc mừng và đổi người dùng khác!');
       }
       return;
     }
@@ -310,12 +310,11 @@ class InvestigationEngine {
     const currentScore = this.score;
 
     if (!forceWithoutConfirm) {
-      const confirmMsg = `Bạn có chắc chắn muốn nộp bài và HOÀN THÀNH lượt thi này không?\n\n` +
+      const confirmMsg = `Bạn có chắc chắn muốn HOÀN THÀNH và lưu kết quả của thí sinh ${name} để chuyển sang người dùng khác không?\n\n` +
         `• Thí sinh: ${name} (Lớp ${className} - ${schoolName})\n` +
         `• Điểm phản biện: ${currentScore} / 900 điểm\n` +
         `• Vụ án đã hoàn thành: ${solvedCount} / 6 vụ án\n\n` +
-        `Dữ liệu kết quả sẽ được lưu vĩnh viễn vào hệ thống.\n` +
-        `Sau khi hoàn thành, hệ thống sẽ mở bảng để nhập Tên, Lớp, Trường mới cho lượt thi tiếp theo!`;
+        `Kết quả này sẽ được lưu vĩnh viễn vào hệ thống và mở form nhập thông tin người dùng mới!`;
       if (!confirm(confirmMsg)) {
         return;
       }
@@ -451,7 +450,7 @@ class InvestigationEngine {
             🔄 3. Chơi Lại Cải Thiện Điểm
           </button>
           <button class="btn btn-success" onclick="window.investigationEngine.finishAndSubmitExam()" style="padding:10px; font-weight:700; justify-content:center; box-shadow:0 0 10px rgba(34,197,94,0.3);">
-            ✅ 4. Hoàn Thành & Đổi Thí Sinh Mới
+            ✅ 4. Hoàn Thành (Đổi Người Dùng Khác)
           </button>
         </div>
       </div>
@@ -1442,10 +1441,10 @@ class InvestigationEngine {
         <div style="display:flex; gap:10px; flex-wrap:wrap;">
           ${isAllCasesSolved ? `
             <button class="btn btn-success" onclick="window.investigationEngine.finishAndSubmitExam()" style="font-weight:700;">
-              ✅ Hoàn Thành & Nộp Bài
+              ✅ Hoàn Thành (Đổi Người Dùng Khác)
             </button>
             <button class="btn btn-primary" onclick="window.investigationEngine.openCompletionModal()" style="font-weight:700; background:var(--green); border-color:var(--green); box-shadow:0 0 12px rgba(34,197,94,0.35);">
-              🏆 Xem Báo Cáo Vinh Danh & Bước Tiếp Theo ➜
+              🏆 Xem Báo Cáo Vinh Danh & Chúc Mừng ➜
             </button>
           ` : `
             <button class="btn btn-primary" onclick="window.investigationEngine.loadNextCase()">
