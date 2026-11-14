@@ -558,8 +558,8 @@ window.CASES_DATA = [
 
     poeQuestion: 'Khi một người nhảy dù rơi trong không khí và đạt trạng thái lực cản không khí bằng đúng trọng lực (F_cản = P), người đó sẽ chuyển động như thế nào?',
     poeOptions: [
-      { id: 'opt1', text: 'Dừng lại ngay lập tức và bay lơ lửng trên không vì hai lực đã triệt tiêu lẫn nhau (Sai lầm phổ biến).', correct: false, explanation: 'Ngộ nhận nghiêm trọng giữa v = 0 và a = 0: Khi F_cản = P thì hợp lực ΣF = 0, theo Định luật I Newton gia tốc a = 0 (vận tốc không đổi). Người nhảy dù đã có sẵn tốc độ rơi nên tiếp tục rơi thẳng đều chứ không đứng yên.' },
-      { id: 'opt2', text: 'Tiếp tục rơi thẳng đều với vận tốc không đổi (gọi là Vận tốc tới hạn v_terminal) theo Định luật I Newton.', correct: true, explanation: 'Dự đoán hoàn toàn chính xác: Khi F_cản = P thì hợp lực ΣF = 0 => gia tốc a = 0. Theo Định luật I Newton, người rơi tiếp tục rơi thẳng đều với vận tốc tới hạn v_terminal.' },
+      { id: 'opt1', text: 'Dừng lại ngay lập tức và bay lơ lửng trên không vì hai lực đã triệt tiêu lẫn nhau.', correct: false, explanation: 'Ngộ nhận nghiêm trọng giữa v = 0 và a = 0: Khi F_cản = P thì hợp lực ΣF = 0, theo Định luật I Newton gia tốc a = 0 (vận tốc không đổi). Người nhảy dù đã có sẵn tốc độ rơi nên tiếp tục rơi thẳng đều chứ không đứng yên.' },
+      { id: 'opt2', text: 'Tiếp tục rơi thẳng đều với vận tốc không đổi theo Định luật I Newton.', correct: true, explanation: 'Dự đoán hoàn toàn chính xác: Khi F_cản = P thì hợp lực ΣF = 0 => gia tốc a = 0. Theo Định luật I Newton, người rơi tiếp tục rơi thẳng đều với vận tốc tới hạn v_terminal.' },
       { id: 'opt3', text: 'Rơi nhanh dần đều mãi mãi với gia tốc g không có giới hạn.', correct: false, explanation: 'Ngộ nhận bỏ qua lực cản: Lực cản không khí tăng tỉ lệ thuận với bình phương vận tốc (v²). Do đó gia tốc giảm dần về 0, vận tốc bị chặn trên bởi vận tốc tới hạn v_terminal.' }
     ],
 
