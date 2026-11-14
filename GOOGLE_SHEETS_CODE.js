@@ -34,7 +34,25 @@ function doPost(e) {
 
   try {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var postData = JSON.parse(e.postData.contents);
+    if (!ss) {
+      // Fallback nếu người dùng tạo Script độc lập
+      ss = SpreadsheetApp.create('NCKH - Du Lieu Hoc Sinh Vat Ly 10');
+    }
+
+    var raw = '';
+    if (e && e.postData && e.postData.contents) {
+      raw = e.postData.contents;
+    } else if (e && e.parameter && e.parameter.data) {
+      raw = e.parameter.data;
+    }
+    if (!raw) {
+      return ContentService.createTextOutput(JSON.stringify({
+        status: 'error',
+        message: 'Không nhận được dữ liệu tải lên'
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    var postData = JSON.parse(raw);
     var records = Array.isArray(postData) ? postData : [postData];
 
     // ===================================================================
@@ -197,12 +215,12 @@ function doPost(e) {
       });
     });
 
-    if (summaryRows.length > 0) {
-      sheetSummary.getRange(sheetSummary.getLastRow() + 1, 1, summaryRows.length, summaryRows[0].length).setValues(summaryRows);
-    }
-    if (detailRows.length > 0) {
-      sheetDetail.getRange(sheetDetail.getLastRow() + 1, 1, detailRows.length, detailRows[0].length).setValues(detailRows);
-    }
+    summaryRows.forEach(function (row) {
+      sheetSummary.appendRow(row);
+    });
+    detailRows.forEach(function (row) {
+      sheetDetail.appendRow(row);
+    });
 
     return ContentService.createTextOutput(JSON.stringify({
       status: 'success',
