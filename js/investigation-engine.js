@@ -770,7 +770,7 @@ class InvestigationEngine {
     if (num <= 80) {
       return { pct: 80, vibe: 'Có cơ sở vững', short: 'Khá chắc chắn', color: 'var(--green)' };
     }
-    return { pct: 100, vibe: 'Khẳng định tuyệt đối', short: 'Chắc chắn 100%', color: 'var(--purple)' };
+    return { pct: 100, vibe: 'Khẳng định tuyệt đối', short: 'Chắc chắn', color: 'var(--purple)' };
   }
 
   alignConfidenceTicks() {
@@ -920,10 +920,12 @@ class InvestigationEngine {
                 const styleWeight = isActive ? '700' : '400';
                 const markBg = isActive ? itemInfo.color : 'var(--border-strong)';
                 const markShadow = isActive ? `box-shadow:0 0 6px ${itemInfo.color};` : '';
+                const p = (val - 20) / 80;
+                const initialLeft = `calc(${p * 100}% + ${(10 - 20 * p).toFixed(1)}px)`;
                 return `
                   <div class="conf-tick-item ${isActive ? 'active' : ''}" data-val="${val}" 
                        ${!isAnswered ? `onclick="window.investigationEngine.updateConfidence(${val})"` : ''} 
-                       style="cursor:${isAnswered ? 'default' : 'pointer'}; font-weight:${styleWeight}; color:${styleColor};">
+                       style="left:${initialLeft}; cursor:${isAnswered ? 'default' : 'pointer'}; font-weight:${styleWeight}; color:${styleColor};">
                     <div class="conf-tick-mark" style="background:${markBg}; ${markShadow}"></div>
                     <strong>${val}%</strong>
                     <small style="color:var(--text-dim); font-size:0.7rem;">${itemInfo.short}</small>

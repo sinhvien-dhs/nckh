@@ -623,10 +623,11 @@ a:focus-visible {
 
 .confidence-slider-box {
   margin: 16px 0;
-  padding: 14px 26px;
+  padding: 14px 36px;
   background: var(--bg-alt);
   border-radius: 6px;
   border: 1px solid var(--border-color);
+  box-sizing: border-box;
 }
 
 .confidence-slider-box label {
@@ -1476,6 +1477,18 @@ a:focus-visible {
   .main-layout {
     padding: 10px 8px;
     gap: 12px;
+  }
+
+  .confidence-slider-box {
+    padding: 12px 28px;
+  }
+
+  .conf-tick-item {
+    font-size: 0.7rem;
+  }
+
+  .conf-tick-item small {
+    font-size: 0.65rem;
   }
 
   .panel-body {
