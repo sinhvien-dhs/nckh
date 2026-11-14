@@ -282,7 +282,7 @@ class VectorRenderer {
     const envKey = engine.currentEnv || 'earth_air';
     const envInfo = (engine.environments && engine.environments[envKey]) || {
       name: 'Trái Đất',
-      label: engine.isVacuum ? '⚡ CHÂN KHÔNG (F_cản = 0)' : '💨 KHÔNG KHÍ (Có F_cản)',
+      label: engine.isVacuum ? '⚡ CHÂN KHÔNG (Fcản = 0)' : '💨 KHÔNG KHÍ (Có Fcản)',
       sky: null,
       ground: null,
       groundLine: null
@@ -361,11 +361,11 @@ class VectorRenderer {
     ctx.fillText(`${s.m2}kg`, b2X, b2Y);
     ctx.restore();
 
-    // Tách riêng: Bên trái vật là Lực (P & F_cản), bên phải là Vận tốc (v), không bao giờ đè nhãn vật
+    // Tách riêng: Bên trái vật là Lực (P & Fcản), bên phải là Vận tốc (v), không bao giờ đè nhãn vật
     const maxP1Len = Math.max(14, Math.min(38, (this.height - 10) - (b1Y + 8)));
     this.drawArrow(ctx, b1X - 10, b1Y + 8, 0, maxP1Len, this.p.rose, `P1 = ${(s.m1 * engine.g).toFixed(0)}N`, { side: 'left' });
     if (drag1 > 0.05) {
-      this.drawArrow(ctx, b1X - 10, b1Y - 8, 0, -Math.min(32, drag1 * 2), this.p.green, `F_c1 = ${drag1.toFixed(1)}N`, { side: 'left' });
+      this.drawArrow(ctx, b1X - 10, b1Y - 8, 0, -Math.min(32, drag1 * 2), this.p.green, `Fc1 = ${drag1.toFixed(1)}N`, { side: 'left' });
     }
     if (s.y1 > s.groundY && s.v1 > 0.1) {
       this.drawArrow(ctx, b1X + 12, b1Y + 6, 0, Math.min(40, s.v1 * 1.8), this.p.teal, `v1 = ${s.v1.toFixed(1)}m/s`, { side: 'right' });
@@ -374,7 +374,7 @@ class VectorRenderer {
     const maxP2Len = Math.max(14, Math.min(32, (this.height - 10) - (b2Y + 6)));
     this.drawArrow(ctx, b2X - 10, b2Y + 6, 0, maxP2Len, this.p.rose, `P2 = ${(s.m2 * engine.g).toFixed(1)}N`, { side: 'left' });
     if (drag2 > 0.05) {
-      this.drawArrow(ctx, b2X - 10, b2Y - 6, 0, -Math.min(32, drag2 * 3.5), this.p.green, `F_c2 = ${drag2.toFixed(1)}N`, { side: 'left' });
+      this.drawArrow(ctx, b2X - 10, b2Y - 6, 0, -Math.min(32, drag2 * 3.5), this.p.green, `Fc2 = ${drag2.toFixed(1)}N`, { side: 'left' });
     }
     if (s.y2 > s.groundY && s.v2 > 0.1) {
       this.drawArrow(ctx, b2X + 12, b2Y + 6, 0, Math.min(40, s.v2 * 1.8), this.p.teal, `v2 = ${s.v2.toFixed(1)}m/s`, { side: 'right' });
@@ -506,8 +506,8 @@ class VectorRenderer {
 
       // Cặp lực trực đối Newton III: tách 2 tầng và nhãn đẩy hẳn ra ngoài
       const fLen = Math.min(52, s.contactForce / 750);
-      this.drawArrow(ctx, contactX - 2, groundY - 32, -fLen, 0, this.p.green, `F_c->t = ${(s.contactForce / 1000).toFixed(1)}kN`, { side: 'left' });
-      this.drawArrow(ctx, contactX + 2, groundY - 14, fLen, 0, this.p.rose, `F_t->c = ${(s.contactForce / 1000).toFixed(1)}kN`, { side: 'right' });
+      this.drawArrow(ctx, contactX - 2, groundY - 32, -fLen, 0, this.p.green, `Fc→t = ${(s.contactForce / 1000).toFixed(1)}kN`, { side: 'left' });
+      this.drawArrow(ctx, contactX + 2, groundY - 14, fLen, 0, this.p.rose, `Ft→c = ${(s.contactForce / 1000).toFixed(1)}kN`, { side: 'right' });
 
       this.drawHighContrastBadge(ctx, '⚖ ĐỊNH LUẬT III NEWTON: Cặp lực trực đối cùng độ lớn, ngược chiều!', 16, 14, {
         fontSize: 9.5,
@@ -584,11 +584,11 @@ class VectorRenderer {
       ctx.lineWidth = 2.5;
       ctx.stroke();
 
-      // Vectơ lực hướng tâm F_ht từ quả cầu hướng vào tâm
+      // Vectơ lực hướng tâm Fht từ quả cầu hướng vào tâm
       const tLen = Math.min(40, r * 0.55);
       const perpX = -rSin * 10;
       const perpY = rCos * 10;
-      this.drawArrow(ctx, ballPxX, ballPxY, -rCos * tLen, -rSin * tLen, this.p.rose, 'F_ht (Lực căng T)', {
+      this.drawArrow(ctx, ballPxX, ballPxY, -rCos * tLen, -rSin * tLen, this.p.rose, 'Fht (Lực căng T)', {
         offsetX: -rCos * (tLen * 0.4) + perpX,
         offsetY: -rSin * (tLen * 0.4) + perpY - 6,
         align: perpX < 0 ? 'right' : 'left'
@@ -755,17 +755,17 @@ class VectorRenderer {
     const maxPLen = Math.max(16, Math.min(45, (this.height - 10) - Gy));
     this.drawArrow(ctx, Gx, Gy, 0, maxPLen, this.p.purple, `P = ${(pVal).toFixed(0)}N`, { side: 'left' });
 
-    // Vectơ 3: Thành phần P_x kéo xe trượt xuống dọc dốc (hướng xuống theo chiều dốc)
+    // Vectơ 3: Thành phần Px kéo xe trượt xuống dọc dốc (hướng xuống theo chiều dốc)
     if (!s.onGround) {
       const fDown = s.m * engine.g * Math.sin(rad);
       const pxLen = Math.min(48, Math.max(18, fDown / 280));
-      this.drawArrow(ctx, frontX, frontY, pxLen * cosA, pxLen * sinA, this.p.amber, `P_x = ${(fDown).toFixed(0)}N`, { side: 'right' });
+      this.drawArrow(ctx, frontX, frontY, pxLen * cosA, pxLen * sinA, this.p.amber, `Px = ${(fDown).toFixed(0)}N`, { side: 'right' });
     }
 
-    // Vectơ 4: Lực ma sát trượt F_ms (hướng ngược chiều chuyển động dọc theo dốc / mặt đường)
+    // Vectơ 4: Lực ma sát trượt Fms (hướng ngược chiều chuyển động dọc theo dốc / mặt đường)
     const fmsLen = Math.min(42, Math.max(16, s.frictionForce / 95));
     if ((!s.onGround || s.v > 0.05) && fmsLen > 4) {
-      this.drawArrow(ctx, rearX, rearY, -fmsLen * cosA, -fmsLen * sinA, this.p.rose, `F_ms = ${(s.frictionForce).toFixed(0)}N`, { side: 'left' });
+      this.drawArrow(ctx, rearX, rearY, -fmsLen * cosA, -fmsLen * sinA, this.p.rose, `Fms = ${(s.frictionForce).toFixed(0)}N`, { side: 'left' });
     }
 
     // Thông tin động lực học gọn góc trên bên trái
@@ -928,7 +928,7 @@ class VectorRenderer {
     const isTerminal = Math.abs(s.airResistForce - pVal) < 15 && s.v > 2;
 
     if (isTerminal) {
-      this.drawHighContrastBadge(ctx, `⚖️ CÂN BẰNG ĐỘNG (F_c = P): v = ${s.v.toFixed(1)} m/s`, 14, 38, {
+      this.drawHighContrastBadge(ctx, `⚖️ CÂN BẰNG ĐỘNG (Fcản = P): v = ${s.v.toFixed(1)} m/s`, 14, 38, {
         fontSize: 9.5,
         color: this.p.green,
         maxWidth: maxLeftW
@@ -939,7 +939,7 @@ class VectorRenderer {
         maxWidth: maxLeftW
       });
     } else {
-      this.drawHighContrastBadge(ctx, `v = ${s.v.toFixed(1)} m/s | v_tới_hạn = ${isFinite(s.terminalV) ? s.terminalV.toFixed(1) + ' m/s' : '∞ (chân không)'}`, 14, 38, {
+      this.drawHighContrastBadge(ctx, `v = ${s.v.toFixed(1)} m/s | vtới hạn = ${isFinite(s.terminalV) ? s.terminalV.toFixed(1) + ' m/s' : '∞ (chân không)'}`, 14, 38, {
         fontSize: 9.5,
         color: this.p.teal,
         maxWidth: maxLeftW
@@ -995,11 +995,11 @@ class VectorRenderer {
     this.drawHighContrastBadge(ctx, `${s.m}kg`, skydiverX + 16, skydiverY - 10, { fontSize: 9, align: 'left' });
     ctx.restore();
 
-    // 1. Vectơ Lực cản không khí F_cản hướng lên (ở bên trái)
+    // 1. Vectơ Lực cản không khí Fcản hướng lên (ở bên trái)
     if (s.airResistForce > 0.5) {
       const topOriginY = s.parachuteOpen ? (skydiverY - 62) : (skydiverY - 22);
       const dragLen = Math.min(48, s.airResistForce / 20);
-      this.drawArrow(ctx, skydiverX - 8, topOriginY, 0, -dragLen, this.p.green, `F_c = ${s.airResistForce.toFixed(0)}N`, { side: 'left' });
+      this.drawArrow(ctx, skydiverX - 8, topOriginY, 0, -dragLen, this.p.green, `Fcản = ${s.airResistForce.toFixed(0)}N`, { side: 'left' });
     }
 
     // 2. Vectơ Trọng lực P hướng xuống (ở bên trái)

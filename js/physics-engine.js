@@ -15,7 +15,7 @@ const CELESTIAL_ENVIRONMENTS = {
     sky: null,
     ground: null,
     groundLine: null,
-    label: '🌍 MÔI TRƯỜNG: TRÁI ĐẤT - KHÍ QUYỂN (g = 9.8 m/s², F_cản > 0)'
+    label: '🌍 MÔI TRƯỜNG: TRÁI ĐẤT - KHÍ QUYỂN (g = 9.8 m/s², Fcản > 0)'
   },
   earth_vacuum: {
     id: 'earth_vacuum',
@@ -27,7 +27,7 @@ const CELESTIAL_ENVIRONMENTS = {
     sky: null,
     ground: null,
     groundLine: null,
-    label: '⚡ MÔI TRƯỜNG: TRÁI ĐẤT - CHÂN KHÔNG (g = 9.8 m/s², F_cản = 0)'
+    label: '⚡ MÔI TRƯỜNG: TRÁI ĐẤT - CHÂN KHÔNG (g = 9.8 m/s², Fcản = 0)'
   },
   mars: {
     id: 'mars',
