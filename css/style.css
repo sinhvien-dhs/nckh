@@ -369,10 +369,9 @@ a:focus-visible {
   cursor: grabbing;
 }
 
-/* Floating circle button at the end of the case bar */
+/* Floating circle buttons for case bar */
 .case-scroll-circle {
   position: absolute;
-  right: 12px;
   top: 50%;
   transform: translateY(-50%);
   width: 34px;
@@ -389,10 +388,18 @@ a:focus-visible {
   cursor: pointer;
   padding: 0;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4), 0 0 10px rgba(0, 240, 255, 0.25);
-  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
   z-index: 10;
   flex-shrink: 0;
   animation: circlePulse 2.4s infinite ease-in-out;
+}
+
+.case-scroll-circle.right {
+  right: 12px;
+}
+
+.case-scroll-circle.left {
+  left: 12px;
 }
 
 .case-scroll-circle:hover {
@@ -408,12 +415,7 @@ a:focus-visible {
 }
 
 .case-scroll-circle .scroll-arrow-icon {
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   display: block;
-}
-
-.case-scroll-circle.reverse .scroll-arrow-icon {
-  transform: rotate(180deg);
 }
 
 @keyframes circlePulse {
@@ -1537,11 +1539,18 @@ a:focus-visible {
   }
 
   .case-scroll-circle {
-    right: 8px;
     width: 28px;
     height: 28px;
     min-width: 28px;
     min-height: 28px;
+  }
+
+  .case-scroll-circle.right {
+    right: 8px;
+  }
+
+  .case-scroll-circle.left {
+    left: 8px;
   }
 
   .case-chip {

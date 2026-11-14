@@ -1402,7 +1402,7 @@ class InvestigationEngine {
         } catch (e) {}
       }
     });
-    if (window.syncCaseScrollCircle) window.syncCaseScrollCircle();
+    if (window.syncCaseScrollCircles) window.syncCaseScrollCircles();
   }
 }
 

@@ -78,10 +78,16 @@
 
   <!-- ==================== CASE SELECTOR BAR ==================== -->
   <div class="case-bar-wrapper" id="caseSelectorWrapper">
+    <button type="button" class="case-scroll-circle left" id="btnCaseScrollLeft" aria-label="Kéo về các vụ án trước" title="Kéo về các vụ án trước" style="display:none;">
+      <svg class="scroll-arrow-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+    </button>
     <div class="case-bar" id="caseSelectorBar">
       <!-- Populated by app.js -->
     </div>
-    <button type="button" class="case-scroll-circle" id="btnCaseScrollCircle" aria-label="Xem tiếp các vụ án" title="Xem tiếp các vụ án">
+    <button type="button" class="case-scroll-circle right" id="btnCaseScrollRight" aria-label="Xem tiếp các vụ án" title="Xem tiếp các vụ án">
       <svg class="scroll-arrow-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <line x1="5" y1="12" x2="19" y2="12"></line>
         <polyline points="12 5 19 12 12 19"></polyline>

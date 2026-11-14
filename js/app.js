@@ -360,48 +360,47 @@ function initStudentGameOnce() {
     let startScrollLeft = 0;
     const DRAG_THRESHOLD = 8;
 
-    // Nút tròn kéo cuộn danh sách vụ án ở cuối thanh tab
-    const scrollCircleBtn = document.getElementById('btnCaseScrollCircle');
+    // Nút tròn kéo cuộn danh sách vụ án ở hai đầu
+    const btnScrollRight = document.getElementById('btnCaseScrollRight');
+    const btnScrollLeft = document.getElementById('btnCaseScrollLeft');
 
     const getScrollStep = () => Math.max(260, Math.floor(caseBar.clientWidth * 0.7));
 
-    const syncCaseScrollCircle = () => {
+    const syncCaseScrollCircles = () => {
       const isScrollable = caseBar.scrollWidth > caseBar.clientWidth + 5;
       caseBar.classList.toggle('is-scrollable', isScrollable);
 
-      if (!scrollCircleBtn) return;
+      if (!btnScrollRight || !btnScrollLeft) return;
       if (!isScrollable) {
-        scrollCircleBtn.style.display = 'none';
+        btnScrollRight.style.display = 'none';
+        btnScrollLeft.style.display = 'none';
         return;
       }
-      scrollCircleBtn.style.display = 'inline-flex';
 
+      const atStart = caseBar.scrollLeft <= 8;
       const atEnd = caseBar.scrollLeft + caseBar.clientWidth >= caseBar.scrollWidth - 10;
-      if (atEnd) {
-        scrollCircleBtn.classList.add('reverse');
-        scrollCircleBtn.setAttribute('title', 'Quay lại các vụ án đầu');
-        scrollCircleBtn.setAttribute('aria-label', 'Quay lại các vụ án đầu');
-      } else {
-        scrollCircleBtn.classList.remove('reverse');
-        scrollCircleBtn.setAttribute('title', 'Xem tiếp các vụ án');
-        scrollCircleBtn.setAttribute('aria-label', 'Xem tiếp các vụ án');
-      }
-    };
-    window.syncCaseScrollCircle = syncCaseScrollCircle;
 
-    if (scrollCircleBtn) {
-      scrollCircleBtn.addEventListener('click', () => {
+      // Khi kéo đến cuối thì đổi sang cái bên trái để kéo về
+      btnScrollLeft.style.display = atStart ? 'none' : 'inline-flex';
+      btnScrollRight.style.display = atEnd ? 'none' : 'inline-flex';
+    };
+    window.syncCaseScrollCircles = syncCaseScrollCircles;
+
+    if (btnScrollRight) {
+      btnScrollRight.addEventListener('click', () => {
         if (window.audioFX) window.audioFX.playClick();
-        const atEnd = caseBar.scrollLeft + caseBar.clientWidth >= caseBar.scrollWidth - 10;
-        if (atEnd || scrollCircleBtn.classList.contains('reverse')) {
-          caseBar.scrollTo({ left: 0, behavior: 'smooth' });
-        } else {
-          caseBar.scrollBy({ left: getScrollStep(), behavior: 'smooth' });
-        }
+        caseBar.scrollBy({ left: getScrollStep(), behavior: 'smooth' });
       });
     }
 
-    caseBar.addEventListener('scroll', syncCaseScrollCircle, { passive: true });
+    if (btnScrollLeft) {
+      btnScrollLeft.addEventListener('click', () => {
+        if (window.audioFX) window.audioFX.playClick();
+        caseBar.scrollBy({ left: -getScrollStep(), behavior: 'smooth' });
+      });
+    }
+
+    caseBar.addEventListener('scroll', syncCaseScrollCircles, { passive: true });
 
     caseBar.addEventListener('pointerdown', (e) => {
       if (e.button !== 0 || e.pointerType === 'touch') return;
@@ -447,10 +446,10 @@ function initStudentGameOnce() {
     caseBar.addEventListener('pointercancel', endDrag);
     window.addEventListener('blur', endDrag);
 
-    syncCaseScrollCircle();
-    window.addEventListener('resize', syncCaseScrollCircle);
+    syncCaseScrollCircles();
+    window.addEventListener('resize', syncCaseScrollCircles);
     if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(syncCaseScrollCircle).catch(() => {});
+      document.fonts.ready.then(syncCaseScrollCircles).catch(() => {});
     }
   }
 
