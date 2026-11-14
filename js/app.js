@@ -363,62 +363,43 @@ function initStudentGameOnce() {
     // Nút tròn kéo cuộn danh sách vụ án ở hai đầu
     const btnScrollRight = document.getElementById('btnCaseScrollRight');
     const btnScrollLeft = document.getElementById('btnCaseScrollLeft');
-    let scrollAnimId = null;
 
-    const syncCaseScrollCircles = () => {
-      const maxScroll = Math.max(0, caseBar.scrollWidth - caseBar.clientWidth);
-      const isScrollable = maxScroll > 10;
+    let cachedMaxScroll = 0;
+    const updateScrollMetrics = () => {
+      cachedMaxScroll = Math.max(0, caseBar.scrollWidth - caseBar.clientWidth);
+      const isScrollable = cachedMaxScroll > 10;
       caseBar.classList.toggle('is-scrollable', isScrollable);
+      syncButtonsState();
+    };
 
+    const syncButtonsState = () => {
       if (!btnScrollRight || !btnScrollLeft) return;
-      if (!isScrollable) {
-        btnScrollRight.style.display = 'none';
-        btnScrollLeft.style.display = 'none';
+      if (cachedMaxScroll <= 10) {
+        btnScrollRight.classList.add('hidden');
+        btnScrollLeft.classList.add('hidden');
         return;
       }
 
       // Khi ở nửa đầu: Hiện nút phải (➔) để kéo tiếp
       // Khi kéo đến cuối: Đổi sang nút bên trái (⬅) để kéo về
-      const isPastHalf = caseBar.scrollLeft >= maxScroll * 0.45;
-      btnScrollLeft.style.display = isPastHalf ? 'inline-flex' : 'none';
-      btnScrollRight.style.display = isPastHalf ? 'none' : 'inline-flex';
-    };
-    window.syncCaseScrollCircles = syncCaseScrollCircles;
-
-    function scrollCaseBarTo(target) {
-      if (scrollAnimId) cancelAnimationFrame(scrollAnimId);
-      const maxScroll = Math.max(0, caseBar.scrollWidth - caseBar.clientWidth);
-      const clampedTarget = Math.max(0, Math.min(maxScroll, target));
-      const start = caseBar.scrollLeft;
-      const change = clampedTarget - start;
-      if (Math.abs(change) < 2) return;
-
-      const duration = 350;
-      const startTime = performance.now();
-
-      function step(now) {
-        const elapsed = now - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        const ease = 1 - Math.pow(1 - progress, 3); // easeOutCubic
-        caseBar.scrollLeft = start + change * ease;
-        syncCaseScrollCircles();
-        if (progress < 1) {
-          scrollAnimId = requestAnimationFrame(step);
-        } else {
-          caseBar.scrollLeft = clampedTarget;
-          syncCaseScrollCircles();
-          scrollAnimId = null;
-        }
+      const atEnd = caseBar.scrollLeft >= cachedMaxScroll - 20;
+      if (atEnd) {
+        btnScrollLeft.classList.remove('hidden');
+        btnScrollRight.classList.add('hidden');
+      } else {
+        btnScrollLeft.classList.add('hidden');
+        btnScrollRight.classList.remove('hidden');
       }
-      scrollAnimId = requestAnimationFrame(step);
-    }
+    };
+    window.syncCaseScrollCircles = updateScrollMetrics;
 
     if (btnScrollRight) {
       btnScrollRight.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
         if (window.audioFX) window.audioFX.playClick();
-        scrollCaseBarTo(caseBar.scrollWidth - caseBar.clientWidth);
+        updateScrollMetrics();
+        caseBar.scrollTo({ left: cachedMaxScroll, behavior: 'smooth' });
       });
     }
 
@@ -427,11 +408,20 @@ function initStudentGameOnce() {
         e.preventDefault();
         e.stopPropagation();
         if (window.audioFX) window.audioFX.playClick();
-        scrollCaseBarTo(0);
+        caseBar.scrollTo({ left: 0, behavior: 'smooth' });
       });
     }
 
-    caseBar.addEventListener('scroll', syncCaseScrollCircles, { passive: true });
+    let scrollTicking = false;
+    caseBar.addEventListener('scroll', () => {
+      if (!scrollTicking) {
+        window.requestAnimationFrame(() => {
+          syncButtonsState();
+          scrollTicking = false;
+        });
+        scrollTicking = true;
+      }
+    }, { passive: true });
 
     caseBar.addEventListener('pointerdown', (e) => {
       if (e.button !== 0 || e.pointerType === 'touch') return;

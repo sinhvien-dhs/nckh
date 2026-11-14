@@ -350,6 +350,8 @@ a:focus-visible {
   -ms-overflow-style: none;
   user-select: none;
   box-sizing: border-box;
+  will-change: scroll-position;
+  -webkit-overflow-scrolling: touch;
 }
 
 .case-bar::-webkit-scrollbar {
@@ -387,10 +389,17 @@ a:focus-visible {
   cursor: pointer;
   padding: 0;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4), 0 0 10px rgba(0, 240, 255, 0.25);
-  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+  transition: opacity 0.25s ease, transform 0.2s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
   z-index: 20;
   flex-shrink: 0;
   pointer-events: auto;
+  opacity: 1;
+}
+
+.case-scroll-circle.hidden {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
 }
 
 .case-scroll-circle.right {
