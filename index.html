@@ -476,29 +476,29 @@
 
   <!-- ==================== ONBOARDING TUTORIAL & PEDAGOGY GUIDE MODAL ==================== -->
   <div class="modal-overlay" id="pedagogyGuideModal">
-    <div class="modal-content" style="max-width: 620px;">
-      <div class="modal-header">
-        <h3 style="color:var(--cyan); display:flex; align-items:center; gap:8px; font-size:1.05rem;">
+    <div class="modal-content" style="max-width: 580px; width: 100%; box-sizing: border-box; overflow-x: hidden;">
+      <div class="modal-header" style="padding: 12px 18px;">
+        <h3 style="color:var(--cyan); display:flex; align-items:center; gap:8px; font-size:1.02rem; margin:0; flex:1; min-width:0; word-break:break-word;">
           🎯 THỬ THÁCH NHANH: TẬP BẮT BẺ NGỤY BIỆN (30 GIÂY)
         </h3>
-        <button class="btn" onclick="window.closePedagogyGuide()">✕ Đóng</button>
+        <button class="btn" onclick="window.closePedagogyGuide()" style="flex-shrink:0;">✕ Đóng</button>
       </div>
 
-      <div class="modal-body" style="gap:14px; font-size:0.88rem; line-height:1.6;" id="onboardingTutorialBody">
+      <div class="modal-body" style="gap:12px; font-size:0.88rem; line-height:1.55; overflow-x:hidden; box-sizing:border-box; padding:16px 18px;" id="onboardingTutorialBody">
         
         <!-- Onboarding Challenge Card -->
-        <div style="background:var(--bg-alt); padding:14px; border-radius:8px; border-left:4px solid var(--amber);">
-          <p style="font-size:0.84rem; color:var(--text-muted); margin-bottom:10px;">
+        <div style="background:var(--bg-alt); padding:12px 14px; border-radius:8px; border-left:4px solid var(--amber); width:100%; box-sizing:border-box;">
+          <p style="font-size:0.84rem; color:var(--text-muted); margin-bottom:8px; line-height:1.45;">
             Trò chơi này không phải trắc nghiệm lý thuyết! Bạn đóng vai Thám tử dùng Định luật Vật lý & Thực nghiệm để <strong>bẻ gãy các lập luận ngụy biện của AI Dr. Sophos</strong>.
           </p>
 
           <!-- Sophos Attack Bubble -->
-          <div class="narrative-card sophos" style="margin-bottom:12px; background:rgba(239, 68, 68, 0.08); border-color:var(--crimson); padding:10px 14px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-              <h5 style="color:var(--crimson); margin:0; font-size:0.88rem;">🦹‍♂️ Dr. Sophos (AI Ngụy Biện):</h5>
-              <span id="tutorialSophosHp" style="font-size:0.75rem; color:var(--crimson); font-weight:700;">HP: 100/100</span>
+          <div class="narrative-card sophos" style="margin-bottom:10px; background:rgba(239, 68, 68, 0.08); border-color:var(--crimson); padding:10px 12px; box-sizing:border-box; width:100%;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; gap:8px;">
+              <h5 style="color:var(--crimson); margin:0; font-size:0.86rem; word-break:break-word;">🦹‍♂️ Dr. Sophos (AI Ngụy Biện):</h5>
+              <span id="tutorialSophosHp" style="font-size:0.75rem; color:var(--crimson); font-weight:700; white-space:nowrap; flex-shrink:0;">HP: 100/100</span>
             </div>
-            <p style="font-size:0.92rem; font-style:italic; color:var(--text-main); margin:0;">
+            <p style="font-size:0.9rem; font-style:italic; color:var(--text-main); margin:0; line-height:1.45; word-break:break-word;">
               "Vật nặng 10kg rơi nhanh gấp 10 lần vật 1kg vì Trái Đất kéo nó bằng lực mạnh gấp 10 lần! Ai chẳng thấy điều hiển nhiên đó?"
             </p>
           </div>
@@ -509,33 +509,33 @@
           </p>
 
           <!-- Action Buttons -->
-          <div id="tutorialActionBox" style="display:flex; flex-direction:column; gap:8px;">
+          <div id="tutorialActionBox" style="display:flex; flex-direction:column; gap:8px; width:100%; box-sizing:border-box;">
             <button class="btn" id="btnTutorialBắtBẻ" onclick="window.runTutorialBắtBẻ(true)" 
-                    style="text-align:left; justify-content:flex-start; padding:10px 14px; border-color:var(--green); color:var(--green); background:rgba(34, 197, 94, 0.05); font-size:0.86rem; line-height:1.4;">
-              <span>💥 <strong>BẮT BẺ NGAY:</strong> Sai! Lực kéo gấp 10 nhưng quán tính cản trở của vật (m) cũng gấp 10, nên gia tốc rơi <em>a = P/m = g</em> là như nhau!</span>
+                    style="width:100%; box-sizing:border-box; white-space:normal; text-align:left; justify-content:flex-start; align-items:flex-start; padding:10px 14px; border-color:var(--green); color:var(--green); background:rgba(34, 197, 94, 0.05); font-size:0.86rem; line-height:1.45; word-break:break-word; overflow-wrap:break-word; display:block;">
+              <span style="display:block; width:100%; white-space:normal; word-break:break-word; line-height:1.45;">💥 <strong>BẮT BẺ NGAY:</strong> Sai! Lực kéo gấp 10 nhưng quán tính cản trở của vật (m) cũng gấp 10, nên gia tốc rơi <em>a = P/m = g</em> là như nhau!</span>
             </button>
             <button class="btn" onclick="window.runTutorialBắtBẻ(false)" 
-                    style="text-align:left; justify-content:flex-start; padding:8px 14px; font-size:0.84rem; color:var(--text-muted);">
-              <span>🤐 <strong>ĐỒNG Ý:</strong> Đúng rồi, vật nặng hơn thì bao giờ cũng rơi nhanh hơn.</span>
+                    style="width:100%; box-sizing:border-box; white-space:normal; text-align:left; justify-content:flex-start; align-items:flex-start; padding:8px 14px; font-size:0.84rem; color:var(--text-muted); line-height:1.4; word-break:break-word; overflow-wrap:break-word; display:block;">
+              <span style="display:block; width:100%; white-space:normal; word-break:break-word; line-height:1.4;">🤐 <strong>ĐỒNG Ý:</strong> Đúng rồi, vật nặng hơn thì bao giờ cũng rơi nhanh hơn.</span>
             </button>
           </div>
 
           <!-- Success / Reward Banner (Hidden initially) -->
-          <div id="tutorialRewardBox" style="display:none; margin-top:12px; background:rgba(34, 197, 94, 0.12); border:1px solid var(--green); border-radius:8px; padding:12px 14px;">
-            <div style="display:flex; align-items:center; gap:8px; color:var(--green); font-weight:700; font-size:0.95rem;">
+          <div id="tutorialRewardBox" style="display:none; margin-top:10px; background:rgba(34, 197, 94, 0.12); border:1px solid var(--green); border-radius:8px; padding:10px 12px; box-sizing:border-box; width:100%;">
+            <div style="display:flex; align-items:center; gap:8px; color:var(--green); font-weight:700; font-size:0.92rem; word-break:break-word;">
               <span>🎉</span> BẮT BẺ THÀNH CÔNG! (+50 ĐIỂM TƯ DUY PHẢN BIỆN)
             </div>
-            <p style="font-size:0.84rem; color:var(--text-main); margin:6px 0 0 0; line-height:1.5;">
+            <p style="font-size:0.83rem; color:var(--text-main); margin:4px 0 0 0; line-height:1.45; word-break:break-word;">
               ✨ <strong>Bạn đã nắm được vòng lặp cốt lõi:</strong> Đọc ngụy biện AI ➜ Dùng <strong>Bút Dạ Quang</strong> khoanh bẫy ➜ Quan sát <strong>Mô phỏng 60 FPS</strong> ➜ Tung đòn <strong>Đối chất Socratic</strong>!
             </p>
           </div>
         </div>
 
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px; flex-wrap:wrap; gap:8px;">
-          <button class="btn" onclick="window.toggleGuideDetail()" id="btnToggleGuideDetail" style="font-size:0.8rem; padding:6px 12px; color:var(--text-muted);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px; flex-wrap:wrap; gap:8px; width:100%; box-sizing:border-box;">
+          <button class="btn" onclick="window.toggleGuideDetail()" id="btnToggleGuideDetail" style="font-size:0.8rem; padding:6px 12px; color:var(--text-muted); white-space:normal;">
             📋 Xem 5 bước chi tiết
           </button>
-          <button class="btn btn-primary" id="btnStartGameFromTutorial" onclick="window.closePedagogyGuide()" style="padding:10px 22px; font-weight:600;">
+          <button class="btn btn-primary" id="btnStartGameFromTutorial" onclick="window.closePedagogyGuide()" style="padding:10px 20px; font-weight:600; white-space:normal; text-align:center;">
             Bắt Đầu Phá Án Vụ 1 Ngay ➜
           </button>
         </div>

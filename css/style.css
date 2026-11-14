@@ -1027,9 +1027,48 @@ a:focus-visible {
 .modal-body {
   padding: 24px;
   overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+#pedagogyGuideModal .modal-content {
+  max-width: 580px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+#pedagogyGuideModal .modal-body {
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+#pedagogyGuideModal #tutorialActionBox {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#pedagogyGuideModal #tutorialActionBox .btn {
+  white-space: normal !important;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  text-align: left;
+  width: 100%;
+  box-sizing: border-box;
+  line-height: 1.45;
+  display: block;
+  height: auto;
+}
+
+#pedagogyGuideModal #tutorialActionBox .btn span {
+  white-space: normal !important;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  display: block;
+  width: 100%;
 }
 
 .analytics-grid {
@@ -1522,11 +1561,28 @@ a:focus-visible {
     line-height: 1.4;
   }
 
+  .modal-overlay {
+    padding: 10px;
+  }
+
   .modal-content {
-    width: 95%;
-    max-width: 95vw;
-    max-height: 90vh;
-    padding: 14px;
+    width: 100%;
+    max-width: 96vw;
+    max-height: 92vh;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  #pedagogyGuideModal .modal-content {
+    padding: 0;
+  }
+
+  #pedagogyGuideModal .modal-header {
+    padding: 12px 14px;
+  }
+
+  #pedagogyGuideModal .modal-body {
+    padding: 12px 14px;
   }
 
   .modal-content input {
