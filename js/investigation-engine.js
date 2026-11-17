@@ -4,6 +4,9 @@
    Integrates Mandatory Student Profile Registration & Response Ledger
    ========================================================================== */
 
+// Cấu hình URL Google Sheets Webhook dùng chung cho TOÀN BỘ HỌC SINH trực tuyến:
+window.GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxe_lt7lmYAE4kqOiyB12WVQwjp-EgMKXQRIRy6fqu2jIx5oGgU04deTNlVn0QfWO7f/exec';
+
 class InvestigationEngine {
   constructor() {
     this.currentCaseIndex = 0;
@@ -303,7 +306,7 @@ class InvestigationEngine {
     if (!record) return { success: false, message: 'Không có dữ liệu bản ghi' };
     let url = '';
     try {
-      url = localStorage.getItem('physics_google_sheets_url') || window.GOOGLE_SHEETS_URL || '';
+      url = window.GOOGLE_SHEETS_URL || localStorage.getItem('physics_google_sheets_url') || '';
     } catch (e) {}
     if (!url || !url.startsWith('http')) {
       return { success: false, message: 'Chưa cấu hình URL Google Sheets' };
@@ -340,7 +343,7 @@ class InvestigationEngine {
 
     let url = '';
     try {
-      url = localStorage.getItem('physics_google_sheets_url') || window.GOOGLE_SHEETS_URL || '';
+      url = window.GOOGLE_SHEETS_URL || localStorage.getItem('physics_google_sheets_url') || '';
     } catch (e) {}
     if (!url || !url.startsWith('http')) {
       return { success: false, message: 'Vui lòng dán và lưu URL Google Sheets Web App hợp lệ!' };

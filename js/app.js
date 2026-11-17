@@ -290,7 +290,7 @@ window.saveGoogleSheetsUrl = function () {
 window.testGoogleSheetsConnection = async function () {
   const input = document.getElementById('googleSheetsUrlInput');
   const fb = document.getElementById('googleSheetsFeedback');
-  const url = input ? input.value.trim() : (localStorage.getItem('physics_google_sheets_url') || '');
+  const url = (input && input.value.trim()) ? input.value.trim() : (window.GOOGLE_SHEETS_URL || localStorage.getItem('physics_google_sheets_url') || '');
 
   if (!url || !url.startsWith('http')) {
     alert('Vui lòng dán đường link Web App Google Apps Script trước khi kiểm tra!');
@@ -893,13 +893,13 @@ function renderAdminDashboard() {
   // Cập nhật trạng thái cấu hình Google Sheets
   const sheetInput = document.getElementById('googleSheetsUrlInput');
   const sheetBadge = document.getElementById('googleSheetsStatusBadge');
-  const savedSheetUrl = localStorage.getItem('physics_google_sheets_url') || '';
+  const activeSheetUrl = window.GOOGLE_SHEETS_URL || localStorage.getItem('physics_google_sheets_url') || '';
   if (sheetInput && !sheetInput.value) {
-    sheetInput.value = savedSheetUrl;
+    sheetInput.value = activeSheetUrl;
   }
   if (sheetBadge) {
-    if (savedSheetUrl) {
-      sheetBadge.innerText = '🟢 Đã Cấu Hình Webhook';
+    if (activeSheetUrl) {
+      sheetBadge.innerText = '🟢 Đã Cấu Hình Webhook Toàn Cầu';
       sheetBadge.style.background = 'rgba(34,197,94,0.15)';
       sheetBadge.style.color = 'var(--green)';
     } else {
