@@ -44,31 +44,32 @@ function doPost(e) {
     var postData = JSON.parse(raw);
     var records = Array.isArray(postData) ? postData : [postData];
 
+    var summaryHeaders = [
+      'Mã bản ghi',
+      'Thời gian nộp',
+      'Họ và tên',
+      'Lớp',
+      'Trường',
+      'Tổng điểm (900)',
+      'Số vụ hoàn thành',
+      'T1: Phân tích chứng cứ (%)',
+      'T2: Nhận diện ngụy biện (%)',
+      'T3: Dự đoán POE (%)',
+      'T4: Bảo vệ chân lý (%)',
+      'Vụ 1: Rơi tự do & Chân không',
+      'Vụ 2: Va chạm & Newton III',
+      'Vụ 3: Quay tròn & Quán tính',
+      'Vụ 4: Dốc nghiêng & Ma sát',
+      'Vụ 5: Va chạm mềm & Cơ năng',
+      'Vụ 6: Nhảy dù & Lực cản'
+    ];
+
     // ===================================================================
     // BẢNG 1: BẢNG ĐIỂM CHI TIẾT HỌC SINH (Dễ đọc, trực quan cho Giáo viên)
     // ===================================================================
     var sheetSummary = ss.getSheetByName('KetQuaHocSinh');
     if (!sheetSummary) {
       sheetSummary = ss.insertSheet('KetQuaHocSinh', 0);
-      var summaryHeaders = [
-        'Mã bản ghi',
-        'Thời gian nộp',
-        'Họ và tên',
-        'Lớp',
-        'Trường',
-        'Tổng điểm (900)',
-        'Số vụ hoàn thành',
-        'T1: Phân tích chứng cứ (%)',
-        'T2: Nhận diện ngụy biện (%)',
-        'T3: Dự đoán POE (%)',
-        'T4: Bảo vệ chân lý (%)',
-        'Vụ 1: Rơi tự do & Chân không',
-        'Vụ 2: Va chạm & Newton III',
-        'Vụ 3: Quay tròn & Quán tính',
-        'Vụ 4: Dốc nghiêng & Ma sát',
-        'Vụ 5: Va chạm mềm & Cơ năng',
-        'Vụ 6: Nhảy dù & Lực cản'
-      ];
       sheetSummary.appendRow(summaryHeaders);
       sheetSummary.getRange(1, 1, 1, summaryHeaders.length)
         .setBackground('#1e293b')
@@ -76,6 +77,14 @@ function doPost(e) {
         .setFontWeight('bold')
         .setHorizontalAlignment('center');
       sheetSummary.setFrozenRows(1);
+    } else if (sheetSummary.getLastColumn() < summaryHeaders.length) {
+      // Bản vá tự động nâng cấp tiêu đề cột nếu bảng đang ở phiên bản cũ
+      sheetSummary.getRange(1, 1, 1, summaryHeaders.length).setValues([summaryHeaders]);
+      sheetSummary.getRange(1, 1, 1, summaryHeaders.length)
+        .setBackground('#1e293b')
+        .setFontColor('#ffffff')
+        .setFontWeight('bold')
+        .setHorizontalAlignment('center');
     }
 
     // ===================================================================

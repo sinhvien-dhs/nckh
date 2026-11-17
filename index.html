@@ -28,7 +28,11 @@
     rel="stylesheet">
 
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="css/style.css?v=20261114_05">
+  <link rel="stylesheet" href="css/style.css?v=20261117_02">
+
+  <!-- KaTeX for high-precision mathematical formula rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 </head>
 
 <body>
@@ -62,6 +66,9 @@
       </div>
 
       <div class="header-actions">
+        <button class="btn btn-rag" id="btnOpenRAG" type="button" onclick="window.openRAGAssistant()" title="Trợ lý Tri thức RAG-Anything (Multimodal RAG)">
+          🧠 Trợ Lý RAG
+        </button>
         <button class="btn" id="btnOpenGuide" type="button" onclick="window.openPedagogyGuide()" title="Xem Hướng dẫn điều tra sư phạm">
           📖 Hướng Dẫn
         </button>
@@ -600,6 +607,11 @@
   </div>
 
 
+  <!-- Floating RAG Assistant Action Button -->
+  <button class="floating-rag-btn" id="floatingRagBtn" onclick="window.openRAGAssistant()" title="Tra cứu Tri thức Sách giáo khoa & Công thức (RAG-Anything)">
+    🧠 RAG Tri Thức
+  </button>
+
   <!-- Floating Mobile Quick-Jump Pill (Only visible on small screens) -->
   <button class="mobile-jump-pill" id="mobileJumpPill" onclick="window.toggleMobileView()" aria-label="Chuyển nhanh giữa Bảng Phá Án và Mô Phỏng">
     🔬 Xem Mô Phỏng
@@ -613,7 +625,8 @@
   <script src="js/physics-engine.js"></script>
   <script src="js/vector-renderer.js?v=20261114_02"></script>
   <script src="js/cases-data.js"></script>
-  <script src="js/investigation-engine.js?v=20261114_02"></script>
+  <script src="js/rag-engine.js?v=20261117_01"></script>
+  <script src="js/investigation-engine.js?v=20261117_01"></script>
   <script src="js/pedagogy-analytics.js"></script>
   <script src="js/app.js?v=20261114_05"></script>
 </body>

@@ -36,12 +36,17 @@ class InvestigationEngine {
     };
 
     this.studentAnswers = {}; // { caseId: { itemId: { chosen, target, isCorrect, text, timestamp } } }
+    this.duelInputMode = 'standard'; // 'standard' | 'rag'
 
     this.container = document.getElementById('investigationContent');
 
     this.loadSavedProfile();
     this.loadSavedAnswers();
     this.loadSolvedCases();
+
+    // Bản vá tự động đồng bộ cấu hình và gửi bù khi có mạng
+    this.initRemoteConfig();
+    window.addEventListener('online', () => this.flushPendingQueue());
 
     window.addEventListener('resize', () => {
       if (this.currentPhase === 3) this.alignConfidenceTicks();
@@ -145,15 +150,18 @@ class InvestigationEngine {
     const chip = document.getElementById('studentProfileChip');
     if (disp) {
       if (this.hasValidProfile()) {
-        disp.innerText = `${this.studentProfile.name} • ${this.studentProfile.className} (${this.studentProfile.schoolName})`;
+        const fullInfo = `${this.studentProfile.name} • ${this.studentProfile.className} (${this.studentProfile.schoolName})`;
+        disp.innerText = fullInfo;
+        disp.title = fullInfo;
         disp.style.color = 'var(--cyan)';
-        if (label) label.innerText = '🔒 Thí sinh (Đã khóa):';
+        if (label) label.innerText = '🔒 Thí sinh:';
         if (chip) {
-          chip.title = 'Thông tin thí sinh đã khóa trong suốt bài thi. Hoàn thành toàn bộ 6 vụ án để nhận chúc mừng và bấm nút Hoàn Thành đổi người dùng.';
+          chip.title = `Thí sinh: ${fullInfo}\n(Thông tin đã khóa trong suốt bài thi. Hoàn thành 6 vụ án để đổi thí sinh).`;
           chip.style.cursor = 'default';
         }
       } else {
         disp.innerText = 'Chưa đăng ký (Bắt buộc nhập)';
+        disp.title = 'Bấm để đăng ký Họ tên, Lớp, Trường';
         disp.style.color = 'var(--crimson)';
         if (label) label.innerText = '👤 Thí sinh:';
         if (chip) {
@@ -301,16 +309,101 @@ class InvestigationEngine {
     }
   }
 
-  // Đồng bộ 1 bản ghi lên Google Sheets Webhook
+  // =========================================================================
+  // BẢN VÁ: HÀNG ĐỢI NGOẠI TUYẾN & TỰ ĐỘNG ĐỒNG BỘ CẤU HÌNH (OFFLINE RESILIENCE)
+  // =========================================================================
+
+  getPendingQueue() {
+    try {
+      const q = localStorage.getItem('physics_unsynced_records');
+      return q ? JSON.parse(q) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  enqueuePendingRecord(record) {
+    try {
+      const queue = this.getPendingQueue();
+      if (!queue.some(r => r.id === record.id)) {
+        queue.push(record);
+        localStorage.setItem('physics_unsynced_records', JSON.stringify(queue));
+      }
+    } catch (e) {}
+  }
+
+  dequeuePendingRecord(recordId) {
+    try {
+      let queue = this.getPendingQueue();
+      queue = queue.filter(r => r.id !== recordId);
+      localStorage.setItem('physics_unsynced_records', JSON.stringify(queue));
+    } catch (e) {}
+  }
+
+  // Tự động gửi bù toàn bộ bài làm tồn đọng khi có mạng
+  async flushPendingQueue() {
+    const queue = this.getPendingQueue();
+    if (!queue.length) return;
+
+    let url = window.GOOGLE_SHEETS_URL || localStorage.getItem('physics_google_sheets_url') || 'https://script.google.com/macros/s/AKfycbxe_lt7lmYAE4kqOiyB12WVQwjp-EgMKXQRIRy6fqu2jIx5oGgU04deTNlVn0QfWO7f/exec';
+    if (!url || !url.startsWith('http')) return;
+
+    console.log(`[Google Sheets Patch] Đang tự động gửi bù ${queue.length} bài làm tồn đọng...`);
+    const successfulIds = [];
+
+    for (const record of queue) {
+      try {
+        await fetch(url, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(record)
+        });
+        successfulIds.push(record.id);
+      } catch (err) {
+        console.warn('[Google Sheets Patch] Chưa gửi được bài:', record.id, err);
+        break; // Dừng lại nếu mạng chưa ổn định
+      }
+    }
+
+    if (successfulIds.length > 0) {
+      let remaining = this.getPendingQueue().filter(r => !successfulIds.includes(r.id));
+      localStorage.setItem('physics_unsynced_records', JSON.stringify(remaining));
+      console.log(`[Google Sheets Patch] Đã gửi bù thành công ${successfulIds.length} bài thi lên Google Sheets!`);
+      if (window.showToast) {
+        window.showToast(`☁️ Đã đồng bộ ${successfulIds.length} bài thi lên Google Sheets!`);
+      }
+    }
+  }
+
+  // Tự động nạp cấu hình link Webhook mới nhất từ config.json trên server/GitHub (tránh cache bằng v=timestamp)
+  async initRemoteConfig() {
+    try {
+      const res = await fetch('config.json?v=' + Date.now());
+      if (res.ok) {
+        const cfg = await res.json();
+        if (cfg && cfg.googleSheetsUrl && cfg.googleSheetsUrl.startsWith('http')) {
+          window.GOOGLE_SHEETS_URL = cfg.googleSheetsUrl;
+          console.log('[Google Sheets Patch] Đã nạp URL Webhook mới nhất:', cfg.googleSheetsUrl);
+        }
+      }
+    } catch (e) {
+      // Dùng URL mặc định nếu offline
+    }
+    // Gửi bù ngay các bản ghi chưa đồng bộ nếu có mạng
+    this.flushPendingQueue();
+  }
+
+  // Đồng bộ 1 bản ghi lên Google Sheets Webhook (Có cơ chế hàng đợi bảo vệ an toàn 100%)
   async syncToGoogleSheets(record) {
     if (!record) return { success: false, message: 'Không có dữ liệu bản ghi' };
-    let url = '';
-    try {
-      url = window.GOOGLE_SHEETS_URL || localStorage.getItem('physics_google_sheets_url') || '';
-    } catch (e) {}
+    let url = window.GOOGLE_SHEETS_URL || localStorage.getItem('physics_google_sheets_url') || 'https://script.google.com/macros/s/AKfycbxe_lt7lmYAE4kqOiyB12WVQwjp-EgMKXQRIRy6fqu2jIx5oGgU04deTNlVn0QfWO7f/exec';
     if (!url || !url.startsWith('http')) {
       return { success: false, message: 'Chưa cấu hình URL Google Sheets' };
     }
+
+    // Bảo vệ: Thêm vào hàng đợi trước khi gửi
+    this.enqueuePendingRecord(record);
 
     try {
       await fetch(url, {
@@ -322,10 +415,12 @@ class InvestigationEngine {
         body: JSON.stringify(record)
       });
       console.log('[Google Sheets] Đã gửi bản ghi lên CSDL:', record.id);
+      // Gửi thành công: Gỡ khỏi hàng đợi
+      this.dequeuePendingRecord(record.id);
       return { success: true };
     } catch (err) {
-      console.warn('[Google Sheets] Lỗi khi gửi dữ liệu:', err);
-      return { success: false, error: err };
+      console.warn('[Google Sheets] Mạng chập chờn, bài thi đã được bảo vệ trong hàng đợi và sẽ tự động gửi bù khi có mạng.', err);
+      return { success: false, queued: true, error: err };
     }
   }
 
@@ -1220,6 +1315,8 @@ class InvestigationEngine {
     const duelRounds = caseAns.duelRounds || {};
     const savedRound = duelRounds[this.currentRound];
     const isAnswered = !!savedRound;
+    const isRAG = savedRound && savedRound.isRAG;
+    const currentMode = isAnswered ? (isRAG ? 'rag' : 'standard') : (this.duelInputMode || 'standard');
 
     return `
       <div class="ai-duel-header">
@@ -1247,28 +1344,102 @@ class InvestigationEngine {
         <p style="margin-top:4px;"><span class="tier-badge">Cấp 3 (Định luật)</span> ${round.socratesHint.t3}</p>
       </div>
 
-      <div class="choice-list">
-        <p style="font-size:0.82rem; font-weight:700; color:var(--cyan); margin-bottom:4px;">⚖️ CHỌN LẬP LUẬN BẰNG CHỨNG ĐỂ PHẢN BÁC:</p>
-        ${round.responses.map((resp, i) => {
-          let extraClass = '';
-          let style = '';
-          if (isAnswered) {
-            style = 'pointer-events:none; opacity:0.85;';
-            if (savedRound.optionIdx === i) {
-              extraClass = 'selected ' + (savedRound.isCorrect ? 'correct' : 'fallacy');
-            }
-          }
-          return `
-            <div class="choice-btn ${extraClass}" style="${style}" onclick="window.investigationEngine.handleDuelResponse(${resp.damage}, ${resp.correct}, '${resp.feedback.replace(/'/g, "\\'")}', ${i})">
-              <span><strong>${String.fromCharCode(65 + i)}.</strong></span>
-              <span>${resp.text}</span>
-            </div>
-          `;
-        }).join('')}
+      <!-- Mode Switcher: Standard Multiple-Choice vs RAG-Anything Free-Text -->
+      <div class="rag-mode-tabs">
+        <button type="button" class="rag-tab-btn ${currentMode !== 'rag' ? 'active' : ''}" 
+          ${isAnswered ? 'disabled style="opacity:0.6;"' : ''} 
+          onclick="window.investigationEngine.setDuelInputMode('standard')">
+          🔘 Chọn Lập Luận Soạn Sẵn (Trắc nghiệm)
+        </button>
+        <button type="button" class="rag-tab-btn ${currentMode === 'rag' ? 'active' : ''}" 
+          ${isAnswered ? 'disabled style="opacity:0.6;"' : ''} 
+          onclick="window.investigationEngine.setDuelInputMode('rag')">
+          ⚡ Tự Viết Luận Điểm Phản Biện (RAG-Anything)
+        </button>
       </div>
 
+      ${currentMode === 'rag' ? `
+        <!-- RAG-Anything Free-Text Argument Area -->
+        <div class="rag-duel-container">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:6px;">
+            <span style="font-size:0.84rem; font-weight:700; color:var(--cyan);">
+              ✍️ TỰ DO NHẬP LUẬN ĐIỂM BẰNG CHỨNG PHẢN BÁC:
+            </span>
+            <button type="button" class="btn" style="font-size:0.75rem; padding:4px 8px; color:var(--amber); border-color:var(--amber);" onclick="window.openRAGAssistant(${c.id})">
+              📖 Tra Cứu SGK Vật Lý 10
+            </button>
+          </div>
+          <textarea id="ragArgumentInput" class="rag-argument-textarea" placeholder="Nhập lập luận của em (Ví dụ: Định luật nào, công thức gì, tại sao kết luận của Sophos là ngụy biện?)..." ${isAnswered ? 'disabled' : ''}>${savedRound && savedRound.studentText ? savedRound.studentText : ''}</textarea>
+          ${!isAnswered ? `
+            <div class="rag-argument-actions">
+              <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <button type="button" class="rag-chip-btn" onclick="window.investigationEngine.insertArgumentSnippet('Theo Định luật Vật lý 10, ')">
+                  + Định luật
+                </button>
+                <button type="button" class="rag-chip-btn" onclick="window.investigationEngine.insertArgumentSnippet('Thực nghiệm mô phỏng đã chứng minh ')">
+                  + Bằng chứng
+                </button>
+                <button type="button" class="rag-chip-btn" onclick="window.investigationEngine.insertArgumentSnippet('Lập luận của Tiến sĩ Sophos đã mắc ngụy biện ')">
+                  + Bóc ngụy biện
+                </button>
+              </div>
+              <button type="button" class="btn btn-primary" onclick="window.investigationEngine.handleRAGDuelSubmit()" style="font-weight:700;">
+                ⚔️ Tung Lập Luận Phản Biện
+              </button>
+            </div>
+          ` : ''}
+        </div>
+      ` : `
+        <!-- Standard Choice List -->
+        <div class="choice-list">
+          <p style="font-size:0.82rem; font-weight:700; color:var(--cyan); margin-bottom:4px;">⚖️ CHỌN LẬP LUẬN BẰNG CHỨNG ĐỂ PHẢN BÁC:</p>
+          ${round.responses.map((resp, i) => {
+            let extraClass = '';
+            let style = '';
+            if (isAnswered) {
+              style = 'pointer-events:none; opacity:0.85;';
+              if (savedRound.optionIdx === i) {
+                extraClass = 'selected ' + (savedRound.isCorrect ? 'correct' : 'fallacy');
+              }
+            }
+            return `
+              <div class="choice-btn ${extraClass}" style="${style}" onclick="window.investigationEngine.handleDuelResponse(${resp.damage}, ${resp.correct}, '${resp.feedback.replace(/'/g, "\\'")}', ${i})">
+                <span><strong>${String.fromCharCode(65 + i)}.</strong></span>
+                <span>${resp.text}</span>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `}
+
       <div id="duelFeedback" style="display:${isAnswered ? 'block' : 'none'}; margin:12px 0;">
-        ${isAnswered ? `
+        ${isAnswered ? (isRAG ? `
+          <div class="dossier-card ${savedRound.isCorrect ? 'feedback-correct' : 'feedback-fallacy'}">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; flex-wrap:wrap; gap:6px;">
+              <strong style="color:${savedRound.isCorrect ? 'var(--green)' : 'var(--crimson)'}">
+                ${savedRound.isCorrect ? '✅ ĐÒN PHẢN BIỆN CHUẨN XÁC (RAG GROUNDED):' : '⚠️ LẬP LUẬN CHƯA ĐỦ CĂN CỨ KHOA HỌC:'}
+              </strong>
+              <span class="hud-badge" style="color:var(--green)">Độ tín nhiệm: ${savedRound.confidenceScore || 90}%</span>
+            </div>
+            <div style="margin-bottom:8px; font-size:0.84rem; line-height:1.5;">
+              <strong>🦹‍♂️ Phản hồi của Tiến sĩ Sophos:</strong> "${savedRound.sophosReaction || savedRound.feedbackText}"
+            </div>
+            <div style="background:var(--bg-card); padding:8px 10px; border-radius:6px; font-size:0.82rem; border-left:3px solid var(--purple); margin-bottom:8px;">
+              ${savedRound.socratesAdvice || ''}
+            </div>
+            ${savedRound.groundingRef ? `
+              <div style="font-size:0.78rem; color:var(--text-muted); background:var(--bg-alt); padding:6px 10px; border-radius:4px; border:1px solid var(--border-color);">
+                📚 <strong>Cơ sở đối chiếu:</strong> ${savedRound.groundingRef.source}
+                ${savedRound.groundingRef.formula ? ` | 🧮 <em>${savedRound.groundingRef.formula.label}: ${savedRound.groundingRef.formula.formula}</em>` : ''}
+              </div>
+            ` : ''}
+          </div>
+          ${this.sophosHp <= 0 ? `
+            <div class="purified-badge" style="margin-top:12px;">
+              🏆 TIẾN SĨ SOPHOS ĐÃ BỊ THUYẾT PHỤC HOÀN TOÀN. CHÂN LÝ VẬT LÝ ĐÃ ĐƯỢC XÁC LẬP.
+            </div>
+          ` : ''}
+        ` : `
           <div class="dossier-card ${savedRound.isCorrect ? 'feedback-correct' : 'feedback-fallacy'}">
             <strong style="color:${savedRound.isCorrect ? 'var(--green)' : 'var(--crimson)'}">
               ${savedRound.isCorrect ? '✅ BẰNG CHỨNG HỮU HIỆU:' : '⚠️ LẬP LUẬN BỊ BÁC BỎ:'}
@@ -1279,7 +1450,7 @@ class InvestigationEngine {
               🏆 TIẾN SĨ SOPHOS ĐÃ BỊ THUYẾT PHỤC HOÀN TOÀN. CHÂN LÝ VẬT LÝ ĐÃ ĐƯỢC XÁC LẬP.
             </div>
           ` : ''}
-        ` : ''}
+        `) : ''}
       </div>
 
       <div style="margin-top: 18px; display:flex; justify-content:space-between;">
@@ -1289,6 +1460,85 @@ class InvestigationEngine {
         </button>
       </div>
     `;
+  }
+
+  setDuelInputMode(mode) {
+    this.duelInputMode = mode;
+    this.render();
+  }
+
+  insertArgumentSnippet(snippet) {
+    const input = document.getElementById('ragArgumentInput');
+    if (input) {
+      input.value = (input.value ? input.value + ' ' : '') + snippet;
+      input.focus();
+    }
+  }
+
+  handleRAGDuelSubmit() {
+    if (!this.hasValidProfile()) {
+      this.openProfileModal();
+      return;
+    }
+
+    const currentCase = this.getCurrentCase();
+    if (!this.studentAnswers[currentCase.id]) {
+      this.studentAnswers[currentCase.id] = {};
+    }
+    if (!this.studentAnswers[currentCase.id].duelRounds) {
+      this.studentAnswers[currentCase.id].duelRounds = {};
+    }
+
+    // Chống đúp điểm nếu đã trả lời vòng này
+    if (this.studentAnswers[currentCase.id].duelRounds[this.currentRound]) {
+      return;
+    }
+
+    const input = document.getElementById('ragArgumentInput');
+    const studentText = input ? input.value.trim() : '';
+
+    if (!studentText || studentText.length < 5) {
+      if (window.showToast) window.showToast('⚠️ Vui lòng nhập lập luận phản biện của em trước khi gửi!');
+      if (input) input.focus();
+      return;
+    }
+
+    if (!window.ragEngine) {
+      alert('RAG Engine chưa sẵn sàng!');
+      return;
+    }
+
+    const evalRes = window.ragEngine.evaluateStudentArgument(currentCase.id, studentText);
+
+    this.studentAnswers[currentCase.id].duelRounds[this.currentRound] = {
+      isRAG: true,
+      studentText: studentText,
+      damage: evalRes.damage,
+      isCorrect: evalRes.isCorrect,
+      feedbackText: evalRes.sophosReaction,
+      confidenceScore: evalRes.confidenceScore,
+      sophosReaction: evalRes.sophosReaction,
+      socratesAdvice: evalRes.socratesAdvice,
+      groundingRef: evalRes.groundingRef,
+      timestamp: new Date().toISOString()
+    };
+
+    try {
+      localStorage.setItem('physics_student_answers', JSON.stringify(this.studentAnswers));
+    } catch (e) {}
+
+    if (evalRes.isCorrect) {
+      this.sophosHp = Math.max(0, this.sophosHp - evalRes.damage);
+      this.facione.t3 = Math.min(100, this.facione.t3 + evalRes.facioneGains.t3);
+      this.facione.t2 = Math.min(100, this.facione.t2 + evalRes.facioneGains.t2);
+      if (window.audioFX) window.audioFX.playSuccess();
+    } else {
+      this.facione.t3 = Math.max(30, this.facione.t3 - 4);
+      if (window.audioFX) window.audioFX.playAlert();
+    }
+
+    this.recalculateScore();
+    this.render();
   }
 
   handleDuelResponse(damage, isCorrect, feedbackText, optionIdx) {
